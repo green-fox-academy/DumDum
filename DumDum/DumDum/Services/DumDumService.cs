@@ -34,7 +34,8 @@ namespace DumDum.Services
 
         public Kingdom CreateKingdom(string username)
         {
-            var kingdom = new Kingdom() {KingdomName = $"{username}'s kingdom"};
+            var player = GetPlayerByUsername(username);
+            var kingdom = new Kingdom() {KingdomName = $"{username}'s kingdom", PlayerId = player.PlayerId};
             DbContext.Kingdoms.Add(kingdom);
             DbContext.SaveChanges();
             var kingdomToReturn = GetKingdomByName(kingdom.KingdomName);

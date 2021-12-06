@@ -47,6 +47,7 @@ namespace DumDum.Controllers
             {
                 var newKingdom = DumDumService.CreateKingdom(playerJson.Username);
                 var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom.KingdomId);
+                
                 return Ok(new {username = player.Username, kingdomId = newKingdom.KingdomId});
             }
         }
