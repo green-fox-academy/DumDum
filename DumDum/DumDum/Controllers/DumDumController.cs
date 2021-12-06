@@ -7,7 +7,7 @@ using DumDum.Models.Entities;
 
 namespace DumDum.Controllers
 {
-    public class HomeController : Controller
+    public class DumDumController : Controller
     {
         [Route("")]
         public IActionResult Index()
