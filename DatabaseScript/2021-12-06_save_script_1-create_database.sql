@@ -10,6 +10,6 @@ Create table Players(
 insert into Players(PlayerId,Username,Password,KingdomId)
 Values (1,'Nya','catcatcat',1),
 (2,'Mladen','mladen',2),
-(3,'Komin','dildodildo',1),
-(4,'Beef69','chicken',1),
-(5,'Marek','pivko',2);
+(3,'Komin','dildodildo',3),
+(4,'Beef69','chicken',4),
+('Marek','pivko',5);
