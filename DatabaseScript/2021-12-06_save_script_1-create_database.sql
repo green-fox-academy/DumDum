@@ -2,7 +2,7 @@ create database DumDum;
 use DumDum;
 Create table Players(
 	PlayerId int not null auto_increment,
-    Username varchar (255),
+    Username varchar (255) not null,
     Password varchar (255),
     KingdomId int not null,
     primary key (PlayerId)
