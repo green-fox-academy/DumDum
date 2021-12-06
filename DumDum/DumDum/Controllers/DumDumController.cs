@@ -53,22 +53,23 @@ namespace DumDum.Controllers
         }
 
         [HttpPut("registration")]
-        public IActionResult RegisterKingdom([FromBody] int coordinateX, [FromBody] int coordinateY, [FromBody] int kingdomId)
+        public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
         {
-            KingdomJson kingdomJson = new KingdomJson() { CoordinateX = coordinateX, CoordinateY = coordinateY, KingdomId = kingdomId };
-
-            if (DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) && DumDumService.IsKingdomIdValid(kingdomJson.KingdomId))
+            if (DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) && DumDumService.IsKingdomIdValid(kingdomJson.KingdomId) && !DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
                 DumDumService.RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
-                return Ok();
+                kingdomJson.Status = "Ok";
+                return Ok(new {status = kingdomJson.Status } );
             } 
             else if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
-                return BadRequest(kingdomJson.Error = "One or both coordinates are out of valid range(0 - 99).");
+                kingdomJson.Error = "One or both coordinates are out of valid range(0 - 99).";
+                return BadRequest(new { error = kingdomJson.Error});
             }
             else if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
-                return BadRequest(kingdomJson.Error = "Given coordinates are already taken!");
+                kingdomJson.Error = "Given coordinates are already taken!";
+                return BadRequest(new { error = kingdomJson.Error });
             }
             else
             {

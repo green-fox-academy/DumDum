@@ -55,7 +55,7 @@ namespace DumDum.Services
         }
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
         {
-            if (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY > 100)
+            if (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100)
             {
                 return true;
             }
@@ -64,7 +64,7 @@ namespace DumDum.Services
 
         internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
         {
-            if (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) && DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY))
+            if (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) || DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY))
             {
                 return true;
             }
