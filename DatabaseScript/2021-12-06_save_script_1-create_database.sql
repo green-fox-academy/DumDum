@@ -12,4 +12,4 @@ Values (1,'Nya','catcatcat',1),
 (2,'Mladen','mladen',2),
 (3,'Komin','dildodildo',3),
 (4,'Beef69','chicken',4),
-('Marek','pivko',5);
+(5,'Marek','pivko',5);
