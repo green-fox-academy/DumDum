@@ -4,11 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DumDum.Models.Entities;
+using DumDum.Services;
 
 namespace DumDum.Controllers
 {
     public class DumDumController : Controller
     {
+        private DumDumService DumDumService { get; set; }
+
+        public DumDumController(DumDumService dumDumService)
+        {
+            DumDumService = dumDumService;
+        }
+        
         [Route("")]
         public IActionResult Index()
         {
@@ -18,8 +26,26 @@ namespace DumDum.Controllers
         [HttpPost("registration")]
         public IActionResult Register([FromBody] string username, string password, string kingdomname)
         {
-            
-            return Ok();
+            var kingdom = DumDumService.GetKingdomByName(kingdomname);
+
+            if (kingdom is not null)
+            {
+                var player = DumDumService.Register(username, password, kingdom.KingdomId);
+                if (DumDumService.IsValid(username, password) == true)
+                {
+                    return Ok(new {username = player.Username, kingdomId = kingdom.KingdomId});
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                var newKingdom = DumDumService.CreateKingdom(username);
+                var player = DumDumService.Register(username, password, newKingdom.KingdomId);
+                return Ok(new {username = player.Username, kingdomId = newKingdom.KingdomId});
+            }
         }
     }
 }
