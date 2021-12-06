@@ -5,13 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
 using DumDum.Services;
-
-
 
 namespace DumDum.Controllers
 {
-    [Authorize]
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
@@ -28,16 +26,17 @@ namespace DumDum.Controllers
         }
 
         [HttpPost("registration")]
-        public IActionResult Register([FromBody] string username, string password, string kingdomname)
+        public IActionResult Register([FromBody] PlayerJson playerJson)
         {
-            var kingdom = DumDumService.GetKingdomByName(kingdomname);
+            
+            var kingdom = DumDumService.GetKingdomByName(playerJson.KingdomName);
 
             if (kingdom is not null)
             {
-                var player = DumDumService.Register(username, password, kingdom.KingdomId);
-                if (DumDumService.IsValid(username, password) == true)
+                var player = DumDumService.Register(playerJson.Username, playerJson.Password, kingdom.KingdomId);
+                if (DumDumService.IsValid(playerJson.Username, playerJson.Password) == true)
                 {
-                    return Ok(new {username = player.Username, kingdomId = kingdom.KingdomId});
+                    return Ok(new PlayerJson(){Username = player.Username, KingdomId = kingdom.KingdomId});
                 }
                 else
                 {
@@ -46,8 +45,8 @@ namespace DumDum.Controllers
             }
             else
             {
-                var newKingdom = DumDumService.CreateKingdom(username);
-                var player = DumDumService.Register(username, password, newKingdom.KingdomId);
+                var newKingdom = DumDumService.CreateKingdom(playerJson.Username);
+                var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom.KingdomId);
                 return Ok(new {username = player.Username, kingdomId = newKingdom.KingdomId});
             }
         }
