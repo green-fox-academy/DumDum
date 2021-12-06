@@ -8,6 +8,7 @@ namespace DumDum.Models.Entities
     public class Kingdom
     {
         public int KingdomId { get; set; }
+        public string KingdomName { get; set; }
         public int CoordinateX { get; set; }
         public int CoordinateY { get; set; }
         public int PlayerId { get; set; }
