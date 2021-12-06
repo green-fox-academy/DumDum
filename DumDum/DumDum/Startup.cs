@@ -38,7 +38,7 @@ namespace DumDum
             var appSettingSection = AppConfig.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
             
-            //JWT Authentication
+            //JWT Authentication...
 
             var appSettings = appSettingSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Key);
