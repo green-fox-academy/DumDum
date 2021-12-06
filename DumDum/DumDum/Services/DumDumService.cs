@@ -52,5 +52,45 @@ namespace DumDum.Services
                 return false;
             }
         }
+        internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
+        {
+            if (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY > 100)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
+        {
+            if (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) && DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal bool IsKingdomIdValid(int kingdomId)
+        {
+            if (DbContext.Players.Any(p => p.KingdomId == kingdomId))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Kingdom GetKingdomById(int kingdomId)
+        {
+            return DbContext.Kingdoms.FirstOrDefault(x => x.KingdomId == kingdomId);
+        }
+
+        public Kingdom RegisterKingdom(int coordinateX, int coordinateY, int kingdomId)
+        {
+            var kingdom = GetKingdomById(kingdomId);
+            kingdom.CoordinateX = coordinateX;
+            kingdom.CoordinateY = coordinateY;
+            DbContext.SaveChanges();
+            return kingdom;
+        }
     }
 }

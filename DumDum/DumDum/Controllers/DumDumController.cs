@@ -53,5 +53,29 @@ namespace DumDum.Controllers
                 return Ok(new {username = player.Username, kingdomId = newKingdom.KingdomId});
             }
         }
+
+        [HttpPut("registration")]
+        public IActionResult RegisterKingdom([FromBody] int coordinateX, [FromBody] int coordinateY, [FromBody] int kingdomId)
+        {
+            KingdomJson kingdomJson = new KingdomJson() { CoordinateX = coordinateX, CoordinateY = coordinateY, KingdomId = kingdomId };
+
+            if (DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) && DumDumService.IsKingdomIdValid(kingdomJson.KingdomId))
+            {
+                DumDumService.RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
+                return Ok();
+            } 
+            else if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            {
+                return BadRequest(kingdomJson.Error = "One or both coordinates are out of valid range(0 - 99).");
+            }
+            else if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            {
+                return BadRequest(kingdomJson.Error = "Given coordinates are already taken!");
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
     }
 }
