@@ -40,5 +40,17 @@ namespace DumDum.Services
             var kingdomToReturn = GetKingdomByName(kingdom.KingdomName);
             return kingdomToReturn;
         }
+
+        public bool IsValid(string username, string password)
+        {
+            if (username != string.Empty && DbContext.Players.Any(p => p.Username != username))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
