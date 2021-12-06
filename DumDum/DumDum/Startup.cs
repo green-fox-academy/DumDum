@@ -31,6 +31,8 @@ namespace DumDum
         {
             services.AddControllersWithViews();
             services.AddTransient<DumDumService>();
+            services.AddTransient<LoginService>();
+
             ConfigureDb(services);
             
             //This is setting for authentication
@@ -59,8 +61,8 @@ namespace DumDum
                     ValidateAudience = false
                 };
             });
-
         }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -70,6 +72,8 @@ namespace DumDum
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
