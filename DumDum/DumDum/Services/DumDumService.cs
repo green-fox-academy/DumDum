@@ -1,5 +1,6 @@
+using System.Linq;
 using DumDum.Database;
-using System;
+using DumDum.Models.Entities;
 
 namespace DumDum.Services
 {
@@ -12,13 +13,44 @@ namespace DumDum.Services
             DbContext = dbContex;
         }
 
-        internal bool CoordinatesValidation(int coordinateX, int coordinateY)
+        public Player GetPlayerByUsername(string username)
         {
-            if (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY > 100)
+            return DbContext.Players.FirstOrDefault(p => p.Username == username);
+        }
+
+    public Kingdom GetKingdomByName(string kingdomName)
+        {
+            return DbContext.Kingdoms.FirstOrDefault(x => x.KingdomName == kingdomName);
+        }
+
+        public Player Register(string username, string password, int kingdomId)
+        {
+            var player = new Player() {Password = password, Username = username, KingdomId = kingdomId};
+            DbContext.Players.Add(player);
+            DbContext.SaveChanges();
+            var playerToReturn = GetPlayerByUsername(username);
+            return playerToReturn;
+        }
+
+        public Kingdom CreateKingdom(string username)
+        {
+            var kingdom = new Kingdom() {KingdomName = $"{username}'s kingdom"};
+            DbContext.Kingdoms.Add(kingdom);
+            DbContext.SaveChanges();
+            var kingdomToReturn = GetKingdomByName(kingdom.KingdomName);
+            return kingdomToReturn;
+        }
+
+        public bool IsValid(string username, string password)
+        {
+            if (username != string.Empty && DbContext.Players.Any(p => p.Username != username))
             {
                 return true;
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
     }
 }
