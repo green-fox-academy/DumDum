@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using DumDum.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using DumDum.Services;
 
 namespace DumDum
 {
@@ -29,6 +30,7 @@ namespace DumDum
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<DumDumService>();
             ConfigureDb(services);
             
             //This is setting for authentication
