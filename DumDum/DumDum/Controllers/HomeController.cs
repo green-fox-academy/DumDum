@@ -9,7 +9,7 @@ using DumDum.Models.Entities;
 namespace DumDum.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class DumDumController : Controller
     {
         [Route("")]
         public IActionResult Index()
