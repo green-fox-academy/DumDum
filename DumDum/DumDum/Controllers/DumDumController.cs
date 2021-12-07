@@ -24,11 +24,10 @@ namespace DumDum.Controllers
         {
             return View ();
         }
-        [AllowAnonymous]
+
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerJson playerJson)
         {
-            
             var kingdom = DumDumService.GetKingdomByName(playerJson.KingdomName);
 
             if (kingdom is not null)
@@ -63,16 +62,15 @@ namespace DumDum.Controllers
             } 
             if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
-                kingdomJson.Error = "One or both coordinates are out of valid range(0 - 99).";
-                return BadRequest(new { error = kingdomJson.Error});
+                kingdomJson.Status = "One or both coordinates are out of valid range(0 - 99).";
+                return BadRequest(new { error = kingdomJson.Status});
             }
             if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
-                kingdomJson.Error = "Given coordinates are already taken!";
-                return BadRequest(new { error = kingdomJson.Error });
+                kingdomJson.Status = "Given coordinates are already taken!";
+                return BadRequest(new { error = kingdomJson.Status });
             }
             return BadRequest();
-            
         }
     }
 }
