@@ -55,11 +55,7 @@ namespace DumDum.Services
         }
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
         {
-            if (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100)
-            {
-                return true;
-            }
-            return false;
+            return (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100);
         }
 
         internal bool DoCoordinatesExist(int coordinateX, int coordinateY)

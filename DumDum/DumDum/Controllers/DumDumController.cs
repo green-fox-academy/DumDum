@@ -61,20 +61,18 @@ namespace DumDum.Controllers
                 kingdomJson.Status = "Ok";
                 return Ok(new {status = kingdomJson.Status } );
             } 
-            else if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
                 kingdomJson.Error = "One or both coordinates are out of valid range(0 - 99).";
                 return BadRequest(new { error = kingdomJson.Error});
             }
-            else if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
                 kingdomJson.Error = "Given coordinates are already taken!";
                 return BadRequest(new { error = kingdomJson.Error });
             }
-            else
-            {
-                return BadRequest();
-            }
+            return BadRequest();
+            
         }
     }
 }
