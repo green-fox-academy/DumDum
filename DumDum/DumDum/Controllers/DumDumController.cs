@@ -51,10 +51,8 @@ namespace DumDum.Controllers
                     var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom);
                     return Ok(new PlayerJson(){Username = player.Username, KingdomId = newKingdom.KingdomId});
                 }
-                else
-                {
+                
                     return BadRequest();
-                }
             }
         }
     }
