@@ -26,13 +26,13 @@ namespace DumDum.Controllers
             response.Token = Service.Authenticate(player.Username, player.Password);
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
-                return StatusCode(400, new { error = "Field username and/or field password was empty!" });
+                return StatusCode(400, new LoginResponse{ Error = "Field username and/or field password was empty!" });
             }
             if (!Service.LoginPasswordCheck(player.Username, player.Password))
             {
-                return StatusCode(401, new { error = "Username and / or password was incorrect!" });
+                return StatusCode(401, new LoginResponse { Error = "Username and/or password was incorrect!" });
             }
-                return Ok(new { status = "Ok", token = $"{response.Token}" });
+                return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
         }
     }
 }
