@@ -18,10 +18,6 @@ namespace DumDum.Controllers
         {
             Service = service;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
 
         [AllowAnonymous]
         [HttpPost("login")]
