@@ -58,7 +58,7 @@ namespace DumDum.Services
                 var player = FindPlayerByTokenName(identity);
                 UserInfo.Add(player.Username);
                 UserInfo.Add(player.KingdomId.ToString());
-                //UserInfo.Add(player.Kingdom.KingdomName);
+                UserInfo.Add(player.Kingdom.KingdomName);
 
                 return UserInfo;
             }
