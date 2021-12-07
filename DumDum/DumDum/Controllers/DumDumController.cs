@@ -25,6 +25,7 @@ namespace DumDum.Controllers
             return View ();
         }
 
+        [AllowAnonymous]
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerJson playerJson)
         {
@@ -51,6 +52,7 @@ namespace DumDum.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
         {
