@@ -1,7 +1,6 @@
 ﻿using DumDum.Database;
 using DumDum.Models;
 using DumDum.Models.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -18,12 +17,12 @@ namespace DumDum.Services
     {
         
         private ApplicationDbContext DbContext { get; set; }
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings AppSettings;
 
         public LoginService(ApplicationDbContext dbContex,IOptions<AppSettings> appSettings)
         {
             DbContext = dbContex;
-            _appSettings = appSettings.Value;
+            AppSettings = appSettings.Value;
         }
 
         public bool LoginCheck(string username)
@@ -45,7 +44,7 @@ namespace DumDum.Services
             {
                 //je potreba nainstalovat nuget System.IdentityModel.Tokens.Jwt
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenKey = Encoding.ASCII.GetBytes(_appSettings.Key);
+                var tokenKey = Encoding.ASCII.GetBytes(AppSettings.Key);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
@@ -74,7 +73,7 @@ namespace DumDum.Services
                 if (jwtToken == null)
                     return null;
 
-                var symmetricKey = Encoding.ASCII.GetBytes(_appSettings.Key);
+                var symmetricKey = Encoding.ASCII.GetBytes(AppSettings.Key);
 
                 var validationParameters = new TokenValidationParameters()
                 {
@@ -97,31 +96,5 @@ namespace DumDum.Services
             }
         }
 
-        public IActionResult LoginLogic(Player player)
-        {
-            var token = Authenticate(player.Username, player.Password);
-            if (string.IsNullOrEmpty(player.Username))
-            {
-                return StatusCode(400, new { error = "Field username and/or field password was empty!" });
-            }
-            else if (LoginPasswordCheck(player.Username, player.Password))
-            {
-                return StatusCode(401, new { error = "Username and / or password was incorrect!" });
-            }
-            else
-            {
-                return Ok(new { status = "Ok", token = $"{token}" });
-            }
-        }
-
-        private IActionResult Ok(object p)
-        {
-            throw new NotImplementedException();
-        }
-
-        private IActionResult StatusCode(int v, object p)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
