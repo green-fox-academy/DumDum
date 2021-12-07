@@ -24,7 +24,7 @@ namespace DumDum.Controllers
         {
             return View ();
         }
-
+        [AllowAnonymous]
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerJson playerJson)
         {
