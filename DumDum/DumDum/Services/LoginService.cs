@@ -17,12 +17,12 @@ namespace DumDum.Services
     {
         
         private ApplicationDbContext DbContext { get; set; }
-        private readonly AppSettings _appSettings;
+        private readonly AppSettings AppSettings;
 
         public LoginService(ApplicationDbContext dbContex,IOptions<AppSettings> appSettings)
         {
             DbContext = dbContex;
-            _appSettings = appSettings.Value;
+            AppSettings = appSettings.Value;
         }
 
         public bool LoginCheck(string username)
@@ -44,7 +44,7 @@ namespace DumDum.Services
             {
                 //je potreba nainstalovat nuget System.IdentityModel.Tokens.Jwt
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenKey = Encoding.ASCII.GetBytes(_appSettings.Key);
+                var tokenKey = Encoding.ASCII.GetBytes(AppSettings.Key);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
