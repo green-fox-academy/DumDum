@@ -28,7 +28,7 @@ namespace DumDum.Controllers
         public IActionResult Login([FromBody] LoginRequest player,LoginResponse response)
         {
             response.Token = Service.Authenticate(player.Username, player.Password);
-            if (string.IsNullOrEmpty(player.Username))
+            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
                 return StatusCode(400, new { error = "Field username and/or field password was empty!" });
             }
