@@ -58,17 +58,17 @@ namespace DumDum.Controllers
             {
                 DumDumService.RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
                 kingdomJson.Status = "Ok";
-                return Ok(new {status = kingdomJson.Status } );
+                return Ok(new {Status = kingdomJson.Status } );
             } 
             if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
                 kingdomJson.Status = "One or both coordinates are out of valid range(0 - 99).";
-                return BadRequest(new { error = kingdomJson.Status});
+                return BadRequest(new { Error = kingdomJson.Status});
             }
             if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
             {
                 kingdomJson.Status = "Given coordinates are already taken!";
-                return BadRequest(new { error = kingdomJson.Status });
+                return BadRequest(new { Error = kingdomJson.Status });
             }
             return BadRequest();
         }
