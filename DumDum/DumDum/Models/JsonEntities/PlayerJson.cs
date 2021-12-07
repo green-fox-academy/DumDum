@@ -6,7 +6,6 @@ namespace DumDum.Models.JsonEntities
     {
         public string Username { get; set; }
         public string Password { get; set; }
-
         public string KingdomName { get; set; }
         public int KingdomId { get; set; }
     }
