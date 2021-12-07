@@ -33,7 +33,7 @@ namespace DumDum.Controllers
 
             if (kingdom is not null)
             {
-                var player = DumDumService.Register(playerJson.Username, playerJson.Password, kingdom.KingdomId);
+                var player = DumDumService.Register(playerJson.Username, playerJson.Password, kingdom);
                 if (DumDumService.IsValid(playerJson.Username, playerJson.Password) == true)
                 {
                     return Ok(new PlayerJson(){Username = player.Username, KingdomId = kingdom.KingdomId});
@@ -45,10 +45,16 @@ namespace DumDum.Controllers
             }
             else
             {
-                var newKingdom = DumDumService.CreateKingdom(playerJson.Username);
-                var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom.KingdomId);
-                
-                return Ok(new {username = player.Username, kingdomId = newKingdom.KingdomId});
+                if (DumDumService.IsValid(playerJson.Username, playerJson.Password) == true)
+                {
+                    var newKingdom = DumDumService.CreateKingdom(playerJson.Username);
+                    var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom);
+                    return Ok(new PlayerJson(){Username = player.Username, KingdomId = newKingdom.KingdomId});
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
         }
     }
