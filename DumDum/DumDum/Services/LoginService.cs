@@ -1,6 +1,7 @@
 ﻿using DumDum.Database;
 using DumDum.Models;
 using DumDum.Models.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -96,5 +97,31 @@ namespace DumDum.Services
             }
         }
 
+        public IActionResult LoginLogic(Player player)
+        {
+            var token = Authenticate(player.Username, player.Password);
+            if (string.IsNullOrEmpty(player.Username))
+            {
+                return StatusCode(400, new { error = "Field username and/or field password was empty!" });
+            }
+            else if (LoginPasswordCheck(player.Username, player.Password))
+            {
+                return StatusCode(401, new { error = "Username and / or password was incorrect!" });
+            }
+            else
+            {
+                return Ok(new { status = "Ok", token = $"{token}" });
+            }
+        }
+
+        private IActionResult Ok(object p)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IActionResult StatusCode(int v, object p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
