@@ -56,12 +56,12 @@ namespace DumDum.Services
         }
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
         {
-            return (coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100);
+            return coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100;
         }
 
         internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
         {
-            return (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) || DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY));
+            return DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) || DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY);
         }
 
         internal bool IsKingdomIdValid(int kingdomId)

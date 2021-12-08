@@ -67,7 +67,6 @@ namespace DumDum.Controllers
             {
                 return Ok(new { status = "Ok" });
             }
-
             return StatusCode(statusCode, new { error = message });
         }
     }
