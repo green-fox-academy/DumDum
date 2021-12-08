@@ -24,16 +24,11 @@ namespace TestProject1
         [Fact]
         public void LoginTestReturnOkAndToken()
         {
-           // var request = new HttpRequestMessage(); //pripravim si classu
+          
             var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef69", Password = "chicken" }); //vezmu json, ktery tam chci poslat akonvert. Serialize je z norm objektu do jsonu
             
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json"); //udelam z toho spravnou klacuu jaky to ma enchoding; app/json je typ souboru
-            
-            //request.RequestUri = new Uri("http://localhost:20625/login"); //kam to pošlu
-            //request.Method = HttpMethod.Post;  
-            //request.Content = requestContent;                                       //připravuju sem ten objekt
-           // var response = client.SendAsync(request).Result;        //pošlu to na server, a čekám na odpověď
-
+  
             var response2 = client.PostAsync("http://localhost:20625/login", requestContent).Result; //smazat. dělá to samé co ř.35
             string respond = response2.Content.ReadAsStringAsync().Result;                              //ještě jednou na to čekám
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(respond);                
@@ -63,7 +58,6 @@ namespace TestProject1
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal("Field username and/or field password was empty!", token.Error);
-            
 
         }
 
