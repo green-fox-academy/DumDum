@@ -56,23 +56,15 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
         {
-            if (DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) && DumDumService.IsKingdomIdValid(kingdomJson.KingdomId) && !DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            int statusCode;
+            var message = DumDumService.RegisterKingdomLogic(kingdomJson, out statusCode);
+
+            if (statusCode == 200)
             {
-                DumDumService.RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
-                kingdomJson.Status = "Ok";
-                return Ok(new {Status = kingdomJson.Status } );
-            } 
-            if (!DumDumService.AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
-            {
-                kingdomJson.Status = "One or both coordinates are out of valid range(0 - 99).";
-                return BadRequest(new { Error = kingdomJson.Status});
+                return Ok(new { status = "Ok" });
             }
-            if (DumDumService.DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
-            {
-                kingdomJson.Status = "Given coordinates are already taken!";
-                return BadRequest(new { Error = kingdomJson.Status });
-            }
-            return BadRequest();
+
+            return StatusCode(statusCode, new { error = message });
         }
     }
 }

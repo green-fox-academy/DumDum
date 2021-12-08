@@ -27,8 +27,8 @@ namespace TestProject1
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
             KingdomJson requestBody = new();
-            requestBody.CoordinateY = 10;
-            requestBody.CoordinateX = 10;
+            requestBody.CoordinateY = 11;
+            requestBody.CoordinateX = 11;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");

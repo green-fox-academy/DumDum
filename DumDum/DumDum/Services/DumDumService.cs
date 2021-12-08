@@ -1,6 +1,7 @@
 using System.Linq;
 using DumDum.Database;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
 
 namespace DumDum.Services
 {
@@ -60,25 +61,22 @@ namespace DumDum.Services
 
         internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
         {
-            if (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) || DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY))
-            {
-                return true;
-            }
-            return false;
+            return (DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) || DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY));
         }
 
         internal bool IsKingdomIdValid(int kingdomId)
         {
-            if (DbContext.Players.Any(p => p.KingdomId == kingdomId))
-            {
-                return true;
-            }
-            return false;
+            return DbContext.Players.Any(p => p.KingdomId == kingdomId);
         }
 
         public Kingdom GetKingdomById(int kingdomId)
         {
-            return DbContext.Kingdoms.FirstOrDefault(x => x.KingdomId == kingdomId);
+            var kingdom= DbContext.Kingdoms.FirstOrDefault(x => x.KingdomId == kingdomId);
+            if (kingdom != null)
+            {
+                return kingdom;
+            }
+            return new Kingdom() { };
         }
 
         public Kingdom RegisterKingdom(int coordinateX, int coordinateY, int kingdomId)
@@ -88,6 +86,29 @@ namespace DumDum.Services
             kingdom.CoordinateY = coordinateY;
             DbContext.SaveChanges();
             return kingdom;
+        }
+
+        public string RegisterKingdomLogic(KingdomJson kingdomJson, out int statusCode)
+        {
+            if (AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) && IsKingdomIdValid(kingdomJson.KingdomId) &&
+                !DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            {
+                RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
+                statusCode = 200;
+                return "Ok";
+            }
+            if (!AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            {
+                statusCode = 400;
+                return "One or both coordinates are out of valid range(0 - 99).";
+            }
+            if (DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            {
+                statusCode = 400;
+                return "Given coordinates are already taken!";
+            }
+            statusCode = 400;
+            return "";
         }
     }
 }
