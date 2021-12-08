@@ -24,9 +24,10 @@ namespace DumDum.Services
             return DbContext.Kingdoms.FirstOrDefault(x => x.KingdomName == kingdomName);
         }
 
-        public Player Register(string username, string password, int kingdomId)
+        public Player Register(string username, string password, Kingdom kingdom)
         {
-            var player = new Player() {Password = password, Username = username, KingdomId = kingdomId};
+            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
+            kingdom.PlayerId = player.PlayerId;
             DbContext.Players.Add(player);
             DbContext.SaveChanges();
             var playerToReturn = GetPlayerByUsername(username);
@@ -35,8 +36,7 @@ namespace DumDum.Services
 
         public Kingdom CreateKingdom(string username)
         {
-            var player = GetPlayerByUsername(username);
-            var kingdom = new Kingdom() {KingdomName = $"{username}'s kingdom", PlayerId = player.PlayerId};
+            var kingdom = new Kingdom() {KingdomName = $"{username}'s kingdom"};
             DbContext.Kingdoms.Add(kingdom);
             DbContext.SaveChanges();
             var kingdomToReturn = GetKingdomByName(kingdom.KingdomName);
@@ -45,7 +45,7 @@ namespace DumDum.Services
 
         public bool IsValid(string username, string password)
         {
-            if (username != string.Empty && DbContext.Players.Any(p => p.Username != username))
+            if (!string.IsNullOrEmpty(username) && DbContext.Players.Any(p => p.Username != username) && !string.IsNullOrWhiteSpace(username))
             {
                 return true;
             }
