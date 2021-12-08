@@ -98,8 +98,9 @@ namespace DumDum.Services
         }
 
         //logika pro controller
-        public string Login(LoginRequest player, LoginResponse response, out int statusCode)
-        {
+        public string Login(LoginRequest player, out int statusCode)
+        {   
+            LoginResponse response = new LoginResponse();
             response.Token = Authenticate(player.Username, player.Password);
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
