@@ -2,7 +2,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using DumDum;
+using DumDum.Models.JsonEntities;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace TestProject1
