@@ -24,6 +24,7 @@ namespace DumDum.Controllers
         {
             return View ();
         }
+
         [AllowAnonymous]
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerJson playerJson)
@@ -50,6 +51,20 @@ namespace DumDum.Controllers
                 }
                 return BadRequest();
             }
+        }
+
+        [AllowAnonymous]
+        [HttpPut("registration")]
+        public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
+        {
+            int statusCode;
+            var message = DumDumService.RegisterKingdomLogic(kingdomJson, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(new { status = "Ok" });
+            }
+            return StatusCode(statusCode, new { error = message });
         }
 
         [HttpGet("kingdoms/{id=int}/resources")]
