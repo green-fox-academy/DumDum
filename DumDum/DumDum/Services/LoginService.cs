@@ -97,6 +97,7 @@ namespace DumDum.Services
             }
         }
 
+        //logika pro controller
         public string Login(LoginRequest player, LoginResponse response, out int statusCode)
         {
             response.Token = Authenticate(player.Username, player.Password);
