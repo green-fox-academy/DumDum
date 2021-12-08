@@ -12,27 +12,40 @@ namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService Service { get; set; }
+        private LoginService LoginService { get; set; }
+        public AuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service)
+        public LoginController(LoginService service, AuthenticateService auservice)
         {
-            Service = service;
+            LoginService = service;
+            AuthenticateService = auservice;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest player,LoginResponse response)
         {
-            response.Token = Service.Authenticate(player.Username, player.Password);
+            response.Token = LoginService.Authenticate(player.Username, player.Password);
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
                 return StatusCode(400, new LoginResponse{ Error = "Field username and/or field password was empty!" });
             }
-            if (!Service.LoginPasswordCheck(player.Username, player.Password))
+            if (!LoginService.LoginPasswordCheck(player.Username, player.Password))
             {
                 return StatusCode(401, new LoginResponse { Error = "Username and/or password was incorrect!" });
             }
-                return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
+            return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
+        }
+        [HttpPost("auth")]
+        public IActionResult TokenCheck([FromBody]AuthRequest request)
+        {
+            var response = AuthenticateService.GetUserInfo(request);
+           
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return BadRequest();
         }
     }
 }

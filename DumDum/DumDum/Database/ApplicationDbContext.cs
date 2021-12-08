@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DumDum.Models.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace DumDum.Database
 {
@@ -22,7 +23,9 @@ namespace DumDum.Database
         {
             modelBuilder.Entity<Player>()
                 .HasOne<Kingdom>(p => p.Kingdom)
-                .WithOne(k => k.Player);
+                .WithOne(k => k.Player)
+                .HasForeignKey<Player>(p => p.KingdomId)
+                .IsRequired(false);
         }
     }
 }
