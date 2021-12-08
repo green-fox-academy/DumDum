@@ -38,10 +38,7 @@ namespace DumDum.Controllers
                 {
                     return Ok(new PlayerJson(){Username = player.Username, KingdomId = kingdom.KingdomId});
                 }
-                else
-                {
-                    return BadRequest();
-                }
+                return BadRequest();
             }
             else
             {
@@ -51,9 +48,14 @@ namespace DumDum.Controllers
                     var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom);
                     return Ok(new PlayerJson(){Username = player.Username, KingdomId = newKingdom.KingdomId});
                 }
-                
-                    return BadRequest();
+                return BadRequest();
             }
+        }
+
+        [HttpGet("kingdoms/{id=int}/resources")]
+        public IActionResult Resources([FromRoute]int id)
+        {
+            return Ok();
         }
     }
 }

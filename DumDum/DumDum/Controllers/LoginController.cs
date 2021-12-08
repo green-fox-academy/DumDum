@@ -32,7 +32,7 @@ namespace DumDum.Controllers
             {
                 return StatusCode(401, new LoginResponse { Error = "Username and/or password was incorrect!" });
             }
-                return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
+            return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
         }
     }
 }
