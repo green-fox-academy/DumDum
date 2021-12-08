@@ -18,29 +18,29 @@ namespace TestProject1
 
         public LoginTest(WebApplicationFactory<Startup> fixture)
         {
-            client = fixture.CreateClient();
-        }
+            client = fixture.CreateClient();  //vytvori se klient
+        } 
 
         [Fact]
         public void LoginTestReturnOkAndToken()
         {
-            var request = new HttpRequestMessage();
-            var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef69", Password = "chicken" });
+           // var request = new HttpRequestMessage(); //pripravim si classu
+            var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef69", Password = "chicken" }); //vezmu json, ktery tam chci poslat akonvert. Serialize je z norm objektu do jsonu
             
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json"); //udelam z toho spravnou klacuu jaky to ma enchoding; app/json je typ souboru
             
-            request.RequestUri = new Uri("http://localhost:20625/login");
-            request.Method = HttpMethod.Post;
-            request.Content = requestContent;
-            var response = client.SendAsync(request).Result;
+            //request.RequestUri = new Uri("http://localhost:20625/login"); //kam to pošlu
+            //request.Method = HttpMethod.Post;  
+            //request.Content = requestContent;                                       //připravuju sem ten objekt
+           // var response = client.SendAsync(request).Result;        //pošlu to na server, a čekám na odpověď
 
-            var response2 = client.PostAsync("http://localhost:20625/login", requestContent).Result;
-            string respond = response2.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(respond);
+            var response2 = client.PostAsync("http://localhost:20625/login", requestContent).Result; //smazat. dělá to samé co ř.35
+            string respond = response2.Content.ReadAsStringAsync().Result;                              //ještě jednou na to čekám
+            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(respond);                
             var resultFromToken = token.Token.Split('.');
             var result = resultFromToken[0];
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
             Assert.Equal("Ok", token.Status);
             Assert.Equal("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", result);
         }
