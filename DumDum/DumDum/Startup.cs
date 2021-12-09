@@ -32,6 +32,7 @@ namespace DumDum
             services.AddControllersWithViews();
             services.AddTransient<DumDumService>();
             services.AddTransient<LoginService>();
+            services.AddTransient<ResourceService>();
 
             ConfigureDb(services);
             

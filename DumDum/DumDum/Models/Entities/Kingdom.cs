@@ -12,6 +12,7 @@ namespace DumDum.Models.Entities
         public int CoordinateX { get; set; }
         public int CoordinateY { get; set; }
         public int PlayerId { get; set; }
+        public Player Player { get; set; }
         public List<Resource> Resources { get; set; }
     }
 }
