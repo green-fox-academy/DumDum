@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DumDum.Database;
 using DumDum.Models.Entities;
@@ -110,5 +111,9 @@ namespace DumDum.Services
             statusCode = 400;
             return "";
         }
+
+        //internal void ListTroops(KingdomJson kingdomJson, out int statusCode)
+        //{
+        //}
     }
 }

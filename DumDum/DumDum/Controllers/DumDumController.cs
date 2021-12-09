@@ -69,5 +69,19 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new { error = message });
         }
+
+        //[AllowAnonymous]
+        //[HttpGet("kingdoms/{kingdomId}")]
+        //public IActionResult ListTroops([FromBody] KingdomJson kingdomJson)
+        //{
+        //    int statusCode;
+        //   // var message = DumDumService.ListTroops(kingdomJson, out statusCode);
+
+        //    if (statusCode == 200)
+        //    {
+        //        return Ok(new { status = "Ok" });
+        //    }
+        //    return StatusCode(statusCode, new { error = message });
+        //}
     }
 }
