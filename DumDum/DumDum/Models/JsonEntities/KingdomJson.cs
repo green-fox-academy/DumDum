@@ -10,7 +10,5 @@ namespace DumDum.Models.JsonEntities
         public int CoordinateX { get; set; }
         public int CoordinateY { get; set; }
         public int KingdomId { get; set; }
-        public string Status { get; set; }
-        public string Error { get; set; }
     }
 }

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace DumDum.Models.JsonEntities
 {
-    public class Response
+    public class ErrorResponse
     {
         public string Error { get; set; }
-        public string Status { get; set; }
     }
 }

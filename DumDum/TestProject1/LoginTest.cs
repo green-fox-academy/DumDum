@@ -45,10 +45,10 @@ namespace TestProject1
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = client.PostAsync("http://localhost:20625/login", requestContent).Result;
             string respond = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(respond);
+            ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("Field username and/or field password was empty!", token.Error);
+            Assert.Equal("Field username and/or field password was empty!", error.Error);
         }
 
         [Fact]
@@ -58,10 +58,10 @@ namespace TestProject1
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = client.PostAsync("http://localhost:20625/login", requestContent).Result;
             string respond = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(respond);
+            ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-            Assert.Equal("Username and/or password was incorrect!", token.Error);
+            Assert.Equal("Username and/or password was incorrect!", error.Error);
         }
 
 

@@ -30,7 +30,7 @@ namespace DumDum.Controllers
             {
                 return Ok(new LoginResponse{ Status = "Ok", Token = message });
             }
-            return StatusCode(statusCode, new Response{ Error = message });
+            return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
     }
 }
