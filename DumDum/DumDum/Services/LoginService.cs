@@ -1,6 +1,7 @@
 ﻿using DumDum.Database;
 using DumDum.Models;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -94,6 +95,25 @@ namespace DumDum.Services
             {
                 return null;
             }
+        }
+
+        //logika pro controller
+        public string Login(LoginRequest player, out int statusCode)
+        {   
+            LoginResponse response = new LoginResponse();
+            response.Token = Authenticate(player.Username, player.Password);
+            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
+            {
+                statusCode = 400;
+                return "Field username and/or field password was empty!";
+            }
+            if (!LoginPasswordCheck(player.Username, player.Password))
+            {
+                statusCode = 401;
+                return "Username and / or password was incorrect!";
+            }
+            statusCode = 200;
+            return response.Token;
         }
 
     }

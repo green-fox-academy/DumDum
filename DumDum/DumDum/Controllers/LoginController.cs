@@ -18,21 +18,20 @@ namespace DumDum.Controllers
         {
             Service = service;
         }
-
+        
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest player,LoginResponse response)
+        public IActionResult Login([FromBody] LoginRequest player, LoginResponse response)
         {
-            response.Token = Service.Authenticate(player.Username, player.Password);
-            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
+            int statusCode;
+            var message = Service.Login(player, response, out statusCode);
+
+            if (statusCode == 200)
             {
-                return StatusCode(400, new LoginResponse{ Error = "Field username and/or field password was empty!" });
+                return Ok(new { status = "Ok", token = message });
             }
-            if (!Service.LoginPasswordCheck(player.Username, player.Password))
-            {
-                return StatusCode(401, new LoginResponse { Error = "Username and/or password was incorrect!" });
-            }
-                return Ok(new LoginResponse{ Status = "Ok", Token = response.Token });
+
+            return StatusCode(statusCode, new { error = message });
         }
     }
 }
