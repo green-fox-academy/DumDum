@@ -18,19 +18,18 @@ namespace DumDum.Controllers
         {
             Service = service;
         }
-        
+
         [AllowAnonymous]
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest player, LoginResponse response)
+        public IActionResult Login([FromBody] LoginRequest player)
         {
             int statusCode;
-            var message = Service.Login(player, response, out statusCode);
+            var message = Service.Login(player, out statusCode);
 
             if (statusCode == 200)
             {
                 return Ok(new { status = "Ok", token = message });
             }
-
             return StatusCode(statusCode, new { error = message });
         }
     }

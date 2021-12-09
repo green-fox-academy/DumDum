@@ -24,7 +24,6 @@ namespace TestProject1
         [Fact]
         public void LoginTestReturnOkAndToken()
         {
-          
             var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef69", Password = "chicken" }); //vezmu json, ktery tam chci poslat akonvert. Serialize je z norm objektu do jsonu
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json"); //udelam z toho spravnou klacuu jaky to ma enchoding; app/json je typ souboru
             
@@ -55,7 +54,7 @@ namespace TestProject1
         [Fact]
         public void LoginTestWithWrongUserOrPassword()
         {
-           var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef", Password = "chicken" });
+            var inputObj = JsonConvert.SerializeObject(new LoginRequest() { Username = "Beef", Password = "chicken" });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = client.PostAsync("http://localhost:20625/login", requestContent).Result;
             string respond = response.Content.ReadAsStringAsync().Result;
