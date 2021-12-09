@@ -16,5 +16,14 @@ namespace DumDum.Database
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Troop>()
+                .HasOne<Kingdom>(t => t.Kingdom)
+                .WithMany(k => k.Troops)
+                .HasForeignKey(t => t.KingdomId)
+                .IsRequired(false);
+        }
     }
 }
