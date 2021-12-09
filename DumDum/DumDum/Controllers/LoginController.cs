@@ -12,12 +12,12 @@ namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService LoginService { get; set; }
+        private LoginService Service { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
 
         public LoginController(LoginService service, AuthenticateService auservice)
         {
-            LoginService = service;
+            Service = service;
             AuthenticateService = auservice;
         }
 
