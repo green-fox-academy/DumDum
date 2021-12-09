@@ -98,8 +98,9 @@ namespace DumDum.Services
         }
 
         //logika pro controller
-        public string Login(LoginRequest player, LoginResponse response, out int statusCode)
+        public string Login(LoginRequest player, out int statusCode)
         {
+            LoginResponse response = new LoginResponse();
             response.Token = Authenticate(player.Username, player.Password);
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
@@ -109,7 +110,7 @@ namespace DumDum.Services
             if (!LoginPasswordCheck(player.Username, player.Password))
             {
                 statusCode = 401;
-                return "Username and / or password was incorrect!";
+                return "Username and/or password was incorrect!";
             }
             statusCode = 200;
             return response.Token;
