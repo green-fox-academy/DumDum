@@ -28,9 +28,9 @@ namespace DumDum.Controllers
 
             if (statusCode == 200)
             {
-                return Ok(new { status = "Ok", token = message });
+                return Ok(new LoginResponse{ Status = "Ok", Token = message });
             }
-            return StatusCode(statusCode, new { error = message });
+            return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
     }
 }
