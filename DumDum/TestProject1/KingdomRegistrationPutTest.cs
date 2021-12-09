@@ -22,13 +22,13 @@ namespace TestProject1
         public void HttpPutRegistration_ReturnsStatusOkAndCorrectJSON()
         {
             //arrange
-            KingdomJson expectedResult = new();
-            expectedResult.Status = "Ok";
+            StatusResponse expectedStatusResult = new();
+            expectedStatusResult.Status = "Ok";
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
             KingdomJson requestBody = new();
-            requestBody.CoordinateY = 11;
-            requestBody.CoordinateX = 11;
+            requestBody.CoordinateY = 50;
+            requestBody.CoordinateX = 50;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
@@ -36,19 +36,19 @@ namespace TestProject1
             //act
             HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
-            KingdomJson responseData = JsonConvert.DeserializeObject<KingdomJson>(responseBodyContent);
+            StatusResponse responseData = JsonConvert.DeserializeObject<StatusResponse>(responseBodyContent);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedResult.Status, responseData.Status);
+            Assert.Equal(expectedStatusResult.Status, responseData.Status);
         }
 
         [Fact]
         public void HttpPutRegistration_ReturnsBadRequestAndCorrectJson1()
         {
             //arrange
-            KingdomJson expectedResult = new();
-            expectedResult.Error = "One or both coordinates are out of valid range(0 - 99).";
+            ErrorResponse expectedError = new();
+            expectedError.Error = "One or both coordinates are out of valid range(0 - 99).";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
             KingdomJson requestBody = new();
@@ -61,18 +61,18 @@ namespace TestProject1
             //act
             HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
-            KingdomJson responseData = JsonConvert.DeserializeObject<KingdomJson>(responseBodyContent);
+            ErrorResponse responseData = JsonConvert.DeserializeObject<ErrorResponse>(responseBodyContent);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedResult.Error, responseData.Error);
+            Assert.Equal(expectedError.Error, responseData.Error);
         }
 
         [Fact]
         public void HttpPutRegistration_ReturnsBadRequestAndCorrectJson2()
         {
             //arrange
-            KingdomJson expectedResult = new();
+            ErrorResponse expectedResult = new();
             expectedResult.Error = "Given coordinates are already taken!";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
@@ -86,7 +86,7 @@ namespace TestProject1
             //act
             HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
-            KingdomJson responseData = JsonConvert.DeserializeObject<KingdomJson>(responseBodyContent);
+            ErrorResponse responseData = JsonConvert.DeserializeObject<ErrorResponse>(responseBodyContent);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
