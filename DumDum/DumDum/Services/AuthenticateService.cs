@@ -70,6 +70,18 @@ namespace DumDum.Services
                 return null;
             }
         }
+
+        public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
+        {
+            KingdomRenameResponse response = new KingdomRenameResponse();
+            var player = FindPlayerByTokenName(authResponse.Ruler);
+            player.Kingdom.KingdomName = requestKingdomName.KingdomName;
+            DbContext.SaveChanges();
+            response.KingdomId = player.KingdomId;
+            response.KingdomName = player.Kingdom.KingdomName;
+
+            return response;
+        }
     
     }
 }

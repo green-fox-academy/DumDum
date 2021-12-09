@@ -13,10 +13,12 @@ namespace DumDum.Controllers
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
+        public AuthenticateService AuthenticateService { get; set; }
 
-        public DumDumController(DumDumService dumDumService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
         {
             DumDumService = dumDumService;
+            AuthenticateService = authenticateService;
         }
         
         [Route("")]
@@ -51,8 +53,7 @@ namespace DumDum.Controllers
                     var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom);
                     return Ok(new PlayerJson(){Username = player.Username, KingdomId = newKingdom.KingdomId});
                 }
-                
-                    return BadRequest();
+                return BadRequest();
             }
         }
 
@@ -68,6 +69,24 @@ namespace DumDum.Controllers
                 return Ok(new { status = "Ok" });
             }
             return StatusCode(statusCode, new { error = message });
+        }
+
+        [HttpPut("kingdoms")]
+        public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
+        {
+            AuthRequest request = new AuthRequest();
+            request.Token = authorization.Remove(0, 7);
+            var player = AuthenticateService.GetUserInfo(request);
+            if (player != null)
+            {
+                if ( !String.IsNullOrEmpty(requestName.KingdomName))
+                {
+                    var response = AuthenticateService.RenameKingdom(requestName, player);
+                    return Ok(response);
+                }
+                return BadRequest(new { error = "Field kingdomName was empty!"});
+            }
+            return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
         }
     }
 }

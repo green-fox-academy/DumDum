@@ -67,6 +67,12 @@ namespace TestProject1
             Assert.Equal(kingdomNameExpected, player.KingdomName);
             Assert.Equal(statusCodeExpected, response2.StatusCode);
         }
+
+        [Fact]
+        public void RenameKingdom_ShouldReturnChangedName()
+        {
+            
+        }
     }
 }
 
