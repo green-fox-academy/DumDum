@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DumDum.Database;
 
 namespace DumDum.Services
@@ -9,6 +10,14 @@ namespace DumDum.Services
         public ResourceService(ApplicationDbContext dbContex)
         {
             DbContext = dbContex;
+        }
+
+        public Dictionary<string, int> AddToDictionary(int coordinateX, int coordinateY)
+        {
+            Dictionary<string, int> dictionaryToReturn = new Dictionary<string, int>();
+            dictionaryToReturn.Add("CoordinateX", coordinateX);
+            dictionaryToReturn.Add("CoordinateY", coordinateY);
+            return dictionaryToReturn;
         }
     }
 }
