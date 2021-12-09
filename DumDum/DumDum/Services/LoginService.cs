@@ -63,5 +63,57 @@ namespace DumDum.Services
                 return null;
             }
         }
+        public string GetPrincipal(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+                if (jwtToken == null)
+                    return null;
+
+                var symmetricKey = Encoding.ASCII.GetBytes(AppSettings.Key);
+
+                var validationParameters = new TokenValidationParameters()
+                {
+                    RequireExpirationTime = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(symmetricKey)
+                };
+
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+
+                var identity = principal.Identity.Name;    //vraci username tokenu
+
+                return identity;
+            }
+
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        //logika pro controller
+        public string Login(LoginRequest player, out int statusCode)
+        {
+            LoginResponse response = new LoginResponse();
+            response.Token = Authenticate(player.Username, player.Password);
+            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
+            {
+                statusCode = 400;
+                return "Field username and/or field password was empty!";
+            }
+            if (!LoginPasswordCheck(player.Username, player.Password))
+            {
+                statusCode = 401;
+                return "Username and/or password was incorrect!";
+            }
+            statusCode = 200;
+            return response.Token;
+        }
+
     }
 }
