@@ -44,9 +44,6 @@ namespace TestProject1
         [Fact]
         public void AuthPostEndpoint_ShouldReturnInfoAboutPLayer()
         {
-            string rulerExpected = "Nya";
-            long kingdomIdExpected = 1;
-            string kingdomNameExpected = "Nya Nya Land";
             var statusCodeExpected = HttpStatusCode.OK;
             
             var inputObj = JsonConvert.SerializeObject(new PlayerJson() {Username = "Nya", Password = "catcatcat"});
@@ -62,9 +59,9 @@ namespace TestProject1
             string contentResponse2 = response2.Content.ReadAsStringAsync().Result;
             AuthResponse player = JsonConvert.DeserializeObject<AuthResponse>(contentResponse2);
 
-            Assert.Equal(rulerExpected, player.Ruler);
-            Assert.Equal(kingdomIdExpected, player.KingdomId);
-            Assert.Equal(kingdomNameExpected, player.KingdomName);
+            Assert.Equal("Nya", player.Ruler);
+            Assert.Equal(1, player.KingdomId);
+            Assert.Equal("Nya Nya Land", player.KingdomName);
             Assert.Equal(statusCodeExpected, response2.StatusCode);
         }
 
