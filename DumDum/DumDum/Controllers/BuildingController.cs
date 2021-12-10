@@ -29,7 +29,7 @@ namespace DumDum.Controllers
             int statusCode;
             var response = BuildingService.ListBuildings(authorization, Id, out statusCode);
 
-            if (statusCode == 400)
+            if (statusCode == 401)
             {
                 return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
             }
