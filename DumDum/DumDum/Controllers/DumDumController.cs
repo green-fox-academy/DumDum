@@ -72,5 +72,11 @@ namespace DumDum.Controllers
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
         }
+        [HttpGet("kingdoms/{id}")]
+        public IActionResult KingdomDetails([FromQuery] int id, [FromHeader] string authorization)
+        {
+            AuthRequest request = new AuthRequest(){Token = authorization};
+            var player = AuthenticateService.GetUserInfo(request);
+        }
     }
 }
