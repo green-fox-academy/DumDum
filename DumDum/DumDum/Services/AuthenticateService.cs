@@ -33,6 +33,7 @@ namespace DumDum.Services
         
         public AuthResponse GetUserInfo(AuthRequest request)
         {
+            // funkce smaže slovo bearer z tokenu, v případe, že by jej tam uživatel v postmanu zadal.
             var firstFive = request.Token.Substring(0, 6);
             if (firstFive == "bearer") 
             {
@@ -71,7 +72,7 @@ namespace DumDum.Services
                 return responseEnt;
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

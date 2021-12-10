@@ -61,16 +61,16 @@ namespace DumDum.Controllers
         {
             AuthRequest request = new AuthRequest(){Token = authorization};
             var player = AuthenticateService.GetUserInfo(request);
-            if (player != null)
+            if (player == null)
             {
-                if ( !String.IsNullOrEmpty(requestName.KingdomName))
-                {
-                    var response = AuthenticateService.RenameKingdom(requestName, player);
-                    return Ok(response);
-                }
+                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+            }
+            if (String.IsNullOrEmpty(requestName.KingdomName))
+            {
                 return BadRequest(new { error = "Field kingdomName was empty!"});
             }
-            return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+            var response = AuthenticateService.RenameKingdom(requestName, player);
+            return Ok(response);
         }
     }
 }
