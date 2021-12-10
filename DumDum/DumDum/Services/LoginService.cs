@@ -1,7 +1,6 @@
 ﻿using DumDum.Database;
 using DumDum.Models;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -11,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DumDum.Models.JsonEntities;
 
 namespace DumDum.Services
 {
