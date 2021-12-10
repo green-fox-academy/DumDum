@@ -34,7 +34,8 @@ namespace DumDum.Services
         public AuthResponse GetUserInfo(AuthRequest request)
         {
             var responseEnt = new AuthResponse();
-            
+            string token = request.Token;
+            request.Token = token.Remove(0, 7);
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -69,6 +70,18 @@ namespace DumDum.Services
             {
                 return null;
             }
+        }
+
+        public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
+        {
+            KingdomRenameResponse response = new KingdomRenameResponse();
+            var player = FindPlayerByTokenName(authResponse.Ruler);
+            player.Kingdom.KingdomName = requestKingdomName.KingdomName;
+            DbContext.SaveChanges();
+            response.KingdomId = player.KingdomId;
+            response.KingdomName = player.Kingdom.KingdomName;
+
+            return response;
         }
     
     }
