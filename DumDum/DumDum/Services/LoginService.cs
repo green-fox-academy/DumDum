@@ -70,6 +70,7 @@ namespace DumDum.Services
         {
             LoginResponse response = new LoginResponse();
             response.Token = Authenticate(player.Username, player.Password);
+            
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
                 statusCode = 400;
