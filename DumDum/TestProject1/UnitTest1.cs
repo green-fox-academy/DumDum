@@ -91,7 +91,7 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:5000/kingdoms");
             request.Method = HttpMethod.Put;
             request.Content = requestContent2;
-            request.Headers.Add("authorization", "");
+            //request.Headers.Authorization = null;
             var response2 = HttpClient.SendAsync(request).Result;
             
             Assert.Equal(HttpStatusCode.Unauthorized, response2.StatusCode);

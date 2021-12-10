@@ -55,7 +55,7 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
-
+        [Authorize]
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
         {

@@ -33,9 +33,14 @@ namespace DumDum.Services
         
         public AuthResponse GetUserInfo(AuthRequest request)
         {
+            var firstFive = request.Token.Substring(0, 6);
+            if (firstFive == "bearer") 
+            {
+                string token = request.Token;
+                request.Token = token.Remove(0, 7);
+            }
             var responseEnt = new AuthResponse();
-            string token = request.Token;
-            request.Token = token.Remove(0, 7);
+            
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
