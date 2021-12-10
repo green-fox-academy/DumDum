@@ -8,7 +8,7 @@ namespace DumDum.Models.Entities
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
 
-        public Kingdom Kingdom { get; set; }
+      
         //public string Token { get; set; }
     }
 }
