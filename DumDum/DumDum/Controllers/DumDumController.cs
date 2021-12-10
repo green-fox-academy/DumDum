@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Database;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Controllers
 {
@@ -14,11 +16,13 @@ namespace DumDum.Controllers
     {
         private DumDumService DumDumService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
+        public ApplicationDbContext DbContext { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, ApplicationDbContext dbContext)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
+            DbContext = dbContext;
         }
 
         [Route("")]
@@ -71,6 +75,13 @@ namespace DumDum.Controllers
                 return BadRequest(new { error = "Field kingdomName was empty!"});
             }
             return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+        }
+
+        [HttpGet("kingdoms/{id}")]
+        public IActionResult KingdomDetails([FromQuery] int id, [FromHeader] string authorization)
+        {
+            AuthRequest request = new AuthRequest(){Token = authorization};
+            var player = AuthenticateService.GetUserInfo(request);
         }
     }
 }

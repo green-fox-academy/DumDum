@@ -145,7 +145,7 @@ namespace DumDum.Services
                     statusCode = 200;
                     return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
                 }
-                
+
                 statusCode = 400;
                 return null;
             }
@@ -160,6 +160,12 @@ namespace DumDum.Services
 
             statusCode = 400;
             return null;
+        }
+
+        public Kingdom KingdomInformation(int kingdomId)
+        {
+            var kingdom = DbContext.Kingdoms.Include(r => r.Resources).FirstOrDefault(k => k.KingdomId == kingdomId);
+            return kingdom;
         }
     }
 }
