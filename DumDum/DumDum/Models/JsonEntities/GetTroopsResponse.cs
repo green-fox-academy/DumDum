@@ -9,8 +9,5 @@ namespace DumDum.Models.JsonEntities
     {
         public KingdomResponse Kingdom { get; set; }
         public List<TroopsResponse> Troops { get; set; }
-        
-        [JsonProperty("Error", NullValueHandling = NullValueHandling.Ignore)]
-        public string Error { get; set; }
     }
 }

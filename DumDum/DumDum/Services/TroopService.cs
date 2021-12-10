@@ -67,7 +67,6 @@ namespace DumDum.Services
                 }
             }
             statusCode = 400;
-            response.Error = "This kingdom does not belong to authenticated player";
             return  response;
         }
     }

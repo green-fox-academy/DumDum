@@ -28,7 +28,7 @@ namespace DumDum.Controllers
             {
                 return Ok(response);
             }
-            return BadRequest(response.Error);
+            return BadRequest(new ErrorResponse { Error= "This kingdom does not belong to authenticated player" });
         }
     }
 }
