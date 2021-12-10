@@ -1,3 +1,4 @@
+using System.Linq;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
@@ -24,17 +25,21 @@ namespace DumDum.Controllers
         {
             var kingdom = DumDumService.GetKingdomById(id);
             var player = DumDumService.GetPlayerById(kingdom.PlayerId);
+            var locations = ResourceService.AddLocations(kingdom);
+            var resources = ResourceService.GetResources(id);
 
             if (player.PlayerId != kingdom.PlayerId)
             {
                 return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
             }
             
-            return Ok(new ResourceResponse()
+            return Ok(new 
             {
-                KingdomId = kingdom.KingdomId, KingdomName = kingdom.KingdomName,
-                Ruler = player.Username, Resources = kingdom.Resources,
-                Location = {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY}
+                KingdomId = kingdom.KingdomId, 
+                KingdomName = kingdom.KingdomName,
+                Ruler = player.Username, 
+                Location = locations,
+                Resources = resources.Select(x=> new{Type=x.ResourceType,Amount = x.Amount,Generation = x.Generation,UpdatedAt = x.UpdatedAt}).ToList()
             });
         }
     }
