@@ -66,9 +66,9 @@ namespace DumDum.Controllers
 
             if (statusCode == 200)
             {
-                return Ok(new { status = "Ok" });
+                return Ok(new StatusResponse{ Status = "Ok" });
             }
-            return StatusCode(statusCode, new { error = message });
+            return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
 
         [HttpPut("kingdoms")]

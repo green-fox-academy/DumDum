@@ -64,7 +64,7 @@ namespace DumDum.Services
                 return null;
             }
         }
-        
+
         //logika pro controller
         public string Login(LoginRequest player, out int statusCode)
         {
