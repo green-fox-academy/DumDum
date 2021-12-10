@@ -74,8 +74,7 @@ namespace DumDum.Controllers
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
         {
-            AuthRequest request = new AuthRequest();
-            request.Token = authorization.Remove(0, 7);
+            AuthRequest request = new AuthRequest(){Token = authorization};
             var player = AuthenticateService.GetUserInfo(request);
             if (player != null)
             {

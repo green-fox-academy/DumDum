@@ -34,7 +34,8 @@ namespace DumDum.Services
         public AuthResponse GetUserInfo(AuthRequest request)
         {
             var responseEnt = new AuthResponse();
-            
+            string token = request.Token;
+            request.Token = token.Remove(0, 7);
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
