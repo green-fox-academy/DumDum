@@ -44,6 +44,7 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
         {
+
             int statusCode;
             var message = DumDumService.RegisterKingdomLogic(kingdomJson, out statusCode);
 

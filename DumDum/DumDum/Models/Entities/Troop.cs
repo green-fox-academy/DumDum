@@ -13,7 +13,7 @@ namespace DumDum.Models.Entities
         public int HP { get; set; }
         public int Attack { get; set; }
         public int Defence { get; set; }
-        public int Speed { get; set; }
+        public double Speed { get; set; }
         public int StartedAt { get; set; }
         public int FinishedAt { get; set; }
         public int KingdomId { get; set; }
