@@ -70,8 +70,11 @@ namespace TestProject1
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
             var response = HttpClient.SendAsync(request).Result;
+            string respond = response.Content.ReadAsStringAsync().Result;
+            ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
         }
     }
 }
