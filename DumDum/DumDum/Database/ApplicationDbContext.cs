@@ -18,29 +18,26 @@ namespace DumDum.Database
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Player>()
                 .HasOne<Kingdom>(q => q.Kingdom)
-                .WithOne( a => a.Player)
-                .HasForeignKey<Player>(a =>a.KingdomId)
+                .WithOne(a => a.Player)
+                .HasForeignKey<Player>(a => a.KingdomId)
                 .IsRequired(true);
-            
+
             modelBuilder.Entity<Kingdom>()
                 .HasMany<Resource>(k => k.Resources)
-                .WithOne( a => a.Kingdom)
-                .HasForeignKey(a =>a.KingdomId)
+                .WithOne(a => a.Kingdom)
+                .HasForeignKey(a => a.KingdomId)
                 .IsRequired(true);
-        }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<Troop>()
-                .HasOne<Kingdom>(t => t.Kingdom)
-                .WithMany(k => k.Troops)
-                .HasForeignKey(t => t.KingdomId)
-                .IsRequired(false);
+            .HasOne<Kingdom>(t => t.Kingdom)
+            .WithMany(k => k.Troops)
+            .HasForeignKey(t => t.KingdomId)
+            .IsRequired(false);
         }
     }
 }
