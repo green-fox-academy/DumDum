@@ -18,42 +18,26 @@ namespace DumDum.Controllers
         {
             DumDumService = dumDumService;
         }
-        
+
         [Route("")]
         public IActionResult Index()
         {
-            return View ();
+            return View();
         }
 
         [AllowAnonymous]
         [HttpPost("registration")]
-        public IActionResult Register([FromBody] PlayerJson playerJson)
+        public IActionResult Register([FromBody] PlayerRequest playerRequest)
         {
-            var kingdom = DumDumService.GetKingdomByName(playerJson.KingdomName);
+            int statusCode;
+             var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
 
-            if (kingdom is not null)
+            if (statusCode == 200)
             {
-                var player = DumDumService.Register(playerJson.Username, playerJson.Password, kingdom);
-                if (DumDumService.IsValid(playerJson.Username, playerJson.Password))
-                {
-                    return Ok(new PlayerJson(){Username = player.Username, KingdomId = kingdom.KingdomId});
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return Ok(player);
             }
-            else
-            {
-                if (DumDumService.IsValid(playerJson.Username, playerJson.Password))
-                {
-                    var newKingdom = DumDumService.CreateKingdom(playerJson.Username);
-                    var player = DumDumService.Register(playerJson.Username, playerJson.Password, newKingdom);
-                    return Ok(new PlayerJson(){Username = player.Username, KingdomId = newKingdom.KingdomId});
-                }
-                
-                    return BadRequest();
-            }
+
+            return BadRequest();
         }
 
         [AllowAnonymous]
