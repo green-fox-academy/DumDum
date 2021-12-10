@@ -35,21 +35,21 @@ namespace DumDum.Services
         {
             AuthRequest request = new AuthRequest();
             request.Token = authorization.Remove(0, 7);
-            var player1 = AuthenticateService.GetUserInfo(request);
+            var player = AuthenticateService.GetUserInfo(request);
 
-            if (player1 != null)
+            if (player != null && player.KingdomId == id)
             {
                 var kingdom = DumDumService.GetKingdomById(id);
-                var player = DumDumService.GetPlayerById(kingdom.PlayerId);
                 var locations = AddLocations(kingdom);
+                var resources = GetResources(id);
                 statusCode = 200;
                 return new 
                 {
                     KingdomId = kingdom.KingdomId, 
                     KingdomName = kingdom.KingdomName,
-                    Ruler = player.Username, 
+                    Ruler = player.Ruler, 
                     Location = locations,
-                    Resources = kingdom.Resources.Select(x=> new{Type=x.ResourceType,Amount = x.Amount,Generation = x.Generation,UpdatedAt = x.UpdatedAt}).ToList()
+                    Resources = resources.Select(x=> new{Type=x.ResourceType,Amount = x.Amount,Generation = x.Generation,UpdatedAt = x.UpdatedAt}).ToList()
                 };
             }
 
