@@ -22,7 +22,7 @@ namespace DumDum.Controllers
             BuildingService = buildingService;
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("kingdoms/{id=int}/buildings")]
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int Id)
         {
