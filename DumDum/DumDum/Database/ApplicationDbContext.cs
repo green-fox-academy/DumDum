@@ -14,6 +14,7 @@ namespace DumDum.Database
         public Player Player { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
         public DbSet<Resource> Resources { get; set; }
+        public DbSet<Troop> Troops { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

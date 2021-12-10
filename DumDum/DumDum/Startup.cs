@@ -34,7 +34,7 @@ namespace DumDum
             services.AddTransient<LoginService>();
             services.AddTransient<ResourceService>();
             services.AddTransient<AuthenticateService>();
-
+            services.AddTransient<TroopService>();
             ConfigureDb(services);
             
             //This is setting for authentication
