@@ -12,6 +12,8 @@ namespace DumDum.Controllers
         private ResourceService ResourceService { get; set; }
         private DumDumService DumDumService { get; set; }
 
+        private AuthenticateService AuthenticateService { get; set; }
+
         public ResourceController(DumDumService dumDumService, ResourceService resourceService)
         {
             DumDumService = dumDumService;
@@ -21,26 +23,16 @@ namespace DumDum.Controllers
         [Route("")]
         [AllowAnonymous]
         [HttpGet("kingdoms/{id=int}/resources")]
-        public IActionResult Resources([FromRoute] int id)
+        public IActionResult Resources([FromRoute] int id, [FromHeader] string authorization)
         {
-            var kingdom = DumDumService.GetKingdomById(id);
-            var player = DumDumService.GetPlayerById(kingdom.PlayerId);
-            var locations = ResourceService.AddLocations(kingdom);
-            var resources = ResourceService.GetResources(id);
-
-            if (player.PlayerId != kingdom.PlayerId)
-            {
-                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
-            }
+            int statusCode;
+            var response = ResourceService.ResourceLogic(id, authorization, out statusCode);
             
-            return Ok(new 
+            if (statusCode == 200)
             {
-                KingdomId = kingdom.KingdomId, 
-                KingdomName = kingdom.KingdomName,
-                Ruler = player.Username, 
-                Location = locations,
-                Resources = resources.Select(x=> new{Type=x.ResourceType,Amount = x.Amount,Generation = x.Generation,UpdatedAt = x.UpdatedAt}).ToList()
-            });
+                return Ok(response);
+            }
+            return Unauthorized(new ErrorResponse(){Error = "This kingdom does not belong to authenticated player"});
         }
     }
 }

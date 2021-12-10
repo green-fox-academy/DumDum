@@ -73,7 +73,7 @@ namespace TestProject1
         {
             var request = new HttpRequestMessage();
 
-            var inputObj = JsonConvert.SerializeObject(new PlayerJson() {Username = "Nya", Password = "catcatcat"});
+            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
