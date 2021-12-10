@@ -19,113 +19,98 @@ namespace TestProject1
         {
             HttpClient = factory.CreateClient();
         }
-        [Fact]
-        public void LoginTest_ReturnUser()
-        {
-            var request = new HttpRequestMessage();
 
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
+        public string TestLoginReturnToken(string userName, string password)
+        {
+            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = userName, Password = password});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
+            return tokenResult;
+        }
 
-            var inputObj2 = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
-            StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
+        [Fact]
+        public void LoginTest_ReturnUser()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+            
+            var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:5000/auth");
             request.Method = HttpMethod.Post;
-            request.Content = requestContent2;
-            var response2 = HttpClient.SendAsync(request).Result;
+            request.Content = requestContent;
+            var response = HttpClient.SendAsync(request).Result;
 
-            Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Fact]
         public void AuthPostEndpoint_ShouldReturnInfoAboutPLayer()
         {
-            string rulerExpected = "Nya";
-            long kingdomIdExpected = 1;
-            string kingdomNameExpected = "Nya Nya Land";
             var statusCodeExpected = HttpStatusCode.OK;
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
+            var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:5000/auth", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
+            AuthResponse player = JsonConvert.DeserializeObject<AuthResponse>(contentResponse);
 
-            var inputObj2 = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
-            StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
-            var response2 = HttpClient.PostAsync("https://localhost:5000/auth", requestContent2).Result;
-            string contentResponse2 = response2.Content.ReadAsStringAsync().Result;
-            AuthResponse player = JsonConvert.DeserializeObject<AuthResponse>(contentResponse2);
-
-            Assert.Equal(rulerExpected, player.Ruler);
-            Assert.Equal(kingdomIdExpected, player.KingdomId);
-            Assert.Equal(kingdomNameExpected, player.KingdomName);
-            Assert.Equal(statusCodeExpected, response2.StatusCode);
+            Assert.Equal("Nya", player.Ruler);
+            Assert.Equal(1, player.KingdomId);
+            Assert.Equal("Nya Nya Land", player.KingdomName);
+            Assert.Equal(statusCodeExpected, response.StatusCode);
         }
 
         [Fact]
         public void RenameKingdom_ShouldReturnChangedName()
         {
             var request = new HttpRequestMessage();
-
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             
-            var inputObj2 = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = "Hahalkovo"});
-            StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
+            var inputObj = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = "Hahalkovo"});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:5000/kingdoms");
             request.Method = HttpMethod.Put;
-            request.Content = requestContent2;
+            request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
-            var response2 = HttpClient.SendAsync(request).Result;
+            var response = HttpClient.SendAsync(request).Result;
             
-            Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
         [Fact]
         public void RenameKingdom_ShouldReturnUnauthorized()
         {
             var request = new HttpRequestMessage();
             
-            var inputObj2 = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = "Hahalkovo"});
-            StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
+            var inputObj = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = "Hahalkovo"});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:5000/kingdoms");
             request.Method = HttpMethod.Put;
-            request.Content = requestContent2;
-            request.Headers.Add("authorization", "");
-            var response2 = HttpClient.SendAsync(request).Result;
+            request.Content = requestContent;
+            //request.Headers.Authorization = null;
+            var response = HttpClient.SendAsync(request).Result;
             
-            Assert.Equal(HttpStatusCode.Unauthorized, response2.StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
         [Fact]
         public void RenameKingdom_ShouldReturnBadRequest()
         {
             var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
+            var inputObj = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = ""});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-            
-            var inputObj2 = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = ""});
-            StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:5000/kingdoms");
             request.Method = HttpMethod.Put;
-            request.Content = requestContent2;
+            request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
-            var response2 = HttpClient.SendAsync(request).Result;
+            var response = HttpClient.SendAsync(request).Result;
             
-            Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
         
     }
