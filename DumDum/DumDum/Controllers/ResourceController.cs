@@ -21,7 +21,7 @@ namespace DumDum.Controllers
         }
        
         [Route("")]
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("kingdoms/{id=int}/resources")]
         public IActionResult Resources([FromRoute] int id, [FromHeader] string authorization)
         {
