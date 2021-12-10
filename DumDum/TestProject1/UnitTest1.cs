@@ -19,18 +19,24 @@ namespace TestProject1
         {
             HttpClient = factory.CreateClient();
         }
-        [Fact]
-        public void LoginTest_ReturnUser()
-        {
-            var request = new HttpRequestMessage();
 
+        public string TestLoginReturnToken()
+        {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
+            return tokenResult;
+        }
 
+        [Fact]
+        public void LoginTest_ReturnUser()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken();
+            
             var inputObj2 = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:5000/auth");
@@ -45,14 +51,8 @@ namespace TestProject1
         public void AuthPostEndpoint_ShouldReturnInfoAboutPLayer()
         {
             var statusCodeExpected = HttpStatusCode.OK;
+            var tokenResult = TestLoginReturnToken();
             
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = "Nya", Password = "catcatcat"});
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-
             var inputObj2 = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
             var response2 = HttpClient.PostAsync("https://localhost:5000/auth", requestContent2).Result;
@@ -69,13 +69,7 @@ namespace TestProject1
         public void RenameKingdom_ShouldReturnChangedName()
         {
             var request = new HttpRequestMessage();
-
-            var inputObj = JsonConvert.SerializeObject(new PlayerJson() {Username = "Nya", Password = "catcatcat"});
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
+            var tokenResult = TestLoginReturnToken();
             
             var inputObj2 = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = "Hahalkovo"});
             StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
@@ -106,13 +100,7 @@ namespace TestProject1
         public void RenameKingdom_ShouldReturnBadRequest()
         {
             var request = new HttpRequestMessage();
-            
-            var inputObj = JsonConvert.SerializeObject(new PlayerJson() {Username = "Nya", Password = "catcatcat"});
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
+            var tokenResult = TestLoginReturnToken();
             
             var inputObj2 = JsonConvert.SerializeObject(new KingdomRenameRequest() {KingdomName = ""});
             StringContent requestContent2 = new(inputObj2, Encoding.UTF8, "application/json");
