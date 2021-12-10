@@ -16,7 +16,5 @@ namespace DumDum.Models.JsonEntities
         
         [JsonProperty("Error", NullValueHandling = NullValueHandling.Ignore)]
         public string Error { get; set; }
-
-
     }
 }

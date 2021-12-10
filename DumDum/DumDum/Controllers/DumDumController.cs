@@ -30,7 +30,7 @@ namespace DumDum.Controllers
         public IActionResult Register([FromBody] PlayerRequest playerRequest)
         {
             int statusCode;
-             var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
+            var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
 
             if (statusCode == 200)
             {
@@ -44,7 +44,6 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
         {
-
             int statusCode;
             var message = DumDumService.RegisterKingdomLogic(kingdomJson, out statusCode);
 

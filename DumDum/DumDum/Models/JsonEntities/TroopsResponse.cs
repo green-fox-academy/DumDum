@@ -16,7 +16,5 @@ namespace DumDum.Models.JsonEntities
         public int Defence { get; set; }
         public int StartedAt { get; set; }
         public int FinishedAt { get; set; }
-
     }
-    
 }
