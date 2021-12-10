@@ -14,33 +14,26 @@ namespace DumDum.Controllers
     {
 
         private DumDumService DumDumService { get; set; }
-        private BuildingService BuildingService { get; set;}
+        private BuildingService BuildingService { get; set; }
 
-        public BuildingController(DumDumService dumDumService,BuildingService buildingService)
+        public BuildingController(DumDumService dumDumService, BuildingService buildingService)
         {
             DumDumService = dumDumService;
             BuildingService = buildingService;
         }
-        
+
         [AllowAnonymous]
         [HttpGet("kingdoms/{id=int}/buildings")]
-        public IActionResult Buildings([FromRoute] int id)
+        public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int Id)
         {
-            var kingdom = DumDumService.GetKingdomById(id);
-            var player = DumDumService.GetPlayerById(kingdom.PlayerId);
-            var locations = DumDumService.AddLocations(kingdom);
-            
+            int statusCode;
+            var response = BuildingService.ListBuildings(authorization, Id, out statusCode);
 
-            if (player.PlayerId != kingdom.PlayerId)
+            if (statusCode == 400)
             {
-                return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
             }
-
-            return Ok(new BuildingResponse()
-            {   
-                Kingdom = BuildingService.GetKingdom(id),
-                Buildings = BuildingService.GetBuildings(id),
-            });
+            return Ok(response);
         }
     }
 }

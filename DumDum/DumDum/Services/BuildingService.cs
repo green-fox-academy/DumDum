@@ -21,8 +21,6 @@ namespace DumDum.Services
             DumDumService = dumService;
         }
 
-
-
         public List<BuildingList> GetBuildings(int Id)
         {
             return DbContext.Buildings.Where(b => b.KingdomId == Id).
@@ -51,12 +49,24 @@ namespace DumDum.Services
             };
         }
 
-        //public BuildingResponse BuildingResponse(string authorization, int kingdomId, out int statusCode)
-        //{
-            
-        //}
-
-
-
+        public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
+        {
+            var response = new BuildingResponse();
+            if (authorization != null && kingdomId != null)
+            {
+                AuthRequest request = new AuthRequest();
+                request.Token = authorization;
+                var player = AuthenticateService.GetUserInfo(request);
+                if (player != null && player.KingdomId == kingdomId)
+                {
+                    response.Kingdom = GetKingdom(kingdomId);
+                    response.Buildings = GetBuildings(kingdomId);
+                    statusCode = 200;
+                    return response;
+                }
+            }
+            statusCode = 400;
+            return response;
+        }
     }
 }
