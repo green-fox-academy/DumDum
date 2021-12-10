@@ -13,6 +13,8 @@ namespace DumDum.Database
         public DbSet<Player> Players { get; set; }
         public Player Player { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
+        public DbSet<Resource> Resources { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
