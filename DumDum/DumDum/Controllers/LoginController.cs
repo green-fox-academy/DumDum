@@ -13,10 +13,12 @@ namespace DumDum.Controllers
     public class LoginController : Controller
     {
         private LoginService Service { get; set; }
+        public AuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service)
+        public LoginController(LoginService service, AuthenticateService auservice)
         {
             Service = service;
+            AuthenticateService = auservice;
         }
 
         [AllowAnonymous]
@@ -28,9 +30,20 @@ namespace DumDum.Controllers
 
             if (statusCode == 200)
             {
-                return Ok(new { status = "Ok", token = message });
+                return Ok(new LoginResponse{ Status = "Ok", Token = message });
             }
-            return StatusCode(statusCode, new { error = message });
+            return StatusCode(statusCode, new ErrorResponse{ Error = message });
+        }
+        [HttpPost("auth")]
+        public IActionResult TokenCheck([FromBody]AuthRequest request)
+        {
+            var response = AuthenticateService.GetUserInfo(request);
+           
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return BadRequest();
         }
     }
 }

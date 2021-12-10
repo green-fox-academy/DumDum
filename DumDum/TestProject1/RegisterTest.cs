@@ -24,7 +24,7 @@ namespace TestProject1
         {
             var request = new HttpRequestMessage();
 
-            var inputObj = JsonConvert.SerializeObject(new PlayerJson() { Username = "Nyan", Password = "nanynnayn" });
+            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = "Nyan", Password = "nanynnayn" });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:5467/registration");
             request.Method = HttpMethod.Post;
@@ -39,7 +39,7 @@ namespace TestProject1
         {
             var request = new HttpRequestMessage();
 
-            var inputObj = JsonConvert.SerializeObject(new PlayerJson() { Username = "", Password = "ayn", KingdomId = 0});
+            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = "", Password = "ayn"});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:5467/registration");
             request.Method = HttpMethod.Post;

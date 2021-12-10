@@ -11,7 +11,9 @@ namespace DumDum.Models.Entities
         public string KingdomName { get; set; }
         public int CoordinateX { get; set; }
         public int CoordinateY { get; set; }
+        public Player Player { get; set; }
         public int PlayerId { get; set; }
         public List<Troop> Troops { get; set; }
+        public List<Resource> Resources { get; set; }
     }
 }

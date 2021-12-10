@@ -7,6 +7,7 @@ using System.Text;
 using DumDum.Database;
 using DumDum.Models;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -18,25 +19,26 @@ namespace DumDum.Services
         private ApplicationDbContext DbContext { get; set; }
         private readonly AppSettings _appSettings;
 
-        public AuthenticateService(ApplicationDbContext dbContex,IOptions<AppSettings> appSettings)
+        public AuthenticateService(ApplicationDbContext dbContext,IOptions<AppSettings> appSettings)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
             _appSettings = appSettings.Value;
         }
 
-        public Player FindPlayerByTokenName(string tokenName)
+        public Player FindPlayerByTokenName(string userName)
         {
-            var player = DbContext.Players.Include(p =>p.KingdomId).FirstOrDefault(p => p.Username == tokenName);
+            var player = DbContext.Players.Include(p =>p.Kingdom).FirstOrDefault(p => p.Username == userName);
             return player;
         }
         
-        public List<string> GetPrincipal(string token)
+        public AuthResponse GetUserInfo(AuthRequest request)
         {
-            List<string> UserInfo = new List<string>();
+            var responseEnt = new AuthResponse();
+            
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+                var jwtToken = tokenHandler.ReadToken(request.Token) as JwtSecurityToken;
 
                 if (jwtToken == null)
                     return null;
@@ -51,19 +53,19 @@ namespace DumDum.Services
                     IssuerSigningKey = new SymmetricSecurityKey(symmetricKey)
                 };
 
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+                var principal = tokenHandler.ValidateToken(request.Token, validationParameters, out _);
                 
 
                 var identity = principal.Identity.Name;    //vraci username tokenu
                 var player = FindPlayerByTokenName(identity);
-                UserInfo.Add(player.Username);
-                UserInfo.Add(player.KingdomId.ToString());
-                //UserInfo.Add(player.Kingdom.KingdomName);
-
-                return UserInfo;
+                responseEnt.Ruler = player.Username;
+                responseEnt.KingdomId = player.KingdomId;
+                responseEnt.KingdomName = player.Kingdom.KingdomName;
+                
+                return responseEnt;
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }

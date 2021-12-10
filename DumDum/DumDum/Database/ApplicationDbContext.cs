@@ -13,8 +13,25 @@ namespace DumDum.Database
         public DbSet<Player> Players { get; set; }
         public Player Player { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
+        public DbSet<Resource> Resources { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Player>()
+                .HasOne<Kingdom>(q => q.Kingdom)
+                .WithOne( a => a.Player)
+                .HasForeignKey<Player>(a =>a.KingdomId)
+                .IsRequired(true);
+            
+            modelBuilder.Entity<Kingdom>()
+                .HasMany<Resource>(k => k.Resources)
+                .WithOne( a => a.Kingdom)
+                .HasForeignKey(a =>a.KingdomId)
+                .IsRequired(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
