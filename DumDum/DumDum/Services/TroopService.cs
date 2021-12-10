@@ -49,15 +49,17 @@ namespace DumDum.Services
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);
                 var player = AuthenticateService.GetUserInfo(request);
+                
 
                 if (player != null && player.KingdomId == kingdomId)
                 {
-                    response.KingdomId = player.KingdomId;
-                    response.KingdomName = player.KingdomName;
-                    response.Ruler = player.Ruler;
-                    response.Location = new Location();
-                    response.Location.CoordinateX = DumDumService.GetKingdomById(player.KingdomId).CoordinateX;
-                    response.Location.CoordinateY = DumDumService.GetKingdomById(player.KingdomId).CoordinateY;
+                    response.Kingdom = new KingdomResponse();
+                    response.Kingdom.KingdomId = player.KingdomId;
+                    response.Kingdom.KingdomName = player.KingdomName;
+                    response.Kingdom.Ruler = player.Ruler;
+                    response.Kingdom.Location = new Location();
+                    response.Kingdom.Location.CoordinateX = DumDumService.GetKingdomById(player.KingdomId).CoordinateX;
+                    response.Kingdom.Location.CoordinateY = DumDumService.GetKingdomById(player.KingdomId).CoordinateY;
                     response.Troops = GetTroops(player.KingdomId);
 
                     statusCode = 200;
