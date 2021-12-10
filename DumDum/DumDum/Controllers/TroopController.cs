@@ -10,22 +10,19 @@ namespace DumDum.Controllers
 {
     public class TroopController : Controller
     {
-        private LoginService LoginService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
         private TroopService TroopService { get; set; }
-        public TroopController(LoginService service, AuthenticateService auservice, TroopService troopService)
+        public TroopController( AuthenticateService auservice, TroopService troopService)
         {
-            LoginService = service;
             AuthenticateService = auservice;
             TroopService = troopService;
         }
-
 
         [HttpGet("kingdoms/{kingdomId}/troops")]
         public IActionResult ListTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
             int statusCode;
-            var response = TroopService.ListTroops(authorization, out statusCode);
+            var response = TroopService.ListTroops(authorization, kingdomId, out statusCode);
 
             if (statusCode == 200)
             {

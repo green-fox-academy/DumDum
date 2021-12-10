@@ -20,39 +20,53 @@ namespace DumDum.Services
             DumDumService = dumService;
         }
 
-        public List<Troop> GetTroops(int kingdomId)
+        public List<TroopsResponse> GetTroops(int kingdomId)
         {
-            List<Troop> troops = DbContext.Troops.Where(r => r.KingdomId == kingdomId).ToList();
+            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).
+                Select(t => new TroopsResponse()
+                {
+                    TroopId = t.TroopId,
+                    TroopType = t.TroopType,
+                    Level = t.Level,
+                    HP = t.HP,
+                    Attack = t.Attack,
+                    Defence = t.Defence,
+                    StartedAt = t.StartedAt,
+                    FinishedAt = t.FinishedAt
+                }).ToList();
             if (troops != null)
             {
                 return troops;
             }
-            return new List<Troop>();
+            return new List<TroopsResponse>();
         }
 
-        internal TroopResponse ListTroops(string authorization, out int statusCode)
+        internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
         {
-            if (authorization != null)
+            var response = new GetTroopsResponse();
+            if (authorization != null && kingdomId != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);
                 var player = AuthenticateService.GetUserInfo(request);
 
-                var response = new TroopResponse();
-                response.KingdomId = player.KingdomId;
-                response.KingdomName = player.KingdomName;
-                response.Location = new Location();
-                response.Location.CoordinateX = DumDumService.GetKingdomById(player.KingdomId).CoordinateX;
-                response.Location.CoordinateY = DumDumService.GetKingdomById(player.KingdomId).CoordinateY;
-                response.Troops = GetTroops(player.KingdomId);
-                if (player != null)
+                if (player != null && player.KingdomId == kingdomId)
                 {
+                    response.KingdomId = player.KingdomId;
+                    response.KingdomName = player.KingdomName;
+                    response.Ruler = player.Ruler;
+                    response.Location = new Location();
+                    response.Location.CoordinateX = DumDumService.GetKingdomById(player.KingdomId).CoordinateX;
+                    response.Location.CoordinateY = DumDumService.GetKingdomById(player.KingdomId).CoordinateY;
+                    response.Troops = GetTroops(player.KingdomId);
+
                     statusCode = 200;
                     return response;
                 }
             }
             statusCode = 400;
-            return new TroopResponse() { Error = "This kingdom does not belong to authenticated player" };
+            response.Error = "This kingdom does not belong to authenticated player";
+            return  response;
         }
     }
 }
