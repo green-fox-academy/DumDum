@@ -53,20 +53,21 @@ namespace DumDum.Services
 
                 if (player != null && player.KingdomId == kingdomId)
                 {
+                    var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
                     response.Kingdom = new KingdomResponse();
                     response.Kingdom.KingdomId = player.KingdomId;
                     response.Kingdom.KingdomName = player.KingdomName;
                     response.Kingdom.Ruler = player.Ruler;
                     response.Kingdom.Location = new Location();
-                    response.Kingdom.Location.CoordinateX = DumDumService.GetKingdomById(player.KingdomId).CoordinateX;
-                    response.Kingdom.Location.CoordinateY = DumDumService.GetKingdomById(player.KingdomId).CoordinateY;
+                    response.Kingdom.Location.CoordinateX = plyersKingdom.CoordinateX;
+                    response.Kingdom.Location.CoordinateY = plyersKingdom.CoordinateY;
                     response.Troops = GetTroops(player.KingdomId);
 
                     statusCode = 200;
                     return response;
                 }
             }
-            statusCode = 400;
+            statusCode = 401;
             return  response;
         }
     }
