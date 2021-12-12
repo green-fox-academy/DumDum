@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using DumDum.Database;
@@ -160,6 +161,15 @@ namespace DumDum.Services
 
             statusCode = 400;
             return null;
+        }
+
+        public List<Kingdom> GetAllKingdoms()
+        {
+            var kingdoms = new List<Kingdom>();
+
+            kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
+
+            return kingdoms;
         }
     }
 }
