@@ -34,15 +34,16 @@ namespace DumDum
             services.AddTransient<LoginService>();
             services.AddTransient<ResourceService>();
             services.AddTransient<AuthenticateService>();
+            services.AddTransient<TroopService>();
             services.AddTransient<BuildingService>();
 
             ConfigureDb(services);
-            
+
             //This is setting for authentication
-            
+
             var appSettingSection = AppConfig.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
-            
+
             //JWT Authentication...
 
             var appSettings = appSettingSection.Get<AppSettings>();
@@ -64,6 +65,9 @@ namespace DumDum
                     ValidateAudience = false
                 };
             });
+            services.AddControllers().AddNewtonsoftJson(options =>
+                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
