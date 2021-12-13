@@ -70,5 +70,28 @@ namespace DumDum.Services
             statusCode = 401;
             return  response;
         }
+
+        internal object CreateTroops(string authorization, int kingdomId, out int statusCode)
+        {
+            var player = CheckToken(authorization);
+
+            if (player != null)
+            {
+                
+            }
+        }
+
+        internal AuthResponse CheckToken(string authorization)
+        {
+            var player = new AuthResponse();
+            if (authorization != "")
+            {
+                AuthRequest request = new AuthRequest();
+                request.Token = authorization.Remove(0, 7);
+                player = AuthenticateService.GetUserInfo(request);
+                return player;
+            }
+            return player;
+        }   
     }
 }

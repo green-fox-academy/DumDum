@@ -12,11 +12,11 @@ namespace DumDum.Controllers
     [Authorize]
     public class TroopController : Controller
     {
-        public AuthenticateService AuthenticateService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
         private TroopService TroopService { get; set; }
-        public TroopController( AuthenticateService auservice, TroopService troopService)
+        public TroopController( AuthenticateService authService, TroopService troopService)
         {
-            AuthenticateService = auservice;
+            AuthenticateService = authService;
             TroopService = troopService;
         }
 
@@ -31,6 +31,19 @@ namespace DumDum.Controllers
                 return Ok(response);
             }
             return Unauthorized(new ErrorResponse { Error= "This kingdom does not belong to authenticated player" });
+        }
+
+        [HttpGet("kingdoms/{kingdomId}/troops")]
+        public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
+        {
+            int statusCode;
+            var response = TroopService.CreateTroops(authorization, kingdomId, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(response);
+            }
+            return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
     }
 }
