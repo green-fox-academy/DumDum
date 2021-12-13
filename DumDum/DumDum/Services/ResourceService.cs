@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Database;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services
@@ -9,20 +11,63 @@ namespace DumDum.Services
     public class ResourceService
     {
         private ApplicationDbContext DbContext { get; set; }
+        public AuthenticateService AuthenticateService { get; set; }
+        public DumDumService DumDumService { get; set; }
 
-        public ResourceService(ApplicationDbContext dbContex)
+        public ResourceService(ApplicationDbContext dbContex, AuthenticateService authenticateService,
+            DumDumService dumDumService)
         {
             DbContext = dbContex;
+            AuthenticateService = authenticateService;
+            DumDumService = dumDumService;
         }
 
-        public List<Resource> GetResources(int id)
+        public List<ResourceList> GetResources(int id)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).ToList();
+            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
+            {
+                ResourceType = r.ResourceType,
+                Amount = r.Amount,
+                Generation = r.Generation,
+                UpdatedAt = r.UpdatedAt
+            }).ToList();
         }
 
         public Location AddLocations(Kingdom kingdom)
         {
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
+        }
+
+        public ResourceResponse ResourceLogic(int id, string authorization, out int statusCode)
+        {
+            if (authorization != null)
+            {
+                AuthRequest request = new AuthRequest();
+                request.Token = authorization.Remove(0, 7);
+                var player = AuthenticateService.GetUserInfo(request);
+
+                if (player != null && player.KingdomId == id)
+                {
+                    var kingdom = DumDumService.GetKingdomById(id);
+                    var locations = AddLocations(kingdom);
+                    var resources = GetResources(id);
+                    statusCode = 200;
+                    return new ResourceResponse()
+                    {
+                        Kingdom = new KingdomResponse()
+                        {
+                            KingdomId = kingdom.KingdomId,
+                            KingdomName = kingdom.KingdomName,
+                            Ruler = player.Ruler,
+                            Location = locations,
+                        },
+                        Resources = resources
+                    };
+                }
+            }
+
+            statusCode = 401;
+            return new ResourceResponse();
         }
     }
 }

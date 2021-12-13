@@ -35,7 +35,7 @@ namespace DumDum.Services
         {
             // funkce smaže slovo bearer z tokenu, v případe, že by jej tam uživatel v postmanu zadal.
             var firstFive = request.Token.Substring(0, 6);
-            if (firstFive == "bearer") 
+            if (firstFive == "bearer" || firstFive == "Bearer") 
             {
                 string token = request.Token;
                 request.Token = token.Remove(0, 7);

@@ -14,7 +14,7 @@ namespace DumDum.Controllers
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
-        public AuthenticateService AuthenticateService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
 
         public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
         {
@@ -33,7 +33,7 @@ namespace DumDum.Controllers
         public IActionResult Register([FromBody] PlayerRequest playerRequest)
         {
             int statusCode;
-             var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
+            var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
 
             if (statusCode == 200)
             {
@@ -56,6 +56,7 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
+
         [Authorize]
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
@@ -64,11 +65,11 @@ namespace DumDum.Controllers
             var player = AuthenticateService.GetUserInfo(request);
             if (player == null)
             {
-                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
             }
             if (String.IsNullOrEmpty(requestName.KingdomName))
             {
-                return BadRequest(new { error = "Field kingdomName was empty!"});
+                return BadRequest(new ErrorResponse{ Error = "Field kingdomName was empty!"});
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
