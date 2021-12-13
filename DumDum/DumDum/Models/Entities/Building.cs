@@ -14,5 +14,10 @@ namespace DumDum.Models.Entities
         public long FinishedAt { get; set; }
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
+
+        public Building()
+        {
+            Level = 1;
+        }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services
 {
@@ -67,6 +68,34 @@ namespace DumDum.Services
             }
             statusCode = 401;
             return response;
+        }
+
+        public Kingdom FindPlayerByKingdomId(int Id)
+        {
+            var kingdom = DbContext.Kingdoms.Include(p => p.Player).FirstOrDefault(k => k.KingdomId == Id);
+            return kingdom;
+        }
+
+        public void AddBuilding(string building, int id, string authorization, out int statusCode)
+        {
+            string buildingLover = building.ToLower();
+            var buildingList = GetBuildings(id);
+            AuthRequest authRequest = new AuthRequest(){Token = authorization};
+            
+            var player = AuthenticateService.GetUserInfo(authRequest);
+            if (player == null)
+            {
+                statusCode = 401;
+            }
+
+            if (building != "townhall" || building != "barracks" || building != "academy" || building != "walls" || building != "farm" || building != "mine")
+            {
+                statusCode = 400;
+            }
+            
+            
+            var kingdom = FindPlayerByKingdomId(id);
+            DbContext.Buildings.Add(new Building(){BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, });
         }
     }
 }

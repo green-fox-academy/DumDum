@@ -35,5 +35,13 @@ namespace DumDum.Controllers
             }
             return Ok(response);
         }
+
+        [Authorize]
+        [HttpPost("kingdoms/{id=int}/buildings")]
+        public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] string building )
+        {
+            
+        }
+        
     }
 }
