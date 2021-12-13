@@ -18,7 +18,7 @@ namespace DumDum.Controllers
             ResourceService = resourceService;
         }
        
-        [Route("")]
+        
         [AllowAnonymous]
         [HttpGet("kingdoms/{id=int}/resources")]
         public IActionResult Resources([FromRoute] int id)
@@ -30,7 +30,7 @@ namespace DumDum.Controllers
 
             if (player.PlayerId != kingdom.PlayerId)
             {
-                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
             }
             
             return Ok(new 

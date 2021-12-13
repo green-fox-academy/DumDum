@@ -161,5 +161,9 @@ namespace DumDum.Services
             statusCode = 400;
             return null;
         }
+        public Location AddLocations(Kingdom kingdom)
+        {
+            return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
+        }
     }
 }

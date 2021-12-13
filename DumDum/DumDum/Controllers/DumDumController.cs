@@ -63,11 +63,11 @@ namespace DumDum.Controllers
             var player = AuthenticateService.GetUserInfo(request);
             if (player == null)
             {
-                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
             }
             if (String.IsNullOrEmpty(requestName.KingdomName))
             {
-                return BadRequest(new { error = "Field kingdomName was empty!"});
+                return BadRequest(new ErrorResponse{ Error = "Field kingdomName was empty!"});
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
