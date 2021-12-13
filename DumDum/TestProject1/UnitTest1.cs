@@ -91,7 +91,6 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:5000/kingdoms");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
-            //request.Headers.Authorization = null;
             var response = HttpClient.SendAsync(request).Result;
             
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -108,6 +107,37 @@ namespace TestProject1
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+            
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public void KingdomDetails_ShouldReturnOk()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+            
+            var inputObj = JsonConvert.SerializeObject(new KingdomDetailsRequest(){Id = 1});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/");
+            request.Method = HttpMethod.Get;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+            
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+        [Fact]
+        public void KingdomDetails_ShouldReturnUnauthorized()
+        {
+            var request = new HttpRequestMessage();
+
+            var inputObj = JsonConvert.SerializeObject(new KingdomDetailsRequest(){Id = 1});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/");
+            request.Method = HttpMethod.Get;
+            request.Content = requestContent;
             var response = HttpClient.SendAsync(request).Result;
             
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

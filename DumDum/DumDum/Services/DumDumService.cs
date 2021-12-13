@@ -10,10 +10,23 @@ namespace DumDum.Services
     public class DumDumService
     {
         private ApplicationDbContext DbContext { get; set; }
+        public BuildingService BuildingService { get; set; }
+        public DumDumService DumDumService { get; set; }
+        public ResourceService ResourceService { get; set; }
+        public TroopService TroopService { get; set; }
+        public AuthenticateService AuthenticateService { get; set; }
+        
 
-        public DumDumService(ApplicationDbContext dbContex)
+        public DumDumService(ApplicationDbContext dbContex, BuildingService buildingService, DumDumService dumDumService,
+            ResourceService resourceService, BuildingService buildingService, TroopService troopService, AuthenticateService authenticateService)
         {
             DbContext = dbContex;
+            BuildingService = buildingService;
+            DumDumService = dumDumService;
+            ResourceService = resourceService;
+            BuildingService = buildingService;
+            TroopService = troopService;
+            AuthenticateService = authenticateService;
         }
 
         public Player GetPlayerByUsername(string username)
@@ -160,6 +173,24 @@ namespace DumDum.Services
 
             statusCode = 400;
             return null;
+        }
+        public KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization)
+        {
+            KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse();
+            AuthRequest response = new AuthRequest();
+            response.Token = authorization;
+            var player = AuthenticateService.GetUserInfo(response);
+            if (player != null)
+            {
+                kingdomDetailsResponse.Kingdom = DumDumService.GetKingdom(kingdomId);
+                kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
+                kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
+                kingdomDetailsResponse.Troops = TroopService.GetResources(kingdomId);
+                kingdomDetailsResponse.StatusCode = 200;
+                return kingdomDetailsResponse;
+            }
+            kingdomDetailsResponse.StatusCode = 401;
+            return kingdomDetailsResponse;
         }
     }
 }
