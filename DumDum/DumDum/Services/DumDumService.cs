@@ -11,18 +11,14 @@ namespace DumDum.Services
     {
         private ApplicationDbContext DbContext { get; set; }
         public BuildingService BuildingService { get; set; }
-        public DumDumService DumDumService { get; set; }
         public ResourceService ResourceService { get; set; }
         public TroopService TroopService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
         
 
-        public DumDumService(ApplicationDbContext dbContex, BuildingService buildingService, DumDumService dumDumService,
-            ResourceService resourceService, BuildingService buildingService, TroopService troopService, AuthenticateService authenticateService)
+        public DumDumService(ApplicationDbContext dbContex, BuildingService buildingService, ResourceService resourceService, TroopService troopService, AuthenticateService authenticateService)
         {
             DbContext = dbContex;
-            BuildingService = buildingService;
-            DumDumService = dumDumService;
             ResourceService = resourceService;
             BuildingService = buildingService;
             TroopService = troopService;
@@ -178,7 +174,7 @@ namespace DumDum.Services
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
         }
-        public KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization)
+        public KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization, out int statusCode)
         {
             KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse();
             AuthRequest response = new AuthRequest();
@@ -186,14 +182,14 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(response);
             if (player != null)
             {
-                kingdomDetailsResponse.Kingdom = DumDumService.GetKingdom(kingdomId);
+                kingdomDetailsResponse.Kingdom = BuildingService.GetKingdom(kingdomId);
                 kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
                 kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
-                kingdomDetailsResponse.Troops = TroopService.GetResources(kingdomId);
-                kingdomDetailsResponse.StatusCode = 200;
+                kingdomDetailsResponse.Troops = TroopService.GetTroops(kingdomId);
+                statusCode = 200;
                 return kingdomDetailsResponse;
             }
-            kingdomDetailsResponse.StatusCode = 401;
+            statusCode = 401;
             return kingdomDetailsResponse;
         }
     }

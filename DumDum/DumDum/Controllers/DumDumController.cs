@@ -75,11 +75,12 @@ namespace DumDum.Controllers
             return Ok(response);
         }
         [Authorize]
-        [HttpGet("kingdoms/{id}")]
-        public IActionResult KingdomDetails([FromQuery] int id, [FromHeader] string authorization)
+        [HttpGet("kingdoms/{id=int}")]
+        public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
         {
-            var details = DumDumService.KingdomInformation(id, authorization);
-            if (details.StatusCode == 200)
+            int statusCode;
+            var details = DumDumService.KingdomInformation(id, authorization, out statusCode);
+            if (statusCode == 200)
             {
                 return Ok(details);
             }
