@@ -13,7 +13,7 @@ namespace DumDum.Controllers
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
-        public AuthenticateService AuthenticateService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
 
         public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
         {
@@ -55,6 +55,7 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
+
         [Authorize]
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
