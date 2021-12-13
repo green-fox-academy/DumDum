@@ -12,7 +12,8 @@ namespace DumDum.Services
         public AuthenticateService AuthenticateService { get; set; }
         
 
-        public DetailService(ApplicationDbContext dbContex, BuildingService buildingService, ResourceService resourceService, TroopService troopService, AuthenticateService authenticateService)
+        public DetailService(ApplicationDbContext dbContex, BuildingService buildingService,
+            ResourceService resourceService, TroopService troopService, AuthenticateService authenticateService)
         {
             DbContext = dbContex;
             ResourceService = resourceService;
