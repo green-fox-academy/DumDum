@@ -11,8 +11,8 @@ namespace DumDum.Services
     public class TroopService
     {
         private ApplicationDbContext DbContext { get; set; }
-        public AuthenticateService AuthenticateService { get; set; }
-        public DumDumService DumDumService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
+        private DumDumService DumDumService { get; set; }
         public TroopService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
         {
             DbContext = dbContext;
