@@ -13,10 +13,12 @@ namespace DumDum.Controllers
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
 
-        public DumDumController(DumDumService dumDumService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
         {
             DumDumService = dumDumService;
+            AuthenticateService = authenticateService;
         }
 
         [Route("")]
