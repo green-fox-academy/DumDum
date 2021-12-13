@@ -53,5 +53,23 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
+
+        [Authorize]
+        [HttpPut("kingdoms")]
+        public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
+        {
+            AuthRequest request = new AuthRequest(){Token = authorization};
+            var player = AuthenticateService.GetUserInfo(request);
+            if (player == null)
+            {
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
+            }
+            if (String.IsNullOrEmpty(requestName.KingdomName))
+            {
+                return BadRequest(new ErrorResponse{ Error = "Field kingdomName was empty!"});
+            }
+            var response = AuthenticateService.RenameKingdom(requestName, player);
+            return Ok(response);
+        }
     }
 }

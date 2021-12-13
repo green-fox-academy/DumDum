@@ -14,6 +14,7 @@ namespace DumDum.Database
         public Player Player { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
         public DbSet<Resource> Resources { get; set; }
+        public DbSet<Building> Buildings { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -31,6 +32,12 @@ namespace DumDum.Database
                 .HasMany<Resource>(k => k.Resources)
                 .WithOne( a => a.Kingdom)
                 .HasForeignKey(a =>a.KingdomId)
+                .IsRequired(true);
+
+            modelBuilder.Entity<Kingdom>()
+                .HasMany<Building>(k => k.Buildings)
+                .WithOne(a => a.Kingdom)
+                .HasForeignKey(a => a.KingdomId)
                 .IsRequired(true);
         }
     }
