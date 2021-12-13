@@ -44,7 +44,7 @@ namespace DumDum.Services
         internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
         {
             var response = new GetTroopsResponse();
-            if (authorization != null && kingdomId != null)
+            if (authorization != "")
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);

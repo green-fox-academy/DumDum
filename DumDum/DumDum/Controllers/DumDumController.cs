@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.Entities;
@@ -14,11 +15,13 @@ namespace DumDum.Controllers
     {
         private DumDumService DumDumService { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
+        private DetailService DetailService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
+            DetailService = detailService;
         }
 
         [Route("")]
@@ -72,6 +75,18 @@ namespace DumDum.Controllers
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
+        }
+        [Authorize]
+        [HttpGet("kingdoms/{id=int}")]
+        public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
+        {
+            int statusCode;
+            var details = DetailService.KingdomInformation(id, authorization, out statusCode);
+            if (statusCode == 200)
+            {
+                return Ok(details);
+            }
+            return Unauthorized(new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
         }
     }
 }
