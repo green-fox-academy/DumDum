@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.Entities;
@@ -14,12 +15,14 @@ namespace DumDum.Controllers
     public class DumDumController : Controller
     {
         private DumDumService DumDumService { get; set; }
-        public AuthenticateService AuthenticateService { get; set; }
+        private AuthenticateService AuthenticateService { get; set; }
+        private DetailService DetailService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
+            DetailService = detailService;
         }
 
         [Route("")]
@@ -33,7 +36,7 @@ namespace DumDum.Controllers
         public IActionResult Register([FromBody] PlayerRequest playerRequest)
         {
             int statusCode;
-             var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
+            var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
 
             if (statusCode == 200)
             {
@@ -65,14 +68,26 @@ namespace DumDum.Controllers
             var player = AuthenticateService.GetUserInfo(request);
             if (player == null)
             {
-                return Unauthorized(new {error = "This kingdom does not belong to authenticated player"});
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
             }
             if (String.IsNullOrEmpty(requestName.KingdomName))
             {
-                return BadRequest(new { error = "Field kingdomName was empty!"});
+                return BadRequest(new ErrorResponse{ Error = "Field kingdomName was empty!"});
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
+        }
+        [Authorize]
+        [HttpGet("kingdoms/{id=int}")]
+        public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
+        {
+            int statusCode;
+            var details = DetailService.KingdomInformation(id, authorization, out statusCode);
+            if (statusCode == 200)
+            {
+                return Ok(details);
+            }
+            return Unauthorized(new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
         }
 
         [HttpGet("kingdoms")]

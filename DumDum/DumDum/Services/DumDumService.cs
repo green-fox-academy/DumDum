@@ -12,7 +12,7 @@ namespace DumDum.Services
     public class DumDumService
     {
         private ApplicationDbContext DbContext { get; set; }
-
+        
         public DumDumService(ApplicationDbContext dbContex)
         {
             DbContext = dbContex;
@@ -171,6 +171,10 @@ namespace DumDum.Services
             kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
                        
             return kingdoms;
+        }
+        public Location AddLocations(Kingdom kingdom)
+        {
+            return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
         }
     }
 }
