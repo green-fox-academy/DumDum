@@ -77,6 +77,19 @@ namespace DumDum.Controllers
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
         }
+
+        [HttpGet("kingdoms")]
+        public IActionResult KingdomsList()
+        {
+            var kingdoms = DumDumService.GetAllKingdoms();
+
+            if(kingdoms != null && kingdoms.Kingdoms.Any())
+            {
+                return Ok(kingdoms);
+            }
+            return NotFound();
+        }
+
         [Authorize]
         [HttpGet("kingdoms/{id=int}")]
         public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
@@ -88,17 +101,6 @@ namespace DumDum.Controllers
                 return Ok(details);
             }
             return Unauthorized(new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
-        }
-
-        [HttpGet("kingdoms")]
-        public IActionResult KingdomsList()
-        {
-            var kingdoms = DumDumService.GetAllKingdoms();
-            var json = JsonConvert.SerializeObject(kingdoms, Formatting.Indented);
-
-            return Ok(json);
-
-            //return Ok(kingdoms);
         }
     }
 }

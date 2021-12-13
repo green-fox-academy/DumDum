@@ -7,6 +7,7 @@ using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
+
 namespace DumDum.Services
 {
     public class DumDumService
@@ -164,17 +165,33 @@ namespace DumDum.Services
             return null;
         }
 
-        public List<Kingdom> GetAllKingdoms()
+        public KingdomsListResponse GetAllKingdoms()
         {
-            var kingdoms = new List<Kingdom>();
-                        
-            kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
-                       
-            return kingdoms;
+
+            KingdomsListResponse response = new KingdomsListResponse();
+
+
+            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
+            {
+                KingdomId = k.KingdomId,
+                KingdomName = k.KingdomName,
+                Ruler = k.Player.Username,
+                Population = 0,
+                Location = new Location()
+                {
+                    CoordinateX = k.CoordinateX,
+                    CoordinateY = k.CoordinateY,
+                }
+            }).ToList();
+
+            return response;
+
         }
+
         public Location AddLocations(Kingdom kingdom)
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
+
         }
     }
 }
