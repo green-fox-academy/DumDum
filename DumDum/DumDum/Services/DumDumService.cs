@@ -80,7 +80,7 @@ namespace DumDum.Services
 
         internal bool IsKingdomIdValid(int kingdomId)
         {
-            return DbContext.Players.Any(p => p.KingdomId == kingdomId);
+            return DbContext.Players.Any(p => p.KingdomId == kingdomId) && DbContext.Kingdoms.Any(k=>k.KingdomId==kingdomId && k.CoordinateX==0 && k.CoordinateY==0) ;
         }
 
         public Kingdom GetKingdomById(int kingdomId)
@@ -136,6 +136,11 @@ namespace DumDum.Services
                 {
                     statusCode = 400;
                     return "Given coordinates are already taken!";
+                }
+                if (!IsKingdomIdValid(kingdomRequest.KingdomId))
+                {
+                    statusCode = 400;
+                    return "Kingdom has coordinates assigned already";
                 }
                 if (AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
                    IsKingdomIdValid(kingdomRequest.KingdomId) &&
