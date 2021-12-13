@@ -1,5 +1,6 @@
 ﻿using DumDum.Models.JsonEntities;
 using DumDum.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
+    [Authorize]
     public class TroopController : Controller
     {
         public AuthenticateService AuthenticateService { get; set; }
