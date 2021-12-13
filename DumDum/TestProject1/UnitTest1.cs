@@ -140,7 +140,7 @@ namespace TestProject1
             request.Content = requestContent;
             var response = HttpClient.SendAsync(request).Result;
             
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
         
     }

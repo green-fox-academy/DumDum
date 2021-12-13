@@ -36,6 +36,7 @@ namespace DumDum
             services.AddTransient<AuthenticateService>();
             services.AddTransient<TroopService>();
             services.AddTransient<BuildingService>();
+            services.AddTransient<DetailService>();
 
             ConfigureDb(services);
 
