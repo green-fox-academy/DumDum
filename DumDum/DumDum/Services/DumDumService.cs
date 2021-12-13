@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Castle.Core.Internal;
 using DumDum.Database;
@@ -11,7 +10,7 @@ namespace DumDum.Services
     public class DumDumService
     {
         private ApplicationDbContext DbContext { get; set; }
-
+        
         public DumDumService(ApplicationDbContext dbContex)
         {
             DbContext = dbContex;
