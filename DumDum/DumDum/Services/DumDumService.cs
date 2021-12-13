@@ -5,6 +5,7 @@ using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DumDum.Services
 {
@@ -166,9 +167,9 @@ namespace DumDum.Services
         public List<Kingdom> GetAllKingdoms()
         {
             var kingdoms = new List<Kingdom>();
-
+                        
             kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
-
+                       
             return kingdoms;
         }
     }

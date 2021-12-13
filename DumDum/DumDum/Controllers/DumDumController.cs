@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
+using Newtonsoft.Json;
 
 namespace DumDum.Controllers
 {
@@ -55,6 +56,7 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
+
         [Authorize]
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
@@ -71,6 +73,17 @@ namespace DumDum.Controllers
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
+        }
+
+        [HttpGet("kingdoms")]
+        public IActionResult KingdomsList()
+        {
+            var kingdoms = DumDumService.GetAllKingdoms();
+            var json = JsonConvert.SerializeObject(kingdoms, Formatting.Indented);
+
+            return Ok(json);
+
+            //return Ok(kingdoms);
         }
     }
 }

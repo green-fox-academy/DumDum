@@ -1,8 +1,10 @@
 ﻿using DumDum.Models.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace DumDum.Models.JsonEntities
 {
-    public class ListResponse
+    public class KingdomsListResponse
     {
         public int KingdomId { get; set; }
         public string KingdomName { get; set; }
