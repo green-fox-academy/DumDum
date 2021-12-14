@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Troops
 {
     public class TroopsResponse
     {

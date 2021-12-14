@@ -3,6 +3,9 @@ using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using System.Collections.Generic;
 using System.Linq;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Troops;
 
 namespace DumDum.Services
 {

@@ -4,6 +4,8 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
 using System.Linq;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services

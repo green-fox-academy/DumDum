@@ -4,6 +4,9 @@ using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services

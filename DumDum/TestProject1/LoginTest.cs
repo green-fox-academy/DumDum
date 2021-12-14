@@ -5,6 +5,7 @@ using System.Text;
 using DumDum;
 using DumDum.Controllers;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
 using DumDum.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
