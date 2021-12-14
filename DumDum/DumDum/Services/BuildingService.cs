@@ -2,10 +2,8 @@
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Services
 {
@@ -104,71 +102,83 @@ namespace DumDum.Services
         {
             var code = 0;
             var building = GetBuildingById(buildingId);
-            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            switch (building.BuildingType)
+            if (building is null)
             {
-                case "Farm":
-                    if (goldAmount < building.Level * 60)
-                    {
-                        code = 400;
-                    }
+                var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+                switch (building.BuildingType)
+                {
+                    case "Farm":
+                        if (goldAmount < building.Level * 60)
+                        {
+                            code = 400;
+                        }
+                        else
+                        {
+                            code = 200;
+                            DumDumService.TakeGold(kingdomId, building.Level * 60);
+                            building.Level++;
+                        }
 
-                    code = 200;
-                    DumDumService.TakeGold(kingdomId, building.Level * 60);
-                    building.Level++;
-                    break;
-                case "Townhall":
-                    if (goldAmount < building.Level * 110)
-                    {
-                        code = 400;
-                    }
-                    else
-                    {
-                        code = 200;
-                        DumDumService.TakeGold(kingdomId, building.Level * 110);
-                        building.Level++;
-                    }
+                        break;
 
-                    break;
-                case "Mine":
-                    if (goldAmount < building.Level * 80)
-                    {
-                        code = 400;
-                    }
-                    else
-                    {
-                        code = 200;
-                        DumDumService.TakeGold(kingdomId, building.Level * 80);
-                        building.Level++;
-                    }
+                    case "Townhall":
+                        if (goldAmount < building.Level * 110)
+                        {
+                            code = 400;
+                        }
+                        else
+                        {
+                            code = 200;
+                            DumDumService.TakeGold(kingdomId, building.Level * 110);
+                            building.Level++;
+                        }
 
-                    break;
-                case "Barrack":
-                    if (goldAmount < building.Level * 120)
-                    {
-                        code = 400;
-                    }
-                    else
-                    {
-                        code = 200;
-                        DumDumService.TakeGold(kingdomId, building.Level * 120);
-                        building.Level++;
-                    }
+                        break;
 
-                    break;
-                case "Academy":
-                    if (goldAmount < building.Level * 130)
-                    {
-                        code = 400;
-                    }
-                    else
-                    {
-                        code = 200;
-                        DumDumService.TakeGold(kingdomId, building.Level * 130);
-                        building.Level++;
-                    }
+                    case "Mine":
+                        if (goldAmount < building.Level * 80)
+                        {
+                            code = 400;
+                        }
+                        else
+                        {
+                            code = 200;
+                            DumDumService.TakeGold(kingdomId, building.Level * 80);
+                            building.Level++;
+                        }
 
-                    break;
+                        break;
+
+                    case "Barrack":
+                        if (goldAmount < building.Level * 120)
+                        {
+                            code = 400;
+                        }
+                        else
+                        {
+                            code = 200;
+                            DumDumService.TakeGold(kingdomId, building.Level * 120);
+                            building.Level++;
+                        }
+
+                        break;
+
+                    case "Academy":
+                        if (goldAmount < building.Level * 130)
+                        {
+                            code = 400;
+                        }
+                        else
+                        {
+                            code = 200;
+                            DumDumService.TakeGold(kingdomId, building.Level * 130);
+                            building.Level++;
+                        }
+
+                        break;
+                }
+
+                code = 404;
             }
 
             statusCode = code;

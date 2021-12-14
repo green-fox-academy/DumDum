@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using DumDum.Models.Entities;
 
 namespace DumDum.Database
@@ -11,7 +6,6 @@ namespace DumDum.Database
     public class ApplicationDbContext : DbContext
     {
         public DbSet<Player> Players { get; set; }
-        public Player Player { get; set; }
         public DbSet<Kingdom> Kingdoms { get; set; }
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
@@ -36,10 +30,10 @@ namespace DumDum.Database
                 .IsRequired(true);
 
             modelBuilder.Entity<Troop>()
-            .HasOne<Kingdom>(t => t.Kingdom)
-            .WithMany(k => k.Troops)
-            .HasForeignKey(t => t.KingdomId)
-            .IsRequired(false);
+                .HasOne<Kingdom>(t => t.Kingdom)
+                .WithMany(k => k.Troops)
+                .HasForeignKey(t => t.KingdomId)
+                .IsRequired(false);
 
             modelBuilder.Entity<Kingdom>()
                 .HasMany<Building>(k => k.Buildings)
