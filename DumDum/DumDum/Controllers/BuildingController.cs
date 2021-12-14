@@ -15,11 +15,13 @@ namespace DumDum.Controllers
 
         private DumDumService DumDumService { get; set; }
         private BuildingService BuildingService { get; set; }
+        private TimeService TimeService { get; set; }
 
-        public BuildingController(DumDumService dumDumService, BuildingService buildingService)
+        public BuildingController(DumDumService dumDumService, BuildingService buildingService, TimeService timeService)
         {
             DumDumService = dumDumService;
             BuildingService = buildingService;
+            TimeService = timeService;
         }
 
         [Authorize]
@@ -28,6 +30,8 @@ namespace DumDum.Controllers
         {
             int statusCode;
             var response = BuildingService.ListBuildings(authorization, Id, out statusCode);
+            TimeService.GetCycle(1);
+
 
             if (statusCode == 401)
             {

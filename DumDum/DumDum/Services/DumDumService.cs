@@ -105,7 +105,7 @@ namespace DumDum.Services
 
         public Player GetPlayerById(int id)
         {
-            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
+            return DbContext.Players.Include(p => p.Kingdom).Include(p=>p.LastChange).FirstOrDefault(p => p.PlayerId == id);
         }
 
         public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)

@@ -13,12 +13,14 @@ namespace DumDum.Controllers
     public class LoginController : Controller
     {
         private LoginService Service { get; set; }
+        private TimeService TimeService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service, AuthenticateService auservice)
+        public LoginController(LoginService service, AuthenticateService auservice, TimeService timeService)
         {
             Service = service;
             AuthenticateService = auservice;
+            TimeService = timeService;
         }
 
         [AllowAnonymous]
@@ -27,6 +29,7 @@ namespace DumDum.Controllers
         {
             int statusCode;
             var message = Service.Login(player, out statusCode);
+            TimeService.GetRegistrationTime(1);
 
             if (statusCode == 200)
             {
@@ -34,6 +37,7 @@ namespace DumDum.Controllers
             }
             return StatusCode(statusCode, new ErrorResponse{ Error = message });
         }
+
         [HttpPost("auth")]
         public IActionResult TokenCheck([FromBody]AuthRequest request)
         {
