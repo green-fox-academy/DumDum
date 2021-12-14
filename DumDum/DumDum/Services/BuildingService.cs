@@ -15,9 +15,9 @@ namespace DumDum.Services
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
 
-        public BuildingService(ApplicationDbContext dbContex, AuthenticateService authService, DumDumService dumService)
+        public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
             AuthenticateService = authService;
             DumDumService = dumService;
         }
@@ -69,33 +69,7 @@ namespace DumDum.Services
             statusCode = 401;
             return response;
         }
-
-        public int GetGoldAmountOfKingdom(int kingdomId)
-        {
-            if (kingdomId != 0)
-            {
-                var gold = DbContext.Resources.FirstOrDefault(r =>
-                    r.KingdomId == kingdomId && r.ResourceType == "Gold");
-                if (gold != null)
-                {
-                    return gold.Amount;
-                }
-
-                return 0;
-            }
-
-            return 0;
-        }
-
-        public void TakeGold(int kingdomId, int amount)
-        {
-            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
-            if (gold != null)
-            {
-                gold.Amount = -amount;
-            }
-        }
-
+        
         private Building GetBuildingById(int buildingId)
         {
             return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
@@ -130,7 +104,7 @@ namespace DumDum.Services
         {
             var code = 0;
             var building = GetBuildingById(buildingId);
-            var goldAmount = GetGoldAmountOfKingdom(kingdomId);
+            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             switch (building.BuildingType)
             {
                 case "Farm":
@@ -140,7 +114,7 @@ namespace DumDum.Services
                     }
 
                     code = 200;
-                    TakeGold(kingdomId, building.Level * 60);
+                    DumDumService.TakeGold(kingdomId, building.Level * 60);
                     building.Level++;
                     break;
                 case "Townhall":
@@ -151,7 +125,7 @@ namespace DumDum.Services
                     else
                     {
                         code = 200;
-                        TakeGold(kingdomId, building.Level * 110);
+                        DumDumService.TakeGold(kingdomId, building.Level * 110);
                         building.Level++;
                     }
 
@@ -164,7 +138,7 @@ namespace DumDum.Services
                     else
                     {
                         code = 200;
-                        TakeGold(kingdomId, building.Level * 80);
+                        DumDumService.TakeGold(kingdomId, building.Level * 80);
                         building.Level++;
                     }
 
@@ -177,7 +151,7 @@ namespace DumDum.Services
                     else
                     {
                         code = 200;
-                        TakeGold(kingdomId, building.Level * 120);
+                        DumDumService.TakeGold(kingdomId, building.Level * 120);
                         building.Level++;
                     }
 
@@ -190,7 +164,7 @@ namespace DumDum.Services
                     else
                     {
                         code = 200;
-                        TakeGold(kingdomId, building.Level * 130);
+                        DumDumService.TakeGold(kingdomId, building.Level * 130);
                         building.Level++;
                     }
 
