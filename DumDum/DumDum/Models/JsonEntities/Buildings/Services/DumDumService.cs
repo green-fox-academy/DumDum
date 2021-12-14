@@ -11,9 +11,9 @@ namespace DumDum.Services
     {
         private ApplicationDbContext DbContext { get; set; }
         
-        public DumDumService(ApplicationDbContext dbContex)
+        public DumDumService(ApplicationDbContext dbContext)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
         }
 
         public Player GetPlayerByUsername(string username)

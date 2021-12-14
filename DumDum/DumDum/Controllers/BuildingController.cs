@@ -3,22 +3,15 @@ using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
     public class BuildingController : Controller
     {
-
-        private DumDumService DumDumService { get; set; }
         private BuildingService BuildingService { get; set; }
 
-        public BuildingController(DumDumService dumDumService, BuildingService buildingService)
+        public BuildingController(BuildingService buildingService)
         {
-            DumDumService = dumDumService;
             BuildingService = buildingService;
         }
 
@@ -26,8 +19,7 @@ namespace DumDum.Controllers
         [HttpGet("kingdoms/{id=int}/buildings")]
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int Id)
         {
-            int statusCode;
-            var response = BuildingService.ListBuildings(authorization, Id, out statusCode);
+            var response = BuildingService.ListBuildings(authorization, Id, out int statusCode);
 
             if (statusCode == 401)
             {
@@ -38,10 +30,24 @@ namespace DumDum.Controllers
 
         [Authorize]
         [HttpPost("kingdoms/{id=int}/buildings")]
-        public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] string building )
+        public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] BuildingAddRequest type)
         {
-            
+            var response = BuildingService.AddBuilding(type.Type, id, authorization, out int statusCode);
+            if (statusCode == 400)
+            {
+                return StatusCode(statusCode, new ErrorResponse {Error = "You don't have enough gold to build that!"});
+            }
+
+            if (statusCode == 406)
+            {
+                return StatusCode(statusCode, new ErrorResponse {Error = "Type is required."});
+            }
+
+            if (statusCode == 401)
+            {
+                return StatusCode(statusCode, new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
+            }
+            return Ok(response);
         }
-        
     }
 }

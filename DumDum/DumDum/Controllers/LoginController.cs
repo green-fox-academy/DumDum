@@ -1,23 +1,18 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
+﻿using DumDum.Models.JsonEntities;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService Service { get; set; }
+        private LoginService LoginService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service, AuthenticateService auservice)
+        public LoginController(LoginService loginService, AuthenticateService auservice)
         {
-            Service = service;
+            LoginService = loginService;
             AuthenticateService = auservice;
         }
 
@@ -26,7 +21,7 @@ namespace DumDum.Controllers
         public IActionResult Login([FromBody] LoginRequest player)
         {
             int statusCode;
-            var message = Service.Login(player, out statusCode);
+            var message = LoginService.Login(player, out statusCode);
 
             if (statusCode == 200)
             {
