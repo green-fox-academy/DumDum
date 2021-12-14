@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Web.Helpers;
 using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
@@ -155,7 +156,8 @@ namespace DumDum.Services
             {
                 if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
                 {
-                    var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
+                    var hashedPassword = Crypto.HashPassword(playerRequest.Password);
+                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName);
                     if (player is null)
                     {
                         statusCode = 400;

@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Web.Helpers;
 using DumDum.Models.JsonEntities;
 
 namespace DumDum.Services
@@ -14,25 +15,32 @@ namespace DumDum.Services
     public class LoginService
     {
         private ApplicationDbContext DbContext { get; set; }
+        private DumDumService DumDumService { get; set; }
         private readonly AppSettings AppSettings;
 
-        public LoginService(ApplicationDbContext dbContext,IOptions<AppSettings> appSettings)
+        public LoginService(ApplicationDbContext dbContext, IOptions<AppSettings> appSettings,
+            DumDumService dumDumService)
         {
             DbContext = dbContext;
             AppSettings = appSettings.Value;
+            DumDumService = dumDumService;
         }
 
         public bool LoginCheck(string username)
         {
             return DbContext.Players.Any(x => x.Username == username);
         }
+
         public bool PasswordCheck(string password)
         {
             return DbContext.Players.Any(x => x.Password == password);
         }
+
         public bool LoginPasswordCheck(string username, string password)
         {
-            return DbContext.Players.Any(x => x.Username == username && x.Password == password);
+            var playerFromDb = DumDumService.GetPlayerByUsername(username);
+            var verified = Crypto.VerifyHashedPassword(playerFromDb.Password, password);
+            return DbContext.Players.Any(x => x.Username == username) && verified;
         }
 
         public string Authenticate(string username, string password)
@@ -46,14 +54,14 @@ namespace DumDum.Services
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Name, username),//z ceho ma brat jmeno
+                        new Claim(ClaimTypes.Name, username), //z ceho ma brat jmeno
                     }),
-                    Expires = DateTime.UtcNow.AddHours(24),  //za kolik hodin vyprsi
+                    Expires = DateTime.UtcNow.AddHours(24), //za kolik hodin vyprsi
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey),
-                    SecurityAlgorithms.HmacSha256Signature) //typ tokenu
+                        SecurityAlgorithms.HmacSha256Signature) //typ tokenu
                 };
-                var token = tokenHandler.CreateToken(tokenDescriptor);  //toto vytvori novy token
-                return tokenHandler.WriteToken(token);  //toto posle hotovy token ve stringu
+                var token = tokenHandler.CreateToken(tokenDescriptor); //toto vytvori novy token
+                return tokenHandler.WriteToken(token); //toto posle hotovy token ve stringu
             }
             else
             {
@@ -66,20 +74,21 @@ namespace DumDum.Services
         {
             LoginResponse response = new LoginResponse();
             response.Token = Authenticate(player.Username, player.Password);
-            
+
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
                 statusCode = 400;
                 return "Field username and/or field password was empty!";
             }
+
             if (!LoginPasswordCheck(player.Username, player.Password))
             {
                 statusCode = 401;
                 return "Username and/or password was incorrect!";
             }
+
             statusCode = 200;
             return response.Token;
         }
-
     }
 }

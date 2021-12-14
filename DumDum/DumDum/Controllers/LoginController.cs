@@ -7,12 +7,12 @@ namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService Service { get; set; }
+        private LoginService LoginService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
 
         public LoginController(LoginService service, AuthenticateService auservice)
         {
-            Service = service;
+            LoginService = service;
             AuthenticateService = auservice;
         }
 
@@ -21,7 +21,7 @@ namespace DumDum.Controllers
         public IActionResult Login([FromBody] LoginRequest player)
         {
             int statusCode;
-            var message = Service.Login(player, out statusCode);
+            var message = LoginService.Login(player, out statusCode);
 
             if (statusCode == 200)
             {
