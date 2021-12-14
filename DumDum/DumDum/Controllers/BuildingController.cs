@@ -19,7 +19,7 @@ namespace DumDum.Controllers
         }
 
         [Authorize]
-        [HttpGet("kingdoms/{id=int}")]
+        [HttpGet("kingdoms/{id=int}/buildings")]
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int Id)
         {
             int statusCode;
@@ -54,6 +54,7 @@ namespace DumDum.Controllers
             }
             return Ok(response);
         }
+        
         [Authorize]
         [HttpPost("kingdoms/{id=int}/buildings")]
         public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] BuildingAddRequest type)

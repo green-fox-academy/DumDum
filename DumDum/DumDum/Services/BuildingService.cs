@@ -235,13 +235,12 @@ namespace DumDum.Services
 
             else
             {
-                var build = DbContext.Buildings.Add(new Building()
-                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,});
+                var build = DbContext.Buildings.Add(new Building(){BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom});
                 DbContext.SaveChanges();
                 response.BuildingId = build.Entity.BuildingId;
                 response.BuildingType = building;
-                response.Level = 1;
-                response.Hp = 1;
+                response.Level = build.Entity.Level;
+                response.Hp = build.Entity.Level;
                 response.StartedAt = 112;
                 response.FinishedAt = 123;
                 statusCode = 200;
