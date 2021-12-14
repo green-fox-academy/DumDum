@@ -23,8 +23,7 @@ namespace DumDum.Controllers
         [HttpGet("kingdoms/{kingdomId}/troops")]
         public IActionResult ListTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
-            int statusCode;
-            var response = TroopService.ListTroops(authorization, kingdomId, out statusCode);
+            var response = TroopService.ListTroops(authorization, kingdomId, out int statusCode);
 
             if (statusCode == 200)
             {
@@ -33,11 +32,10 @@ namespace DumDum.Controllers
             return Unauthorized(new ErrorResponse { Error= "This kingdom does not belong to authenticated player" });
         }
 
-        [HttpGet("kingdoms/{kingdomId}/troops")]
-        public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
+        [HttpPost("kingdoms/{kingdomId}/troops")]
+        public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopCreationRequest TroopCreationReq )
         {
-            int statusCode;
-            var response = TroopService.CreateTroops(authorization, kingdomId, out statusCode);
+            var response = TroopService.CreateTroops(authorization, TroopCreationReq, kingdomId, out int statusCode);
 
             if (statusCode == 200)
             {

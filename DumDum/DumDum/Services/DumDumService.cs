@@ -210,7 +210,9 @@ namespace DumDum.Services
             var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
             if (gold != null)
             {
-                gold.Amount = -amount;
+                gold.Amount -= amount;
+                DbContext.Resources.Update(gold);
+                DbContext.SaveChanges();
             }
         }
 

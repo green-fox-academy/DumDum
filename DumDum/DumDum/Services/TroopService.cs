@@ -49,7 +49,7 @@ namespace DumDum.Services
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);
                 var player = AuthenticateService.GetUserInfo(request);
-                
+
 
                 if (player != null && player.KingdomId == kingdomId)
                 {
@@ -68,17 +68,53 @@ namespace DumDum.Services
                 }
             }
             statusCode = 401;
-            return  response;
+            return response;
         }
 
-        internal TroopsResponse CreateTroops(string authorization, int kingdomId, out int statusCode)
+        internal List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
         {
             var player = CheckToken(authorization);
+            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var createdTroops = new List<TroopsResponse>();
 
-            if (player != null)
+            if (player != null && player.KingdomId == kingdomId)
             {
-                
+                switch (troopCreationReq.Type.ToLower())
+                {
+                    case "axeman":
+                        var axeman = new Axeman();
+                        if (goldAmount < axeman.Cost * troopCreationReq.Quantity)
+                        {
+                            statusCode = 400;
+                        }
+                        for (int i = 0; i < troopCreationReq.Quantity; i++)
+                        {
+                            var newAxeman = new Axeman();
+                            newAxeman.KingdomId = kingdomId;
+                            DbContext.Troops.Add(newAxeman);
+                            DbContext.SaveChanges();
+                            DumDumService.TakeGold(kingdomId, axeman.Cost);
+                            createdTroops.Add(new TroopsResponse()
+                            {
+                                TroopId = newAxeman.TroopId,
+                                TroopType = newAxeman.TroopType,
+                                Level = newAxeman.Level,
+                                HP = newAxeman.HP,
+                                Attack = newAxeman.Attack,
+                                Defence = newAxeman.Defence,
+                                StartedAt = newAxeman.StartedAt,
+                                FinishedAt = newAxeman.FinishedAt
+                            });
+                        }
+                        statusCode = 200;
+                        return createdTroops;
+                        break;
+                }
+
             }
+
+            statusCode = 401;
+            return new List<TroopsResponse>();
         }
 
         internal AuthResponse CheckToken(string authorization)
@@ -92,6 +128,6 @@ namespace DumDum.Services
                 return player;
             }
             return player;
-        }   
+        }
     }
 }

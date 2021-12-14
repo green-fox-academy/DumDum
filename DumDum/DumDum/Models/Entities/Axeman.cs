@@ -17,6 +17,7 @@ namespace DumDum.Models.Entities
             CarryCap = 30;
             Consumption = 1;
             Speed = 1;
+            Cost = 20;
         }
     }
 }
