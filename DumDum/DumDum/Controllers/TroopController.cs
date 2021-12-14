@@ -14,7 +14,7 @@ namespace DumDum.Controllers
     {
         private AuthenticateService AuthenticateService { get; set; }
         private TroopService TroopService { get; set; }
-        public TroopController( AuthenticateService authService, TroopService troopService)
+        public TroopController(AuthenticateService authService, TroopService troopService)
         {
             AuthenticateService = authService;
             TroopService = troopService;
@@ -29,17 +29,25 @@ namespace DumDum.Controllers
             {
                 return Ok(response);
             }
-            return Unauthorized(new ErrorResponse { Error= "This kingdom does not belong to authenticated player" });
+            return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
 
         [HttpPost("kingdoms/{kingdomId}/troops")]
-        public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopCreationRequest TroopCreationReq )
+        public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopCreationRequest TroopCreationReq)
         {
             var response = TroopService.CreateTroops(authorization, TroopCreationReq, kingdomId, out int statusCode);
 
             if (statusCode == 200)
             {
                 return Ok(response);
+            }
+            if (statusCode == 400)
+            {
+                return BadRequest(new ErrorResponse { Error = "You don't have enough gold to train all these units!" });
+            }
+            if (statusCode == 404)
+            {
+                return BadRequest(new ErrorResponse { Error = "Request was not done correctly!" });
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }

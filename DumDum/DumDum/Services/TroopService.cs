@@ -20,7 +20,32 @@ namespace DumDum.Services
             DumDumService = dumService;
         }
 
-        public List<TroopsResponse> GetTroops(int kingdomId)
+        internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
+        {
+            var response = new GetTroopsResponse();
+            var player = CheckToken(authorization);
+
+            if (player != null && player.KingdomId == kingdomId)
+            {
+                var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
+                response.Kingdom = new KingdomResponse
+                {
+                    KingdomId = player.KingdomId,
+                    KingdomName = player.KingdomName,
+                    Ruler = player.Ruler,
+                    Location = new Location() { CoordinateX = plyersKingdom.CoordinateX, CoordinateY = plyersKingdom.CoordinateY }
+                };
+                response.Troops = GetTroops(player.KingdomId);
+
+                statusCode = 200;
+                return response;
+            }
+
+            statusCode = 401;
+            return response;
+        }
+
+        internal List<TroopsResponse> GetTroops(int kingdomId)
         {
             List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).
                 Select(t => new TroopsResponse()
@@ -41,78 +66,51 @@ namespace DumDum.Services
             return new List<TroopsResponse>();
         }
 
-        internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
-        {
-            var response = new GetTroopsResponse();
-            if (authorization != "")
-            {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
-
-
-                if (player != null && player.KingdomId == kingdomId)
-                {
-                    var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
-                    response.Kingdom = new KingdomResponse
-                    {
-                        KingdomId = player.KingdomId,
-                        KingdomName = player.KingdomName,
-                        Ruler = player.Ruler,
-                        Location = new Location() { CoordinateX = plyersKingdom.CoordinateX, CoordinateY = plyersKingdom.CoordinateY }
-                    };
-                    response.Troops = GetTroops(player.KingdomId);
-
-                    statusCode = 200;
-                    return response;
-                }
-            }
-            statusCode = 401;
-            return response;
-        }
-
         internal List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
         {
             var player = CheckToken(authorization);
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var createdTroops = new List<TroopsResponse>();
+            var possibleTroops = new List<string> { "spy", "axeman", "phalanx", "knight", "senator" };
 
+            if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroops.Contains(troopCreationReq.Type.ToLower()))
+            {
+                statusCode = 404;
+                return new List<TroopsResponse>();
+            }
             if (player != null && player.KingdomId == kingdomId)
             {
-                switch (troopCreationReq.Type.ToLower())
+                var possibleNewTroop = new Troop();
+                int newTroopCost = possibleNewTroop.CreateTroop(troopCreationReq.Type.ToLower()).Cost;
+
+                if (goldAmount < newTroopCost * troopCreationReq.Quantity)
                 {
-                    case "axeman":
-                        var axeman = new Axeman();
-                        if (goldAmount < axeman.Cost * troopCreationReq.Quantity)
-                        {
-                            statusCode = 400;
-                        }
-                        for (int i = 0; i < troopCreationReq.Quantity; i++)
-                        {
-                            var newAxeman = new Axeman();
-                            newAxeman.KingdomId = kingdomId;
-                            DbContext.Troops.Add(newAxeman);
-                            DbContext.SaveChanges();
-                            DumDumService.TakeGold(kingdomId, axeman.Cost);
-                            createdTroops.Add(new TroopsResponse()
-                            {
-                                TroopId = newAxeman.TroopId,
-                                TroopType = newAxeman.TroopType,
-                                Level = newAxeman.Level,
-                                HP = newAxeman.HP,
-                                Attack = newAxeman.Attack,
-                                Defence = newAxeman.Defence,
-                                StartedAt = newAxeman.StartedAt,
-                                FinishedAt = newAxeman.FinishedAt
-                            });
-                        }
-                        statusCode = 200;
-                        return createdTroops;
-                        break;
+                    statusCode = 400;
+                    return new List<TroopsResponse>();
                 }
-
+                for (int i = 0; i < troopCreationReq.Quantity; i++)
+                {
+                    var newTroop = new Troop();
+                    newTroop = newTroop.CreateTroop(troopCreationReq.Type.ToLower());
+                    newTroop.KingdomId = kingdomId;
+                    DbContext.Troops.Add(newTroop);
+                    DbContext.SaveChanges();
+                    DumDumService.TakeGold(kingdomId, newTroop.Cost);
+                    createdTroops.Add(new TroopsResponse()
+                    {
+                        TroopId = newTroop.TroopId,
+                        TroopType = newTroop.TroopType,
+                        Level = newTroop.Level,
+                        HP = newTroop.HP,
+                        Attack = newTroop.Attack,
+                        Defence = newTroop.Defence,
+                        StartedAt = newTroop.StartedAt,
+                        FinishedAt = newTroop.FinishedAt
+                    });
+                }
+                statusCode = 200;
+                return createdTroops;
             }
-
             statusCode = 401;
             return new List<TroopsResponse>();
         }
