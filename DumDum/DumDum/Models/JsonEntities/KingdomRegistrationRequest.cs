@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DumDum.Models.JsonEntities
 {
-    public class KingdomJson
+    public class KingdomRegistrationRequest
     {
         public int CoordinateX { get; set; }
         public int CoordinateY { get; set; }
