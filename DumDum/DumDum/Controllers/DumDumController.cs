@@ -76,6 +76,7 @@ namespace DumDum.Controllers
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
         }
+
         [Authorize]
         [HttpGet("kingdoms/{id=int}")]
         public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)

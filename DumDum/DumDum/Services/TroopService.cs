@@ -71,7 +71,7 @@ namespace DumDum.Services
             return  response;
         }
 
-        internal object CreateTroops(string authorization, int kingdomId, out int statusCode)
+        internal TroopsResponse CreateTroops(string authorization, int kingdomId, out int statusCode)
         {
             var player = CheckToken(authorization);
 
