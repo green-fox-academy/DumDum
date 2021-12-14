@@ -54,13 +54,13 @@ namespace DumDum.Services
                 if (player != null && player.KingdomId == kingdomId)
                 {
                     var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
-                    response.Kingdom = new KingdomResponse();
-                    response.Kingdom.KingdomId = player.KingdomId;
-                    response.Kingdom.KingdomName = player.KingdomName;
-                    response.Kingdom.Ruler = player.Ruler;
-                    response.Kingdom.Location = new Location();
-                    response.Kingdom.Location.CoordinateX = plyersKingdom.CoordinateX;
-                    response.Kingdom.Location.CoordinateY = plyersKingdom.CoordinateY;
+                    response.Kingdom = new KingdomResponse
+                    {
+                        KingdomId = player.KingdomId,
+                        KingdomName = player.KingdomName,
+                        Ruler = player.Ruler,
+                        Location = new Location() { CoordinateX = plyersKingdom.CoordinateX, CoordinateY = plyersKingdom.CoordinateY }
+                    };
                     response.Troops = GetTroops(player.KingdomId);
 
                     statusCode = 200;
