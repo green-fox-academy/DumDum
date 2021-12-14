@@ -1,28 +1,24 @@
 ﻿using DumDum.Database;
 using DumDum.Models;
-using DumDum.Models.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using DumDum.Models.JsonEntities;
 
 namespace DumDum.Services
 {
     public class LoginService
     {
-        
         private ApplicationDbContext DbContext { get; set; }
         private readonly AppSettings AppSettings;
 
-        public LoginService(ApplicationDbContext dbContex,IOptions<AppSettings> appSettings)
+        public LoginService(ApplicationDbContext dbContext,IOptions<AppSettings> appSettings)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
             AppSettings = appSettings.Value;
         }
 

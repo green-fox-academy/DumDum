@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
 

@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
-using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services
 {
@@ -14,10 +12,10 @@ namespace DumDum.Services
         public AuthenticateService AuthenticateService { get; set; }
         public DumDumService DumDumService { get; set; }
 
-        public ResourceService(ApplicationDbContext dbContex, AuthenticateService authenticateService,
+        public ResourceService(ApplicationDbContext dbContext, AuthenticateService authenticateService,
             DumDumService dumDumService)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
             AuthenticateService = authenticateService;
             DumDumService = dumDumService;
         }
@@ -49,6 +47,11 @@ namespace DumDum.Services
                 if (player != null && player.KingdomId == id)
                 {
                     var kingdom = DumDumService.GetKingdomById(id);
+                    if (kingdom is null)
+                    {
+                        statusCode = 404;
+                        return new ResourceResponse();
+                    }
                     var locations = AddLocations(kingdom);
                     var resources = GetResources(id);
                     statusCode = 200;

@@ -54,7 +54,7 @@ namespace DumDum.Services
             return kingdom;
         }
 
-        public bool IsValid(string username, string password)
+        public bool AreCredentialsValid(string username, string password)
         {
             return DbContext.Players.Any(p => p.Username != username) &&
                 !string.IsNullOrWhiteSpace(username) && password.Length >= 8 ;
@@ -153,21 +153,29 @@ namespace DumDum.Services
         {
             if (playerRequest.KingdomName is not null)
             {
-                if (IsValid(playerRequest.Username, playerRequest.Password))
+                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
                 {
                     var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
-                    var kingdom = GetKingdomByName(playerRequest.KingdomName);
+                    if (player is null)
+                    {
+                        statusCode = 400;
+                        return null;
+                    }
                     statusCode = 200;
                     return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
                 }
-
                 statusCode = 400;
                 return null;
             }
 
-            if (IsValid(playerRequest.Username, playerRequest.Password))
+            if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
             {
                 var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
+                if (player is null)
+                {
+                    statusCode = 400;
+                    return null;
+                }
                 statusCode = 200;
                 return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
             }

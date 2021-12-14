@@ -1,12 +1,7 @@
 ﻿using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
@@ -50,6 +45,11 @@ namespace DumDum.Controllers
             if(statusCode == 400)
             {
                 return StatusCode(statusCode, new ErrorResponse { Error = "You don't have enough gold to upgrade that!" });
+            }
+
+            if (statusCode == 404)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "Kingdom not found" });
             }
             return Ok(response);
         }

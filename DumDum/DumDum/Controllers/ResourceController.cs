@@ -1,5 +1,3 @@
-using System.Linq;
-using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,8 +9,6 @@ namespace DumDum.Controllers
     {
         private ResourceService ResourceService { get; set; }
         private DumDumService DumDumService { get; set; }
-
-        private AuthenticateService AuthenticateService { get; set; }
 
         public ResourceController(DumDumService dumDumService, ResourceService resourceService)
         {
@@ -31,6 +27,10 @@ namespace DumDum.Controllers
             if (statusCode == 200)
             {
                 return Ok(response);
+            } 
+            if (statusCode == 404)
+            {
+                return NotFound(new ErrorResponse() {Error = "Kingdom not found"});
             }
             return Unauthorized(new ErrorResponse(){Error = "This kingdom does not belong to authenticated player"});
         }
