@@ -26,4 +26,12 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Services\BuildingService 2.cs" />
+    <Compile Remove="Models\JsonEntities\ResourceRequest 2.cs" />
+    <Compile Remove="Models\JsonEntities\ResourceList 2.cs" />
+    <Compile Remove="Models\JsonEntities\KingdomResponse 2.cs" />
+    <Compile Remove="Models\JsonEntities\Buildings\UpgradeBuildingsRequest.cs" />
+  </ItemGroup>
+
 </Project>
