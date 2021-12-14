@@ -2,24 +2,19 @@
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
     [Authorize]
     public class TroopController : Controller
     {
-        private AuthenticateService AuthenticateService { get; set; }
         private TroopService TroopService { get; set; }
-        public TroopController(AuthenticateService authService, TroopService troopService)
+        public TroopController(TroopService troopService)
         {
-            AuthenticateService = authService;
             TroopService = troopService;
         }
 
+        [Authorize]
         [HttpGet("kingdoms/{kingdomId}/troops")]
         public IActionResult ListTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
@@ -32,6 +27,7 @@ namespace DumDum.Controllers
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
 
+        [Authorize]
         [HttpPost("kingdoms/{kingdomId}/troops")]
         public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopCreationRequest TroopCreationReq)
         {
