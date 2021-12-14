@@ -1,5 +1,3 @@
-using System;
-
 namespace DumDum.Models.Entities
 {
     public class Resource
