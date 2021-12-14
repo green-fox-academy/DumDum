@@ -36,7 +36,7 @@ namespace DumDum.Controllers
                 return Ok(player);
             }
 
-            return BadRequest();
+            return BadRequest(new ErrorResponse(){Error = "The credentials don't match required"});
         }
 
         [Authorize]
