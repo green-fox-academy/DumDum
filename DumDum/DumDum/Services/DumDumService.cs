@@ -10,10 +10,11 @@ namespace DumDum.Services
     public class DumDumService
     {
         private ApplicationDbContext DbContext { get; set; }
-        
-        public DumDumService(ApplicationDbContext dbContex)
+        private AuthenticateService AuthenticateService { get; set; }
+        public DumDumService(ApplicationDbContext dbContext, AuthenticateService authService)
         {
-            DbContext = dbContex;
+            DbContext = dbContext;
+            AuthenticateService = authService;
         }
 
         public Player GetPlayerByUsername(string username)
@@ -29,7 +30,7 @@ namespace DumDum.Services
         public Player Register(string username, string password, string kingdomName)
         {
             var kingdom = CreateKingdom(kingdomName, username);
-            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
+            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
             DbContext.Players.Add(player);
             DbContext.SaveChanges();
             var playerToReturn = GetPlayerByUsername(username);
@@ -79,7 +80,7 @@ namespace DumDum.Services
 
         internal bool IsKingdomIdValid(int kingdomId)
         {
-            return DbContext.Players.Any(p => p.KingdomId == kingdomId);
+            return DbContext.Players.Any(p => p.KingdomId == kingdomId) && DbContext.Kingdoms.Any(k=>k.KingdomId==kingdomId && k.CoordinateX==0 && k.CoordinateY==0) ;
         }
 
         public Kingdom GetKingdomById(int kingdomId)
@@ -107,29 +108,50 @@ namespace DumDum.Services
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
-        public string RegisterKingdomLogic(KingdomJson kingdomJson, out int statusCode)
+        public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
         {
-            if (AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY) &&
-                IsKingdomIdValid(kingdomJson.KingdomId) &&
-                !DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
+            if (authorization != "")
             {
-                RegisterKingdom(kingdomJson.CoordinateX, kingdomJson.CoordinateY, kingdomJson.KingdomId);
-                statusCode = 200;
-                return "Ok";
-            }
+                AuthRequest request = new AuthRequest();
+                request.Token = authorization.Remove(0, 7);
+                var player = AuthenticateService.GetUserInfo(request);
 
-            if (!AreCoordinatesValid(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
-            {
-                statusCode = 400;
-                return "One or both coordinates are out of valid range(0 - 99).";
-            }
+                if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
+                {
+                    statusCode = 400;
+                    return "Request was not done correctly!";
+                }
+                if (player.KingdomId != kingdomRequest.KingdomId)
+                {
+                    statusCode = 401;
+                    return "This kingdom does not belong to authenticated player";
+                }
+                if (!AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
+                {
+                    statusCode = 400;
+                    return "One or both coordinates are out of valid range(0 - 99).";
+                }
 
-            if (DoCoordinatesExist(kingdomJson.CoordinateX, kingdomJson.CoordinateY))
-            {
-                statusCode = 400;
-                return "Given coordinates are already taken!";
+                if (DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
+                {
+                    statusCode = 400;
+                    return "Given coordinates are already taken!";
+                }
+                if (!IsKingdomIdValid(kingdomRequest.KingdomId))
+                {
+                    statusCode = 400;
+                    return "Kingdom has coordinates assigned already";
+                }
+                if (AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
+                   IsKingdomIdValid(kingdomRequest.KingdomId) &&
+                   !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
+                   player != null && player.KingdomId == kingdomRequest.KingdomId)
+                {
+                    RegisterKingdom(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    statusCode = 200;
+                    return "Ok";
+                }
             }
-
             statusCode = 400;
             return "";
         }
@@ -143,9 +165,9 @@ namespace DumDum.Services
                 {
                     var kingdom = GetKingdomByName(playerRequest.KingdomName);
                     statusCode = 200;
-                    return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
+                    return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
                 }
-                
+
                 statusCode = 400;
                 return null;
             }
@@ -155,7 +177,7 @@ namespace DumDum.Services
                 var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
                 var newKingdom = GetKingdomByName(playerRequest.KingdomName);
                 statusCode = 200;
-                return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
+                return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
             }
 
             statusCode = 400;
@@ -165,5 +187,32 @@ namespace DumDum.Services
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
         }
+        
+        public int GetGoldAmountOfKingdom(int kingdomId)
+        {
+            if (kingdomId != 0)
+            {
+                var gold = DbContext.Resources.FirstOrDefault(r =>
+                    r.KingdomId == kingdomId && r.ResourceType == "Gold");
+                if (gold != null)
+                {
+                    return gold.Amount;
+                }
+
+                return 0;
+            }
+
+            return 0;
+        }
+
+        public void TakeGold(int kingdomId, int amount)
+        {
+            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+            if (gold != null)
+            {
+                gold.Amount = -amount;
+            }
+        }
+
     }
 }

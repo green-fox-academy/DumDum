@@ -5,7 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <Compile Remove="ViewModels\**" />
+    <Content Remove="ViewModels\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
+    <None Remove="ViewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Entities\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +30,14 @@
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\BuildingService 2.cs" />
+    <Compile Remove="Models\JsonEntities\ResourceRequest 2.cs" />
+    <Compile Remove="Models\JsonEntities\ResourceList 2.cs" />
+    <Compile Remove="Models\JsonEntities\KingdomResponse 2.cs" />
+    <Compile Remove="Models\JsonEntities\Buildings\UpgradeBuildingsRequest.cs" />
   </ItemGroup>
 
 </Project>
