@@ -4,6 +4,7 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Services
 {
@@ -13,7 +14,8 @@ namespace DumDum.Services
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
 
-        public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
+        public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService,
+            DumDumService dumService)
         {
             DbContext = dbContext;
             AuthenticateService = authService;
@@ -67,7 +69,7 @@ namespace DumDum.Services
             statusCode = 401;
             return response;
         }
-        
+
         private Building GetBuildingById(int buildingId)
         {
             return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
@@ -183,6 +185,69 @@ namespace DumDum.Services
 
             statusCode = code;
             DbContext.SaveChanges();
+        }
+
+        public Kingdom FindPlayerByKingdomId(int id)
+        {
+            var kingdom = DbContext.Kingdoms.Include(p => p.Player)
+                .Include(r => r.Resources)
+                .FirstOrDefault(k => k.KingdomId == id);
+            return kingdom;
+        }
+
+        public int BuildingPrice(string building)
+        {
+            BuildingList response = new BuildingList();
+            Dictionary<string, int> buildingCosts = new Dictionary<string, int>();
+            buildingCosts.Add("farm", 60);
+            buildingCosts.Add("mine", 80);
+            buildingCosts.Add("walls", 100);
+            buildingCosts.Add("academy", 140);
+            buildingCosts.Add("barracks", 130);
+            buildingCosts.Add("townhall", 120);
+            return buildingCosts[building];
+        }
+
+        public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
+        {
+            BuildingList response = new BuildingList();
+            var kingdom = FindPlayerByKingdomId(id);
+
+            AuthRequest authRequest = new AuthRequest() {Token = authorization};
+            var gold = kingdom.Resources.FirstOrDefault(r => r.ResourceType == "Gold");
+
+            var player = AuthenticateService.GetUserInfo(authRequest);
+            if (player == null)
+            {
+                statusCode = 401;
+            }
+
+            if (building.ToLower() is not ("farm" or "mine" or "walls" or "academy" or "barracks" or "townhall"))
+            {
+                statusCode = 406;
+                return null;
+            }
+
+            if (gold?.Amount < BuildingPrice(building))
+            {
+                statusCode = 400;
+            }
+
+            else
+            {
+                var build = DbContext.Buildings.Add(new Building()
+                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,});
+                DbContext.SaveChanges();
+                response.BuildingId = build.Entity.BuildingId;
+                response.BuildingType = building;
+                response.Level = 1;
+                response.Hp = 1;
+                response.StartedAt = 112;
+                response.FinishedAt = 123;
+                statusCode = 200;
+            }
+
+            return response;
         }
     }
 }

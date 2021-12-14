@@ -76,5 +76,52 @@ namespace TestProject1
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
         }
+                [Fact]
+        public void AddBuilding_ShouldReturnOk()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "farm"});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings");
+            request.Method = HttpMethod.Post;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public void AddBuilding_ShouldReturnTypeIsRequired()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "church"});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings");
+            request.Method = HttpMethod.Post;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
+        }
+        [Fact]
+        public void AddBuilding_Return404()
+        {
+            var request = new HttpRequestMessage();
+
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "farm"});
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings");
+            request.Method = HttpMethod.Post;
+            request.Content = requestContent;
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
     }
 }
