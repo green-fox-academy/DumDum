@@ -187,5 +187,32 @@ namespace DumDum.Services
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
         }
+        
+        public int GetGoldAmountOfKingdom(int kingdomId)
+        {
+            if (kingdomId != 0)
+            {
+                var gold = DbContext.Resources.FirstOrDefault(r =>
+                    r.KingdomId == kingdomId && r.ResourceType == "Gold");
+                if (gold != null)
+                {
+                    return gold.Amount;
+                }
+
+                return 0;
+            }
+
+            return 0;
+        }
+
+        public void TakeGold(int kingdomId, int amount)
+        {
+            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+            if (gold != null)
+            {
+                gold.Amount = -amount;
+            }
+        }
+
     }
 }

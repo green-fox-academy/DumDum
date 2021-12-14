@@ -35,5 +35,24 @@ namespace DumDum.Controllers
             }
             return Ok(response);
         }
+        
+        [Authorize]
+        [HttpPut("kingdoms/{kingdomId=int}/buildings/{buildingId=int}")]
+        public IActionResult UpgradeBuildings([FromHeader] string authorization, [FromRoute] int kingdomId, int buildingId)
+        {
+            int statusCode;
+            var response = BuildingService.UpgradeBuildingsLogic(authorization, kingdomId,buildingId,out statusCode);
+
+            if (statusCode == 401)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+            } 
+            if(statusCode == 400)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "You don't have enough gold to upgrade that!" });
+            }
+            return Ok(response);
+        }
+
     }
 }
