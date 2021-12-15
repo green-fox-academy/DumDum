@@ -216,5 +216,21 @@ namespace DumDum.Services
             }
         }
 
+        public int GetFoodAmountOfKingdom(int kingdomId)
+        {
+            if (kingdomId != 0)
+            {
+                var food = DbContext.Resources.FirstOrDefault(r =>
+                    r.KingdomId == kingdomId && r.ResourceType == "Food");
+                if (food != null)
+                {
+                    return food.Amount;
+                }
+
+                return 0;
+            }
+
+            return 0;
+        }
     }
 }

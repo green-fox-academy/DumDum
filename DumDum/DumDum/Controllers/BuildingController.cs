@@ -20,12 +20,11 @@ namespace DumDum.Controllers
         }
 
         [Authorize]
-        [HttpGet("kingdoms/{id=int}/buildings")]
-        public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int Id)
+        [HttpGet("kingdoms/{kingdomId=int}/buildings")]
+        public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
             int statusCode;
-            var response = BuildingService.ListBuildings(authorization, Id, out statusCode);
-            TimeService.GetCycle(1);
+            var response = BuildingService.ListBuildings(authorization, kingdomId, out statusCode);
 
 
             if (statusCode == 401)
