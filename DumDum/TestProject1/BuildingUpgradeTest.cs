@@ -53,7 +53,7 @@ namespace TestProject1
         public void UpgradeBuildingsReturns400Error()
         {
             var request = new HttpRequestMessage();
-            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+            var tokenResult = TestLoginReturnToken("", "catcatcat");
 
             var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1, BuildingId = 1});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");

@@ -83,15 +83,20 @@ namespace DumDum.Services
             {
                 var building = GetBuildingById(buildingId);
                 Levelup(kingdomId, buildingId, out statusCode);
-                return new UpgradeBuildingsResponse()
+                if (statusCode == 200)
                 {
-                    Id = building.BuildingId,
-                    Type = building.BuildingType,
-                    Level = building.Level,
-                    Hp = building.Hp,
-                    StartedAt = building.StartedAt,
-                    FinishedAt = building.FinishedAt
-                };
+                    return new UpgradeBuildingsResponse()
+                    {
+                        Id = building.BuildingId,
+                        Type = building.BuildingType,
+                        Level = building.Level,
+                        Hp = building.Hp,
+                        StartedAt = building.StartedAt,
+                        FinishedAt = building.FinishedAt
+                    }; 
+                }
+
+                return new UpgradeBuildingsResponse();
             }
 
             statusCode = 401;
@@ -103,6 +108,10 @@ namespace DumDum.Services
             var code = 0;
             var building = GetBuildingById(buildingId);
             if (building is null)
+            {
+                code = 404;
+            }
+            else
             {
                 var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
                 switch (building.BuildingType)
@@ -177,10 +186,8 @@ namespace DumDum.Services
 
                         break;
                 }
-
-                code = 404;
             }
-
+            
             statusCode = code;
             DbContext.SaveChanges();
         }
