@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using DumDum;
@@ -9,11 +11,11 @@ using Xunit;
 
 namespace TestProject1
 {
-    public class KingdomRegistrationPutTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class KingdomTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         private HttpClient HttpClient { get; set; }
 
-        public KingdomRegistrationPutTest(WebApplicationFactory<Startup> factory)
+        public KingdomTest(WebApplicationFactory<Startup> factory)
         {
             HttpClient = factory.CreateClient();
         }
@@ -91,6 +93,49 @@ namespace TestProject1
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
             Assert.Equal(expectedResult.Error, responseData.Error);
+        }
+        [Fact]
+        public void ListingAllKingdoms_ReturnsOKAndCorrectJson()
+        {
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/kingdoms");
+            request.Method = HttpMethod.Get;
+
+            KingdomsListResponse requestBody = new KingdomsListResponse();
+
+            requestBody.Kingdoms = new List<KingdomResponse>()
+            {
+                new KingdomResponse()
+                {
+                KingdomId = 1,
+                KingdomName = "Nya Nya Land",
+                Ruler = "Nya",
+                Population = 0,
+                Location = new DumDum.Models.Entities.Location()
+                    {
+                        CoordinateX = 10,
+                        CoordinateY = 10,
+                    }
+                }
+            };
+
+            var requestBodyContent = JsonConvert.SerializeObject(requestBody);
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            KingdomsListResponse responseDataObj = JsonConvert.DeserializeObject<KingdomsListResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Kingdoms[0].KingdomName,responseDataObj.Kingdoms[0].KingdomName);
+
         }
     }
 }

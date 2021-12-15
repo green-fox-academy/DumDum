@@ -83,11 +83,11 @@ namespace DumDum.Controllers
         {
             var kingdoms = DumDumService.GetAllKingdoms();
 
-            if(kingdoms != null && kingdoms.Kingdoms.Any())
+            if (kingdoms == null)
             {
-                return Ok(kingdoms);
+                return StatusCode(500);
             }
-            return NotFound();
+            return Ok(kingdoms);
         }
 
         [Authorize]

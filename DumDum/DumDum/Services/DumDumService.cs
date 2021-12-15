@@ -170,7 +170,6 @@ namespace DumDum.Services
 
             KingdomsListResponse response = new KingdomsListResponse();
 
-
             response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
             {
                 KingdomId = k.KingdomId,
