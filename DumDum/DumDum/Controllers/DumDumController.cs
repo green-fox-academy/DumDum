@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
 using Newtonsoft.Json;
@@ -25,12 +20,6 @@ namespace DumDum.Controllers
             DetailService = detailService;
         }
 
-        [Route("")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [AllowAnonymous]
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerRequest playerRequest)
@@ -43,21 +32,21 @@ namespace DumDum.Controllers
                 return Ok(player);
             }
 
-            return BadRequest();
+            return BadRequest(new ErrorResponse(){Error = "The credentials don't match required"});
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPut("registration")]
-        public IActionResult RegisterKingdom([FromBody] KingdomJson kingdomJson)
+        public IActionResult RegisterKingdom([FromHeader] string authorization, [FromBody] KingdomRegistrationRequest kingdomRequest)
         {
             int statusCode;
-            var message = DumDumService.RegisterKingdomLogic(kingdomJson, out statusCode);
+            var message = DumDumService.RegisterKingdomLogic(authorization, kingdomRequest, out statusCode);
 
             if (statusCode == 200)
             {
-                return Ok(new StatusResponse{ Status = "Ok" });
+                return Ok(new StatusResponse { Status = "Ok" });
             }
-            return StatusCode(statusCode, new ErrorResponse{ Error = message });
+            return StatusCode(statusCode, new ErrorResponse { Error = message });
         }
 
         [Authorize]

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -20,23 +19,40 @@ namespace TestProject1
             HttpClient = factory.CreateClient();
         }
 
+        public string TestLoginReturnToken(string userName, string password)
+        {
+            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            string contentResponse = response.Content.ReadAsStringAsync().Result;
+            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
+            string tokenResult = token.Token;
+            return tokenResult;
+        }
+
         [Fact]
-        public void HttpPutRegistration_ReturnsStatusOkAndCorrectJSON()
+        public void HttpPutRegistration_ReturnsStatusOkAndCorrectResponse()
         {
             //arrange
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             StatusResponse expectedStatusResult = new();
             expectedStatusResult.Status = "Ok";
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
-            KingdomJson requestBody = new();
-            requestBody.CoordinateY = 50;
-            requestBody.CoordinateX = 50;
+            KingdomRegistrationRequest requestBody = new();
+            requestBody.CoordinateY = 88;
+            requestBody.CoordinateX = 88;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.Method = HttpMethod.Put;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
 
             //act
-            HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
+            var response = HttpClient.SendAsync(request).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
             StatusResponse responseData = JsonConvert.DeserializeObject<StatusResponse>(responseBodyContent);
 
@@ -46,22 +62,28 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectJson1()
+        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse1()
         {
             //arrange
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             ErrorResponse expectedError = new();
             expectedError.Error = "One or both coordinates are out of valid range(0 - 99).";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
-            KingdomJson requestBody = new();
-            requestBody.CoordinateY = 104;
-            requestBody.CoordinateX = 4;
+            KingdomRegistrationRequest requestBody = new();
+            requestBody.CoordinateY = 88;
+            requestBody.CoordinateX = 88;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.Method = HttpMethod.Put;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
 
             //act
-            HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
+            var response = HttpClient.SendAsync(request).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
             ErrorResponse responseData = JsonConvert.DeserializeObject<ErrorResponse>(responseBodyContent);
 
@@ -71,28 +93,34 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectJson2()
+        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse2()
         {
             //arrange
-            ErrorResponse expectedResult = new();
-            expectedResult.Error = "Given coordinates are already taken!";
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+            ErrorResponse expectedError = new();
+            expectedError.Error = "Given coordinates are already taken!";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
-            KingdomJson requestBody = new();
-            requestBody.CoordinateY = 10;
-            requestBody.CoordinateX = 10;
+            KingdomRegistrationRequest requestBody = new();
+            requestBody.CoordinateY = 88;
+            requestBody.CoordinateX = 88;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.Method = HttpMethod.Put;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
 
             //act
-            HttpResponseMessage response = HttpClient.PutAsync("registration", requestContent).Result;
+            var response = HttpClient.SendAsync(request).Result;
             string responseBodyContent = response.Content.ReadAsStringAsync().Result;
             ErrorResponse responseData = JsonConvert.DeserializeObject<ErrorResponse>(responseBodyContent);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedResult.Error, responseData.Error);
+            Assert.Equal(expectedError.Error, responseData.Error);
         }
         [Fact]
         public void ListingAllKingdoms_ReturnsOKAndCorrectJson()

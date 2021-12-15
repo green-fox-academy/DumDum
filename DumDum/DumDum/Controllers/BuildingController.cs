@@ -1,12 +1,7 @@
 ﻿using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Controllers
 {
@@ -35,5 +30,29 @@ namespace DumDum.Controllers
             }
             return Ok(response);
         }
+        
+        [Authorize]
+        [HttpPut("kingdoms/{kingdomId=int}/buildings/{buildingId=int}")]
+        public IActionResult UpgradeBuildings([FromHeader] string authorization, [FromRoute] int kingdomId, int buildingId)
+        {
+            int statusCode;
+            var response = BuildingService.UpgradeBuildingsLogic(authorization, kingdomId,buildingId,out statusCode);
+
+            if (statusCode == 401)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+            } 
+            if(statusCode == 400)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "You don't have enough gold to upgrade that!" });
+            }
+
+            if (statusCode == 404)
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "Kingdom not found" });
+            }
+            return Ok(response);
+        }
+
     }
 }
