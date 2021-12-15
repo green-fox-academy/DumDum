@@ -8,6 +8,5 @@ namespace DumDum.Models.Entities
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
         public LastChange LastChange { get; set; }
-        
     }
 }

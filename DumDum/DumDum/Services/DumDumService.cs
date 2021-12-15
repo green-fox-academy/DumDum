@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Web.Helpers;
 using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
@@ -54,17 +55,10 @@ namespace DumDum.Services
             return kingdom;
         }
 
-        public bool IsValid(string username, string password)
+        public bool AreCredentialsValid(string username, string password)
         {
-            if (!string.IsNullOrEmpty(username) && DbContext.Players.Any(p => p.Username != username) &&
-                !string.IsNullOrWhiteSpace(username))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return DbContext.Players.Any(p => p.Username != username) &&
+                !string.IsNullOrWhiteSpace(username) && password.Length >= 8 ;
         }
 
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
@@ -160,22 +154,30 @@ namespace DumDum.Services
         {
             if (playerRequest.KingdomName is not null)
             {
-                var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
-                if (IsValid(playerRequest.Username, playerRequest.Password))
+                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
                 {
-                    var kingdom = GetKingdomByName(playerRequest.KingdomName);
+                    var hashedPassword = Crypto.HashPassword(playerRequest.Password);
+                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName);
+                    if (player is null)
+                    {
+                        statusCode = 400;
+                        return null;
+                    }
                     statusCode = 200;
                     return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
                 }
-
                 statusCode = 400;
                 return null;
             }
 
-            if (IsValid(playerRequest.Username, playerRequest.Password))
+            if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
             {
                 var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
-                var newKingdom = GetKingdomByName(playerRequest.KingdomName);
+                if (player is null)
+                {
+                    statusCode = 400;
+                    return null;
+                }
                 statusCode = 200;
                 return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
             }

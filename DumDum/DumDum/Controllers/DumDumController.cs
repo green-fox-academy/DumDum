@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
 
@@ -36,7 +31,7 @@ namespace DumDum.Controllers
                 return Ok(player);
             }
 
-            return BadRequest();
+            return BadRequest(new ErrorResponse(){Error = "The credentials don't match required"});
         }
 
         [Authorize]

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DumDum.Models.Entities
+﻿namespace DumDum.Models.Entities
 {
     public class Building
     {
