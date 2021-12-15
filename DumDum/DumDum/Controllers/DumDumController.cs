@@ -11,12 +11,14 @@ namespace DumDum.Controllers
         private DumDumService DumDumService { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DetailService DetailService { get; set; }
+        private TimeService TimeService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, TimeService timeService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
             DetailService = detailService;
+            TimeService = timeService;
         }
 
         [AllowAnonymous]
@@ -25,7 +27,7 @@ namespace DumDum.Controllers
         {
             int statusCode;
             var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
-
+            //TimeService.GetRegistrationTime();
             if (statusCode == 200)
             {
                 return Ok(player);
@@ -38,6 +40,7 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromHeader] string authorization, [FromBody] KingdomRegistrationRequest kingdomRequest)
         {
+            
             int statusCode;
             var message = DumDumService.RegisterKingdomLogic(authorization, kingdomRequest, out statusCode);
 

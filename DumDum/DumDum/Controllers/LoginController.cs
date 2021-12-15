@@ -7,7 +7,7 @@ namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService Service { get; set; }
+        private LoginService LoginService { get; set; }
         private TimeService TimeService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
 
@@ -23,8 +23,8 @@ namespace DumDum.Controllers
         public IActionResult Login([FromBody] LoginRequest player)
         {
             int statusCode;
-            var message = Service.Login(player, out statusCode);
-            TimeService.GetRegistrationTime(1);
+            var message = LoginService.Login(player, out statusCode);
+            
 
             if (statusCode == 200)
             {

@@ -23,15 +23,15 @@ namespace DumDum.Services
             return DbContext.LastChanges.Where(x => x.PlayerId == PlayerId).FirstOrDefault();
         }
 
-        public void GetRegistrationTime(int id)
+        public void GetRegistrationTime(string username)             //do kingdomregistration
         {
             int TimeOfPlayerRegistration = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             var time = new LastChange()
             {
                 RegistrationTime = TimeOfPlayerRegistration,
                 LastChangeTime = TimeOfPlayerRegistration,
-                Player = DumDumService.GetPlayerById(id),
-                PlayerId = DumDumService.GetPlayerById(id).PlayerId
+                Player = DumDumService.GetPlayerByUsername(username),
+                PlayerId = DumDumService.GetPlayerByUsername(username).PlayerId
             };
             DbContext.LastChanges.Add(time);
             DbContext.SaveChanges();
@@ -44,7 +44,6 @@ namespace DumDum.Services
 
         public long GetCycle(int id)
         {
-
             int TimeNow = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
             var time = GetPlayersTime(id);
@@ -53,9 +52,9 @@ namespace DumDum.Services
             var DifferenceBettweenTimes = TimeNow - TimeOfLastChange;
             var Cycles = DifferenceBettweenTimes / 600; //aktualni cas minus cas posledni zmeny
 
-            //var ModuloResult = DifferenceBettweenTimes % 600;
-            //var TimeOfLastChange2 = TimeOfLastChange-ModuloResult;
-            time.LastChangeTime = TimeNow;
+            var ModuloResult = DifferenceBettweenTimes % 600;
+            var TimeOfLastChangeWithRestOfCycle = TimeOfLastChange-ModuloResult;
+            time.LastChangeTime = TimeOfLastChangeWithRestOfCycle;
             DbContext.SaveChanges();
 
             return Cycles;
