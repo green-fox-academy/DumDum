@@ -14,5 +14,6 @@
         public int Consumption { get; set; }
         public int Defense { get; set; }
         public int MaxStorage { get; set; }
+        public int DefBoost { get; set; }
     }
 }

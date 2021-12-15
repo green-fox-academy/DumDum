@@ -210,6 +210,66 @@ namespace DumDum.Services
             return buildingCosts[building];
         }
 
+        public BuildingList BuildingTypeCreator(string building, int id)
+        {
+            var kingdom = FindPlayerByKingdomId(id);
+            BuildingList response = new BuildingList();
+            if (building.ToLower() == "farm")
+            {
+                var build = DbContext.Buildings.Add(new Building()
+                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, Production = 6, Consumption = 1});
+                DbContext.SaveChanges();
+                response.BuildingId = build.Entity.BuildingId;
+                response.BuildingType = building;
+                response.Level = build.Entity.Level;
+                response.Hp = build.Entity.Level;
+                response.StartedAt = 112;
+                response.FinishedAt = 123;
+                response.Production = 6;
+                response.Consumption = 1;
+            }
+            if (building.ToLower() == "mine")
+            {
+                var build = DbContext.Buildings.Add(new Building()
+                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, Production = 5, Consumption = 1});
+                DbContext.SaveChanges();
+                response.BuildingId = build.Entity.BuildingId;
+                response.BuildingType = building;
+                response.Level = build.Entity.Level;
+                response.Hp = build.Entity.Level;
+                response.StartedAt = 112;
+                response.FinishedAt = 123;
+            }
+
+            if (building.ToLower() == "academy")
+            {
+                var build = DbContext.Buildings.Add(new Building()
+                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, Consumption = 1});
+                DbContext.SaveChanges();
+                response.BuildingId = build.Entity.BuildingId;
+                response.BuildingType = building;
+                response.Level = build.Entity.Level;
+                response.Hp = build.Entity.Level;
+                response.StartedAt = 112;
+                response.FinishedAt = 123;
+            }
+            if (building.ToLower() == "wall")
+            {
+                var build = DbContext.Buildings.Add(new Building()
+                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, Defense = 20, Consumption = 1, DefBoost = 2});
+                DbContext.SaveChanges();
+                response.BuildingId = build.Entity.BuildingId;
+                response.BuildingType = building;
+                response.Level = build.Entity.Level;
+                response.Hp = build.Entity.Level;
+                response.StartedAt = 112;
+                response.FinishedAt = 123;
+            }
+
+            return response;
+        }
+
+
         public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
         {
             BuildingList response = new BuildingList();
@@ -233,21 +293,12 @@ namespace DumDum.Services
             if (gold?.Amount < BuildingPrice(building))
             {
                 statusCode = 400;
+                return null;
             }
 
-            else
-            {
-                var build = DbContext.Buildings.Add(new Building(){BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom});
-                DbContext.SaveChanges();
-                response.BuildingId = build.Entity.BuildingId;
-                response.BuildingType = building;
-                response.Level = build.Entity.Level;
-                response.Hp = build.Entity.Level;
-                response.StartedAt = 112;
-                response.FinishedAt = 123;
-                statusCode = 200;
-            }
-
+            statusCode = 200;
+            response = BuildingTypeCreator(building, id);
+            
             return response;
         }
     }
