@@ -141,7 +141,6 @@ namespace DumDum.Services
                         Speed = 1,
                         Cost = 20
                     };
-                    break;
 
                 case "phalanx":
                     return new()
