@@ -111,6 +111,24 @@ namespace DumDum.Services
             return new List<TroopsResponse>();
         }
 
+        internal Troop CreateNewTroop(string troopType)
+        {
+            var requiredTroopType = DbContext.TroopTypes.Where(t => t.TroopType == troopType.ToLower()).Select(t => t.TroopTypeId).FirstOrDefault();
+            var newTroopFromRules = DbContext.TroopLevel.Where(t => t.TroopTypeId == requiredTroopType && t.Level == 1).FirstOrDefault();
+            return new()
+            {
+                TroopType = troopType.ToLower(),
+                Level = newTroopFromRules.Level,
+                HP = newTroopFromRules.HP,
+                Attack = newTroopFromRules.Attack,
+                Defence = newTroopFromRules.Defence,
+                CarryCap = newTroopFromRules.CarryCap,
+                Consumption = newTroopFromRules.Consumption,
+                Speed = newTroopFromRules.Speed,
+                Cost = newTroopFromRules.Cost
+            };
+        }
+
         internal AuthResponse CheckToken(string authorization)
         {
             var player = new AuthResponse();
@@ -123,87 +141,6 @@ namespace DumDum.Services
             }
             return player;
         }
-
-        internal Troop CreateNewTroop(string troopType)
-        {
-            switch (troopType)
-            {
-                case "axeman":
-                    return new()
-                    {
-                        TroopType = "axeman",
-                        Level = 1,
-                        HP = 1,
-                        Attack = 8,
-                        Defence = 5,
-                        CarryCap = 30,
-                        Consumption = 1,
-                        Speed = 1,
-                        Cost = 20
-                    };
-
-                case "phalanx":
-                    return new()
-                    {
-                        TroopType = "phalanx",
-                        Level = 1,
-                        HP = 1,
-                        Attack = 5,
-                        Defence = 8,
-                        CarryCap = 30,
-                        Consumption = 1,
-                        Speed = 0.8,
-                        Cost = 20
-                    };
-
-                case "knight":
-                    return new()
-                    {
-                        TroopType = "knight",
-                        Level = 1,
-                        HP = 1,
-                        Attack = 15,
-                        Defence = 10,
-                        CarryCap = 50,
-                        Consumption = 2,
-                        Speed = 1.6,
-                        Cost = 50
-                    };
-
-                case "spy":
-                    return new()
-                    {
-                        TroopType = "spy",
-                        Level = 1,
-                        HP = 1,
-                        Attack = 4,
-                        Defence = 3,
-                        CarryCap = 0,
-                        Consumption = 2,
-                        Speed = 2.5,
-                        Cost = 60
-                    };
-
-                case "senator":
-                    return new()
-                    {
-                        TroopType = "senator",
-                        Level = 1,
-                        HP = 1,
-                        Attack = 0,
-                        Defence = 0,
-                        CarryCap = 0,
-                        Consumption = 5,
-                        Speed = 0.5,
-                        SpecialSkills = 25,
-                        Cost = 1800
-                    };
-
-                default:
-                    return new();
-            }
-
-        }
-
+      
     }
 }

@@ -10,6 +10,8 @@ namespace DumDum.Database
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
         public DbSet<Building> Buildings { get; set; }
+        public DbSet<TroopLevelRules> TroopLevel { get; set; }
+        public DbSet<TroopTypesRules> TroopTypes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
