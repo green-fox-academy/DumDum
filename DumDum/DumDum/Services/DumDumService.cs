@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Helpers;
 using Castle.Core.Internal;
@@ -5,6 +6,8 @@ using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+
 
 namespace DumDum.Services
 {
@@ -185,9 +188,33 @@ namespace DumDum.Services
             statusCode = 400;
             return null;
         }
+
+        public KingdomsListResponse GetAllKingdoms()
+        {
+
+            KingdomsListResponse response = new KingdomsListResponse();
+
+            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
+            {
+                KingdomId = k.KingdomId,
+                KingdomName = k.KingdomName,
+                Ruler = k.Player.Username,
+                Population = 0,
+                Location = new Location()
+                {
+                    CoordinateX = k.CoordinateX,
+                    CoordinateY = k.CoordinateY,
+                }
+            }).ToList();
+
+            return response;
+
+        }
+
         public Location AddLocations(Kingdom kingdom)
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
+
         }
         
         public int GetGoldAmountOfKingdom(int kingdomId)
