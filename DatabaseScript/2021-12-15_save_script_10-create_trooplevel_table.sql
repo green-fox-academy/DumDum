@@ -7,7 +7,7 @@ CREATE TABLE `trooplevel` (
   `Attack` double DEFAULT NULL,
   `Defence` double DEFAULT NULL,
   `CarryCap` int DEFAULT NULL,
-  `Consumption` int DEFAULT NULL,
+  `Consumption` double DEFAULT NULL,
   `Speed` double DEFAULT NULL,
   `SpecialSkills` int DEFAULT NULL,
   `HP` int DEFAULT NULL,
