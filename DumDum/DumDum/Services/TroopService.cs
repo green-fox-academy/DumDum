@@ -22,7 +22,7 @@ namespace DumDum.Services
         internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
         {
             var response = new GetTroopsResponse();
-            var player = CheckToken(authorization);
+            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
             if (player != null && player.KingdomId == kingdomId)
             {
@@ -67,12 +67,12 @@ namespace DumDum.Services
 
         internal List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
         {
-            var player = CheckToken(authorization);
+            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var createdTroops = new List<TroopsResponse>();
-            var possibleTroops = DbContext.TroopTypes.Select(t => t.TroopType).ToList();
+            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType).ToList();
 
-            if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroops.Contains(troopCreationReq.Type.ToLower()))
+            if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
                 statusCode = 404;
                 return new List<TroopsResponse>();
@@ -129,19 +129,6 @@ namespace DumDum.Services
         internal int GetTroopCost(string troopType)
         {
             return DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower()).FirstOrDefault().Cost;
-        }
-
-        internal AuthResponse CheckToken(string authorization)
-        {
-            var player = new AuthResponse();
-            if (authorization != "")
-            {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                player = AuthenticateService.GetUserInfo(request);
-                return player;
-            }
-            return player;
         }
     }
 }

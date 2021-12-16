@@ -91,7 +91,7 @@ namespace DumDum.Services
             return new Kingdom() { };
         }
 
-        public Kingdom RegisterKingdom(int coordinateX, int coordinateY, int kingdomId)
+        public Kingdom RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId)
         {
             var kingdom = GetKingdomById(kingdomId);
             kingdom.CoordinateX = coordinateX;
@@ -105,7 +105,7 @@ namespace DumDum.Services
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
-        public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
+        public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
         {
             if (authorization != "")
             {
@@ -144,7 +144,7 @@ namespace DumDum.Services
                    !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
                    player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
-                    RegisterKingdom(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
                     statusCode = 200;
                     return "Ok";
                 }
@@ -214,7 +214,6 @@ namespace DumDum.Services
         public Location AddLocations(Kingdom kingdom)
         {
             return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
-
         }
         
         public int GetGoldAmountOfKingdom(int kingdomId)
