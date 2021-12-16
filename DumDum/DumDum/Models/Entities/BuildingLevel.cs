@@ -18,5 +18,6 @@
         public long Catapult { get; set; }
         public long TheSpy { get; set; }
         public long Senator { get; set; }
+        public BuildingType BuildingType { get; set; }
     }
 }

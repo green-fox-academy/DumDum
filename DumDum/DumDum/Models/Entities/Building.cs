@@ -10,10 +10,5 @@
         public long FinishedAt { get; set; }
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
-        public int Production { get; set; }
-        public int Consumption { get; set; }
-        public int Defense { get; set; }
-        public int MaxStorage { get; set; }
-        public int DefBoost { get; set; }
     }
 }
