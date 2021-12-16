@@ -70,7 +70,7 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var createdTroops = new List<TroopsResponse>();
-            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType).ToList();
+            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
 
             if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
