@@ -1,4 +1,5 @@
 ﻿using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Troops;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,31 @@ namespace DumDum.Controllers
                 return BadRequest(new ErrorResponse { Error = "Request was not done correctly!" });
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+        }
+
+        [Authorize]
+        [HttpPut("kingdoms/{kingdomId}/troops")]
+        public IActionResult UpgradeTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopUpdateRequest TroopUpdateReq)
+        {
+            var response = TroopService.UpgradeTroops(authorization, TroopUpdateReq, kingdomId, out int statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(new StatusResponse() { Status = response });
+            }
+            if (statusCode == 400)
+            {
+                return BadRequest(new ErrorResponse { Error = response });
+            }
+            if (statusCode == 402)
+            {
+                return BadRequest(new ErrorResponse { Error = response });
+            }
+            if (statusCode == 404)
+            {
+                return BadRequest(new ErrorResponse { Error = response });
+            }
+            return Unauthorized(new ErrorResponse { Error = response });
         }
     }
 }

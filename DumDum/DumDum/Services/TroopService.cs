@@ -1,9 +1,11 @@
 ﻿using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Troops;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace DumDum.Services
 {
@@ -65,6 +67,43 @@ namespace DumDum.Services
             return new List<TroopsResponse>();
         }
 
+        internal string UpgradeTroops(string authorization, TroopUpdateRequest troopUpdateReq, int kingdomId, out int statusCode)
+        {
+            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
+            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
+            var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower());
+            var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
+            var troopIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
+
+            if (string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
+            {
+                statusCode = 404;
+                return "Request was not done correctly!";
+            }
+            if (player != null && player.KingdomId == kingdomId)
+            {
+                if (amountOfTroopsToUpdate == 0)
+                {
+                    statusCode = 402;
+                    return "You don't have this type of troops!";
+                }
+                if (goldAmount < troopUpgradeCost * amountOfTroopsToUpdate)
+                {
+                    statusCode = 400;
+                    return "You don't have enough gold to upgrade this type of troops!";
+                }
+
+                DbContext.Troops.Where(t => t.TroopTypeId == troopIdToBeUpgraded).ToList().ForEach(t => t.Level = t.Level + 1);
+                DbContext.SaveChanges();
+                DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
+                statusCode = 200;
+                return "Ok";
+            }
+            statusCode = 401;
+            return "This kingdom does not belong to authenticated player";
+        }
+
         internal List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
@@ -79,7 +118,7 @@ namespace DumDum.Services
             }
             if (player != null && player.KingdomId == kingdomId)
             {
-                int newTroopCost = GetTroopCost(troopCreationReq.Type.ToLower());
+                int newTroopCost = GetTroopCreationCost(troopCreationReq.Type.ToLower());
 
                 if (goldAmount < newTroopCost * troopCreationReq.Quantity)
                 {
@@ -126,9 +165,56 @@ namespace DumDum.Services
             };
         }
 
-        internal int GetTroopCost(string troopType)
+        internal int GetTroopCreationCost(string troopType)
         {
-            return DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower()).FirstOrDefault().Cost;
+            var troopToCreate = DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower()).FirstOrDefault();
+            if (troopToCreate != null)
+            {
+                return troopToCreate.Cost;
+            }
+            return 0;
+        }
+
+        internal int GetTroopUpdateCost(string troopType)
+        {
+            var currentLevelOfTroops = GetTroupTypeIdByTroupTypeName(troopType.ToLower());
+            var troopToUpdate = DbContext.TroopLevel.Where(t => t.TroopTypeId == GetTroupTypeIdByTroupTypeName(troopType.ToLower()) && t.Level == currentLevelOfTroops + 1)
+                    .FirstOrDefault();
+            if (troopToUpdate != null)
+            {
+                return troopToUpdate.Cost;
+            }
+            return 0;
+        }
+
+        internal int CountTroopsByType(string troopType)
+        {
+            var troopsCountByType = DbContext.Troops.Where(t => t.TroopType.TroopType == troopType.ToLower());
+            if (troopsCountByType != null)
+            {
+                return troopsCountByType.Count();
+            }
+            return 0;
+        }
+
+        internal int GetTroupTypeIdByTroupTypeName(string troopType)
+        {
+            var TroupTypeIdByTroupTypeName = DbContext.TroopTypes.Where(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
+            if (TroupTypeIdByTroupTypeName != null)
+            {
+                return TroupTypeIdByTroupTypeName.TroopTypeId;
+            }
+            return 0;
+        }
+
+        internal int GetTownhallLevel()
+        {
+            var townhallLevel = DbContext.TroopTypes.Where(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
+            if (TroupTypeIdByTroupTypeName != null)
+            {
+                return TroupTypeIdByTroupTypeName.TroopTypeId;
+            }
+            return 0;
         }
     }
 }
