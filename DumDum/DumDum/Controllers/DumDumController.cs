@@ -3,6 +3,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
+using Newtonsoft.Json;
 
 namespace DumDum.Controllers
 {
@@ -64,6 +65,18 @@ namespace DumDum.Controllers
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
+        }
+
+        [HttpGet("kingdoms")]
+        public IActionResult KingdomsList()
+        {
+            var kingdoms = DumDumService.GetAllKingdoms();
+
+            if (kingdoms == null)
+            {
+                return StatusCode(500);
+            }
+            return Ok(kingdoms);
         }
 
         [Authorize]
