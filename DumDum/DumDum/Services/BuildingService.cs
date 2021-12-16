@@ -219,6 +219,7 @@ namespace DumDum.Services
         
         public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
         {
+            var buildingType = FindLevelingByBuildingType(building.ToLower());
             BuildingList response = new BuildingList();
             var kingdom = FindPlayerByKingdomId(id);
 
@@ -237,15 +238,14 @@ namespace DumDum.Services
                 return null;
             }
 
-            if (gold?.Amount < BuildingPrice(building))
+            if (gold?.Amount < buildingType.BuildingLevel.Cost)
             {
                 statusCode = 400;
                 return null;
             }
-
-            var buildingType = FindLevelingByBuildingType(building.ToLower());
             var build = DbContext.Buildings.Add(new Building()
-                    {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom, Hp = 1, Level = buildingType.BuildingLevel.LevelNumber});
+                        {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,
+                        Hp = 1, Level = buildingType.BuildingLevel.LevelNumber});
             DbContext.SaveChanges();
             response.BuildingId = build.Entity.BuildingId;
             response.BuildingType = building;
