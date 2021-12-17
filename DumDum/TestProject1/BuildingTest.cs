@@ -76,5 +76,48 @@ namespace TestProject1
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
         }
+
+        [Fact]
+        public void BuildingLeaderboardReturOKAndLeaderboardList()
+        {
+
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/buildings");
+            request.Method = HttpMethod.Get;
+
+            BuildingsLeaderboardResponse requestBody = new BuildingsLeaderboardResponse();
+
+            requestBody.Result = new List<BuildingPointsResponse>()
+            {
+                new BuildingPointsResponse()
+                {
+                    Ruler = "Nya",
+                    Kingdom = "Nya Nya Land",
+                    Buildings = 3,
+                    Points = 4
+                }
+            };
+
+            var requestBodyContent = JsonConvert.SerializeObject(requestBody);
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            BuildingsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<BuildingsLeaderboardResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Result[0].Ruler, responseDataObj.Result[0].Ruler);
+            Assert.Equal(requestBody.Result[0].Kingdom, responseDataObj.Result[0].Kingdom);
+            Assert.Equal(requestBody.Result[0].Buildings, responseDataObj.Result[0].Buildings);
+            Assert.Equal(requestBody.Result[0].Points, responseDataObj.Result[0].Points);
+
+        }
     }
 }
