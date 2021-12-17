@@ -57,7 +57,9 @@ namespace DumDum.Controllers
         [HttpGet("leaderboards/buildings")]
         public IActionResult BuildingsLeaderboard()
         {
+            var buildingsLeaderboard = BuildingService.GetBuildingsLeaderboard();
 
+            return Ok(buildingsLeaderboard);
         }
 
     }
