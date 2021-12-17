@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DumDum.Controllers
 {
-    [Authorize]
     public class TroopController : Controller
     {
         private TroopService TroopService { get; set; }
@@ -51,7 +50,7 @@ namespace DumDum.Controllers
 
         [Authorize]
         [HttpPut("kingdoms/{kingdomId}/troops")]
-        public IActionResult UpgradeTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopUpdateRequest TroopUpdateReq)
+        public IActionResult UpgradeTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopUpgradeRequest TroopUpdateReq)
         {
             var response = TroopService.UpgradeTroops(authorization, TroopUpdateReq, kingdomId, out int statusCode);
 
@@ -67,7 +66,15 @@ namespace DumDum.Controllers
             {
                 return BadRequest(new ErrorResponse { Error = response });
             }
+            if (statusCode == 403)
+            {
+                return BadRequest(new ErrorResponse { Error = response });
+            }
             if (statusCode == 404)
+            {
+                return BadRequest(new ErrorResponse { Error = response });
+            }
+            if (statusCode == 406)
             {
                 return BadRequest(new ErrorResponse { Error = response });
             }
