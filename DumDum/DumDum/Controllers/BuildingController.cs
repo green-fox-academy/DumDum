@@ -54,5 +54,11 @@ namespace DumDum.Controllers
             return Ok(response);
         }
 
+        [HttpGet("leaderboards/buildings")]
+        public IActionResult BuildingsLeaderboard()
+        {
+
+        }
+
     }
 }
