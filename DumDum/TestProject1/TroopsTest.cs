@@ -1,8 +1,11 @@
 ﻿using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Buildings;
+using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -67,6 +70,47 @@ namespace TestProject1
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
+        }
+
+        [Fact]
+        public void TroopsLeaderboardReturOKAndLeaderboardList()
+        {
+
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/troops");
+            request.Method = HttpMethod.Get;
+
+            TroopsLeaderboardResponse requestBody = new TroopsLeaderboardResponse();
+
+            requestBody.Result = new List<TroopsPointResponse>()
+            {
+                new TroopsPointResponse()
+                {
+                    Ruler = "Nya",
+                    Kingdom = "Nya Nya Land",
+                    Troops = 7,
+                    Points = 0
+                }
+            };
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            TroopsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<TroopsLeaderboardResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Result[0].Ruler, responseDataObj.Result[0].Ruler);
+            Assert.Equal(requestBody.Result[0].Kingdom, responseDataObj.Result[0].Kingdom);
+            Assert.Equal(requestBody.Result[0].Troops, responseDataObj.Result[0].Troops);
+            Assert.Equal(requestBody.Result[0].Points, responseDataObj.Result[0].Points);
+
         }
     }
 }

@@ -102,8 +102,6 @@ namespace TestProject1
                 }
             };
 
-            var requestBodyContent = JsonConvert.SerializeObject(requestBody);
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
             string responseData = response.Content.ReadAsStringAsync().Result;
