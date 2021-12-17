@@ -1,0 +1,1658 @@
+[33mcommit 7c9924ffc3930bbbdc2bb29471c07dd1c63a1fa2[m[33m ([m[1;36mHEAD -> [m[1;32mSSI-93-CreateTroops[m[33m)[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 15 14:11:47 2021 +0100
+
+    Revert "Creating script for DB"
+    
+    This reverts commit 6c723c3aa8855adb25517bae96200127766dcdd1.
+
+[33mcommit 6c723c3aa8855adb25517bae96200127766dcdd1[m[33m ([m[1;31morigin/SSI-93-CreateTroops[m[33m)[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 15 13:11:42 2021 +0100
+
+    Creating script for DB
+
+[33mcommit edfd113ea3c159aa08acf2dcad023206e5185ef6[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 15 08:36:55 2021 +0100
+
+    Removed break from switch
+
+[33mcommit 83d2ea25d99f5680b14c9d96a0a8f2e592406bc7[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 15 08:33:12 2021 +0100
+
+    Moved troop creation function to service
+
+[33mcommit 7a100a1cc1e425c841f180c05bc62c5b03d6c4b5[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 21:46:53 2021 +0100
+
+    Deleted unnecessary class Axeman
+
+[33mcommit 7c4624857f8c78fa02b950e195b7f28a3b65ff76[m
+Merge: de5719b e263464
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 21:43:42 2021 +0100
+
+    Merge branch 'master' into SSI-93-CreateTroops
+
+[33mcommit de5719be0b06c7b8a2f918861388000fb24eb7fe[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 21:41:14 2021 +0100
+
+    Minor code updates
+
+[33mcommit 002a138d509136e40b789bc5a36b414b9d1431ff[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 21:34:35 2021 +0100
+
+    Created script for Troops table extension
+
+[33mcommit 20fe4cafb0fde2e1450cb1d042b69ed1956ba8c4[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 17:40:08 2021 +0100
+
+    Updated Create Troops function
+
+[33mcommit e263464f6d08788958b5443950520b3420ba5f57[m[33m ([m[1;32mmaster[m[33m)[m
+Merge: a22672c 3bd5a03
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Tue Dec 14 15:46:16 2021 +0100
+
+    Merge pull request #37 from green-fox-academy/SSI-92-Wuwime-Upgrade-Building
+    
+    SSI-92 wuwime upgrade building and hashing passwords
+
+[33mcommit 3bd5a03c43792660e6b36f7b6789bba13fb5ad5a[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 14 14:47:11 2021 +0100
+
+    Hashed passwords at register
+
+[33mcommit 03d2e86c090e9f11a5f5b6db4453ed2e13ebb6fa[m
+Merge: c948094 a22672c
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 14:40:38 2021 +0100
+
+    pulled from master
+
+[33mcommit c948094f4b18bd93b898d149116c7a10277df8c5[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 14:38:27 2021 +0100
+
+    Created Axeman class
+
+[33mcommit a137f619c776295c7783bc1ac05db14e08f482de[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 14 13:13:12 2021 +0100
+
+    deleted useless usings, cleaned up the code a little bit
+
+[33mcommit 9253eb4b19dd6d3b9f62542ec4969a2e3e33b399[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 13:10:59 2021 +0100
+
+    Updated service
+
+[33mcommit d2b1a204af8acd517bcb03518eb570c86cc68dba[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 14 12:36:03 2021 +0100
+
+    registration bug fix
+
+[33mcommit a22672c1d1dd978c6d11d5a7f2f8934e88ed97c1[m[33m ([m[1;31morigin/SSI-74-KingdomTroops[m[33m, [m[1;32mSSI-74-KingdomTroops[m[33m)[m
+Merge: cf144e3 578b7fe
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 10:34:31 2021 +0100
+
+    Merge pull request #36 from green-fox-academy/SSI-45-KingdomRegistrationBugFix
+    
+    Ssi 45 kingdom registration bug fix
+
+[33mcommit 578b7fecd9b27c346d31311781373acf851d40d9[m[33m ([m[1;31morigin/SSI-45-KingdomRegistrationBugFix[m[33m, [m[1;32mSSI-45-KingdomRegistrationBugFix[m[33m)[m
+Merge: f8263f0 cf144e3
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 14 10:31:19 2021 +0100
+
+    Merge branch 'master' into SSI-45-KingdomRegistrationBugFix
+
+[33mcommit cf144e3fa42a597b751b97fffe5f83879b00cc0c[m
+Merge: 26d7d43 8a9992f
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Tue Dec 14 10:29:57 2021 +0100
+
+    Merge pull request #35 from green-fox-academy/SSI-92-Wuwime-Upgrade-Building
+
+[33mcommit 8a9992ff44996d77ef1d70fa4aca1f44bf307ced[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 14 10:18:10 2021 +0100
+
+    moved functions from building service to dumdum service
+
+[33mcommit f8263f00156d0ce6211bb7e55865a2994a1416c7[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 22:43:17 2021 +0100
+
+    Added condition for when coordinates already assigned
+
+[33mcommit 9b76d2fd0350c114b0d77ccca866f72f4ff063df[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 22:26:14 2021 +0100
+
+    Added authorization
+
+[33mcommit 131ce6816995179546ec367cd7f43756f52012d0[m
+Merge: d40df86 26d7d43
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:51:15 2021 +0100
+
+    Merge branch 'master' into SSI-92-Wuwime-Upgrade-Building
+
+[33mcommit d40df869c39e557df25d63ee1aa01b56dd1fd1df[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:50:58 2021 +0100
+
+    Added tests for building upgrading
+
+[33mcommit 848fd9f3e0761ead91461e38ff42759ab52b9346[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:14:21 2021 +0100
+
+    Added functions for leveling up and error handling
+
+[33mcommit bae005cbd66857d61fa5cc2b0756f888fd7ab6b8[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:13:34 2021 +0100
+
+    Added new script to update table of buildings
+
+[33mcommit acfc90ce29a449553711d977871c28ec4f30b0e3[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:11:47 2021 +0100
+
+    Added Hp to building model
+
+[33mcommit 11600e44d862c6c4feb7cf71655bef0e2e4d1ff8[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:11:07 2021 +0100
+
+    created json object
+
+[33mcommit 58ee4b1e64e038f115a0d662819a2011989cddef[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 21:10:21 2021 +0100
+
+    created endpoint
+
+[33mcommit bb9d947abfdf880515294031b37625e26346b348[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 16:28:36 2021 +0100
+
+    Created CreateTroops branch
+
+[33mcommit 26d7d4303651e5c2442f66675b378caa6113f07c[m
+Merge: ea6c14f 5f2eb95
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Mon Dec 13 14:35:09 2021 +0100
+
+    Merge pull request #34 from green-fox-academy/SSI-71_Kingdom_Detail
+    
+    Ssi 71 kingdom detail
+
+[33mcommit 5f2eb957c78146c326fdd652b13c2ac50a6ff13c[m[33m ([m[1;31morigin/SSI-71_Kingdom_Detail[m[33m)[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 13 14:15:12 2021 +0100
+
+    repaired task
+
+[33mcommit 5b3c95b84c6686db0ba62d0aeb70996e18d61557[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 13 13:49:40 2021 +0100
+
+    Kingdom details plus tests done
+
+[33mcommit d92c4fb0ccb73a3e9870c79d83718ae1b5f48a36[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 13 13:28:32 2021 +0100
+
+    preparing
+
+[33mcommit e18f2956f14a4505184ee99ae5b7ecd3859479fe[m
+Merge: 7b765d7 ea6c14f
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 13 12:52:05 2021 +0100
+
+    Merge branch 'master' into SSI-71_Kingdom_Details
+    
+    # Conflicts:
+    #       DumDum/DumDum/Services/DumDumService.cs
+
+[33mcommit 7b765d757a843a40ca65be820aef8b263640a2da[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 13 12:49:12 2021 +0100
+
+    kindom details + tests
+
+[33mcommit ea6c14f910053be4ded289b6b3867ef4a56558e9[m
+Merge: 1909503 d5ed2b2
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 13 12:48:50 2021 +0100
+
+    Merge pull request #31 from green-fox-academy/SSI-72-Wuwime-Kingdom-Resources
+
+[33mcommit 19095033609f94de455ee51bb56481b47820cb04[m
+Merge: 28cddbe f8c1e58
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 12:42:16 2021 +0100
+
+    Merge pull request #29 from green-fox-academy/SSI-74-KingdomTroops
+    
+    Ssi 74 kingdom troops
+
+[33mcommit d5ed2b22ad0913cb24f93b6516a7290ec4fdd067[m[33m ([m[1;31morigin/SSI-72-Wuwime-Kingdom-Resources[m[33m)[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 13 10:42:14 2021 +0100
+
+    Added Authenticate service to controller
+
+[33mcommit 1e926b4897e5a51277942aa2d238e788d0481889[m
+Merge: f9b792a 28cddbe
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 13 10:33:05 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+
+[33mcommit f8c1e58b1993df55a83c865d5be9431bf19aec84[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 10:29:08 2021 +0100
+
+    Renamed SQL script
+
+[33mcommit 1ede83785d0a61d1d96a3b86a8e220944bcd84ff[m
+Merge: 4c24bbf 28cddbe
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 10:21:41 2021 +0100
+
+    merged from master
+
+[33mcommit 4c24bbfa93d66d62ed62548a90f3c3a5e3c212d1[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 13 09:57:53 2021 +0100
+
+    Added [Authorize] line
+
+[33mcommit 28cddbee4d5c1302ac68d455967fc688f38812bc[m
+Merge: 87fcc9d ca0e059
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 13 09:12:27 2021 +0100
+
+    Merge pull request #33 from green-fox-academy/SSI-73-MatUrb2-Buildings
+    
+    Ssi 73 mat urb2 buildings
+
+[33mcommit 47bad21a9232e51247f4c7ac682e9f27e60fd0ab[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Sun Dec 12 14:59:01 2021 +0100
+
+    Added tests, fixed minor issues
+
+[33mcommit 6932839d1b7998b558b70b7e341f7d623dfc9dd1[m
+Merge: 589da51 87fcc9d
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Sun Dec 12 14:15:45 2021 +0100
+
+    Merge branch 'master' into SSI-74-KingdomTroops
+
+[33mcommit f9b792a61b6491da9f5c99d6488948eebc4dfce4[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Fri Dec 10 20:54:03 2021 +0100
+
+    Update ResourceController.cs
+
+[33mcommit 717f5aabcbdc64a3cd068fcbc5a3987e28a55f20[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 20:48:46 2021 +0100
+
+    Added tests
+
+[33mcommit ca0e0593cb6bb58b6e5d837dfbbdefa40648ca75[m[33m ([m[1;31morigin/SSI-73-MatUrb2-Buildings[m[33m)[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 20:38:30 2021 +0100
+
+    add error msg
+
+[33mcommit f51796912b5d22f04715c10b23445e6ce3cf014f[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 20:23:14 2021 +0100
+
+    add authorize
+
+[33mcommit 39ffcb0466e65bbe5e8b2492c5304f157725f2cf[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 20:21:31 2021 +0100
+
+    Add BuildingTest
+
+[33mcommit 56fec6ca3c23cf6d3cd76cb28a41062864471dfa[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 17:37:21 2021 +0100
+
+    Fixed anonymous object
+
+[33mcommit 6633d49401c569a785c84e1a606d28eba9eabad6[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 16:53:35 2021 +0100
+
+    fixed Auth service fot it to work, redid controller
+
+[33mcommit 589da518711f2da0461ffffb5f4b710e5847c76e[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 16:20:50 2021 +0100
+
+    Updated Troop Service
+
+[33mcommit e31e3e41c113ae5e020abd5ef81c625de21b3cf9[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 16:03:59 2021 +0100
+
+    Created Authentication for get resources
+
+[33mcommit df33ac99797ed2de6e7f3247bce2c4d5567a30d8[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 15:54:53 2021 +0100
+
+    change annonym error msg to object
+
+[33mcommit 5d0734d1b59cb4d0c5f1f907fe63eaa5d849ec38[m
+Merge: 62ab206 87fcc9d
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 15:50:03 2021 +0100
+
+    Merge branch 'master' into SSI-73-MatUrb2-Buildings
+
+[33mcommit 0db3a3ec1aec593f9aef977a2e4f43aa9549113c[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 15:49:35 2021 +0100
+
+    new endpoint
+
+[33mcommit f9d5fac4412a5dc7785dddad46615f3234a10221[m
+Merge: 57fe232 87fcc9d
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 15:47:44 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+    #       DumDum/TestProject1/UnitTest1.cs
+
+[33mcommit 62ab206a9aa8085ea351015401c786bc8f562384[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 15:47:11 2021 +0100
+
+    add buildingController
+
+[33mcommit 87fcc9dc2c7232a10cc5a7afe75f37c75fb96121[m
+Merge: b8a5ec0 11fb6f3
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Fri Dec 10 15:45:24 2021 +0100
+
+    Merge pull request #30 from green-fox-academy/SSI-75_Rename_Kingdom
+    
+    Ssi 75 rename kingdom
+
+[33mcommit 57fe2328dfb6ab37c43d2f1b41ea68ce8e8e1455[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 15:43:18 2021 +0100
+
+    Moved logic from controller
+
+[33mcommit df88ee4faa5e48ec07bfcc0f5600c4b6be10bbda[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 15:38:49 2021 +0100
+
+    renamed to request
+
+[33mcommit 11fb6f3f0e18f133f15a645303551adce0014f71[m[33m ([m[1;31morigin/SSI-75_Rename_Kingdom[m[33m)[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 15:38:20 2021 +0100
+
+    opraveno
+
+[33mcommit 4fa8b3eea5335601d7b85aaa602587e0342ce0bf[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 14:49:08 2021 +0100
+
+    Final push every test works
+
+[33mcommit bcb32f5c6dd101b9f05272f1eb1a21b006d96782[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 14:45:13 2021 +0100
+
+    Created KingdomResponse JSON entity
+
+[33mcommit f35bdf731af38b30983249d0d72a622b8b206200[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 14:19:30 2021 +0100
+
+    Some empty lines deleted
+
+[33mcommit f31e7980611b026e3066c8d1db845689fc977054[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 14:14:36 2021 +0100
+
+    Finished Get Troops endpoint
+
+[33mcommit 35db1f81dbeaa4af6e44b0b389b63181b51856cd[m
+Merge: 285d55b 12e43dd
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 13:51:08 2021 +0100
+
+    Merge remote-tracking branch 'origin/SSI-75_Rename_Kingdom' into SSI-72-Wuwime-Kingdom-Resources
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit a4998e9981ff4bb8cc50d08455b4e7c7c26009dd[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 13:23:04 2021 +0100
+
+    add Building to AppDbContext
+
+[33mcommit 5c7a0eb04b4c740d8a03bd9b9e46ea84cd66a0ad[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 13:20:39 2021 +0100
+
+    add Building property to Kingdom model
+
+[33mcommit 8e0061324d70da3532c682b0e843c4459be2273d[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 13:17:28 2021 +0100
+
+    create script for creating building table/inserting values
+
+[33mcommit 8ce5084523a25ff1f52cbb3cf34884e760deab82[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 13:17:12 2021 +0100
+
+    Modified buildingmodel
+
+[33mcommit 3614608ae8b37bde9dd57960b01de9cb9793377a[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 13:01:52 2021 +0100
+
+    Added package Microsoft.AspNetCore.Mvc.NewtonsoftJson to help with JSON serialization issues
+
+[33mcommit c0383540066a6f13f341d0a0f8b2a68a7b1bd603[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 12:55:45 2021 +0100
+
+    Added GetTroops service
+
+[33mcommit 273965279568548133b3050ea3bb34f6c95afafb[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Fri Dec 10 12:49:43 2021 +0100
+
+    Add Bulding model
+
+[33mcommit 3931aeeb5085082d7434f3eaa5a4fc9f8fc5116a[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 11:48:23 2021 +0100
+
+    Updated Troop Entity
+
+[33mcommit 5554df2e9d3e5af4bb13b58efd2baf8c64621fcb[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 11:08:23 2021 +0100
+
+    Fixed OnModelCreating
+
+[33mcommit 749bd693a2c1facd809ca8bdbb649d584b1b17f5[m
+Merge: 746798a b8a5ec0
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Fri Dec 10 11:05:07 2021 +0100
+
+    Merge from Master
+
+[33mcommit cd7c162d8844de3c583d66cc11bd68436b420dcb[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 10:50:39 2021 +0100
+
+    last repair of tests
+
+[33mcommit 64a049e9f498777e2e9bd189a35664b80bb775e6[m
+Merge: 592b735 b8a5ec0
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 10:21:54 2021 +0100
+
+    Merge branch 'master' into SSI-75_Rename_Kingdom
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 592b735451db84fbdaa5badb6ab5ff697a133c66[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 10:16:37 2021 +0100
+
+    changes in tests
+
+[33mcommit b8a5ec0ceb668a360c75102a18442b96eebdb2b9[m
+Merge: ab23d4b 285d55b
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Fri Dec 10 10:14:14 2021 +0100
+
+    Merge pull request #28 from green-fox-academy/SSI-72-Wuwime-Kingdom-Resources
+    
+    fixed bugs after merge
+
+[33mcommit 285d55b19a0ead8e0d1f3c63dbad75e16f72094d[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 09:35:03 2021 +0100
+
+    fixed bugs after merge
+
+[33mcommit ab23d4b700150b5eb3e8ae1fbc4ac9a0eac617bb[m
+Merge: b69eae5 3a191cb
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Fri Dec 10 09:24:45 2021 +0100
+
+    Merge pull request #26 from green-fox-academy/SSI-72-Wuwime-Kingdom-Resources
+    
+    SSI-72
+
+[33mcommit 3a191cb6600c2c6efecb4499ba32a130a3b4c95d[m
+Merge: a76cf62 b69eae5
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 09:18:47 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+    
+    # Conflicts:
+    #       DumDum/DumDum/Database/ApplicationDbContext.cs
+    #       DumDum/DumDum/Startup.cs
+
+[33mcommit 2ba30bab072cfbf574fb93da26e28b814037ad4d[m
+Merge: 12e43dd b69eae5
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 09:17:26 2021 +0100
+
+    Merge branch 'master' into SSI-75_Rename_Kingdom
+
+[33mcommit 12e43dd4d993db0380013ad51874b0930d1fecd9[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Fri Dec 10 09:16:31 2021 +0100
+
+    Kingdom rename + tests
+
+[33mcommit a76cf62e76dcaa8f05fcb797a2711d16a6f951f9[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Fri Dec 10 09:15:42 2021 +0100
+
+    fixed resource list cycling
+
+[33mcommit b69eae510e42455767da5e0649236040f49e9f46[m
+Merge: 999b571 56ca678
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Fri Dec 10 09:09:59 2021 +0100
+
+    Merge pull request #24 from green-fox-academy/SSI-47_Player_Identity
+    
+    Ssi 47 player identity
+
+[33mcommit 56ca678d243f90b7a16c69298fb4d039f7512b53[m[33m ([m[1;31morigin/SSI-47_Player_Identity[m[33m)[m
+Merge: 2706494 999b571
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Fri Dec 10 09:09:25 2021 +0100
+
+    Merge branch 'master' into SSI-47_Player_Identity
+
+[33mcommit 746798ac3d644266ecfeecd294b50e8a9bc4023d[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Thu Dec 9 15:42:24 2021 +0100
+
+    ListTroops started.
+
+[33mcommit 52517948ae47463dc3f526c95341c46d0ed36892[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Thu Dec 9 15:34:45 2021 +0100
+
+    add RenameKingdom function
+
+[33mcommit 4cd3060a076ba1667f8590a3974aa963aaa2f164[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Thu Dec 9 15:19:31 2021 +0100
+
+    moved location
+
+[33mcommit 74438175899de7976a3393dbb78cb8abb9daddb3[m
+Merge: 738f4d9 999b571
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Thu Dec 9 14:56:38 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+
+[33mcommit 999b5718f8c163ebcbb134898321f3c0fc4d2d31[m
+Merge: b38249c 5b6b53f
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Thu Dec 9 14:54:30 2021 +0100
+
+    Merge pull request #27 from green-fox-academy/SSI-87-MatUrb2-Error
+    
+    Ssi 87 mat urb2 error
+
+[33mcommit 738f4d9df40c7c39e7fd1ec40f871ba3cbe89edd[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Thu Dec 9 14:53:21 2021 +0100
+
+    deleted useless dictionary
+
+[33mcommit 5b6b53f4a5b5e270655a9c5840dc54770aef1374[m[33m ([m[1;31morigin/SSI-87-MatUrb2-Error[m[33m)[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 14:43:18 2021 +0100
+
+    Removed string status/error from classes. Added new models for it
+
+[33mcommit eec35c513a2de047f05c7ee038053a4e9d391592[m
+Merge: 506ce3f b38249c
+Author: Wuwime <wallovas@gmail.com>
+Date:   Thu Dec 9 14:21:51 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/LoginController.cs
+    #       DumDum/DumDum/Database/ApplicationDbContext.cs
+
+[33mcommit 506ce3fbde9a40a8ad0666fd7b6e0fadc9402571[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Thu Dec 9 14:18:50 2021 +0100
+
+    created controller, service and json entity for resources and created table for resources
+
+[33mcommit 4455ff3de0f820b776cb9b052ac0b7ef4b7eb90f[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Thu Dec 9 14:17:28 2021 +0100
+
+    removed logic from controller and moved to service
+
+[33mcommit c5315322e24f64e546939963449ed85117b4a198[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Thu Dec 9 14:16:25 2021 +0100
+
+    Added Location class, renamed JsonEntities from PlayerJson to PlayerRequest/Response
+
+[33mcommit 51e36fbf3d9534d8079e0cd8b245d361b262b4d4[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 13:27:18 2021 +0100
+
+    modify LoginController
+
+[33mcommit b9a478a58eb196e25c4a71d62e124f554cb6490b[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 13:25:18 2021 +0100
+
+    Add Response model/modify logincontroller
+
+[33mcommit d5117bc3cf5ab08007140fc70862bfa0c5276b6c[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 13:24:50 2021 +0100
+
+    Deleted GetPrincipal method
+
+[33mcommit 625829a83fb21c1b06d55307ad2dac3354561642[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Thu Dec 9 11:25:52 2021 +0100
+
+    Created Troop entity model, oneToMany model builder
+
+[33mcommit 27064947f41d44e869dead479b4d62d2f7dc7ede[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Thu Dec 9 10:58:10 2021 +0100
+
+    add authenticate
+
+[33mcommit 37a66228e406dc72623e05dd2549126f76305716[m
+Merge: 376e294 b38249c
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Thu Dec 9 10:54:20 2021 +0100
+
+    Merge branch 'master' into SSI-47_Player_Identity
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/LoginController.cs
+    #       DumDum/DumDum/Database/ApplicationDbContext.cs
+    #       DumDum/DumDum/Services/LoginService.cs
+
+[33mcommit 376e2948d348172abe1a7cd5ce701f576e73a8ca[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Thu Dec 9 10:48:19 2021 +0100
+
+    changes
+
+[33mcommit b38249c30b5a202994a85a09c625ebe1e05d4b75[m
+Merge: ed2937a a89c682
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Thu Dec 9 10:23:33 2021 +0100
+
+    Merge pull request #25 from green-fox-academy/SSI-46-MatUrb2-LoginTest
+    
+    Ssi 46 mat urb2 login test
+
+[33mcommit a89c6825831e3891dc756ac2bc08b589c962d4e6[m[33m ([m[1;31morigin/SSI-46-MatUrb2-LoginTest[m[33m)[m
+Merge: 503a538 25e162c
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 10:17:46 2021 +0100
+
+    fixed login
+
+[33mcommit 503a5388d36d392042fdfe2fd0055e4ce4b70fa1[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Thu Dec 9 10:10:19 2021 +0100
+
+    Fixed login logic
+
+[33mcommit ed2937a2398f578a698b736bdd7922c17b1f83a0[m
+Merge: b736346 25e162c
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Thu Dec 9 09:03:16 2021 +0100
+
+    Merge pull request #23 from green-fox-academy/SSI-46-MatUrb2-LoginTest
+    
+    Ssi 46 mat urb2 login test
+
+[33mcommit 7c22b03b3a266e581915e64bd11509fe32af66c6[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Wed Dec 8 14:50:21 2021 +0100
+
+    finis player identity, finish xunit testing.
+
+[33mcommit 538e78702ae30cbd0fbfbe0a2e99706c9dc45825[m
+Merge: 37b20bd b736346
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Wed Dec 8 14:48:43 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit 25e162c19c20a5c4d8ade94db7e3425df0c0144b[m
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Wed Dec 8 14:40:02 2021 +0100
+
+    Done (redid rest of the test)
+
+[33mcommit 8168fd5a0f601dffffc14a0fd8f44fda6fa848ce[m
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Wed Dec 8 14:30:48 2021 +0100
+
+    Update LoginTest.cs
+
+[33mcommit d10030be76ce724a1b788d1a1b06d1cef27bfff4[m
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Wed Dec 8 14:28:12 2021 +0100
+
+    done
+
+[33mcommit 02dd0cbdf88a78a1ee5df96fe9001de4407d035c[m
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Wed Dec 8 14:25:25 2021 +0100
+
+    Done
+
+[33mcommit 08a0547b5adae489f6a8acc5b61210a27064f0f5[m
+Merge: ea9aff3 b736346
+Author: Wuwime <wallovas@gmail.com>
+Date:   Wed Dec 8 14:02:25 2021 +0100
+
+    Merge branch 'master' into SSI-72-Wuwime-Kingdom-Resources
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit ea9aff30c6fe240b5e093946533ecc7c1ca7f53b[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Wed Dec 8 13:59:48 2021 +0100
+
+    created controller, model and service for resources
+
+[33mcommit b736346caca242a06671e9a172950029695225bf[m
+Merge: c8e9f3c dc4921c
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 8 13:51:27 2021 +0100
+
+    Merge pull request #16 from green-fox-academy/SSI-45-KingdomRegistration
+    
+    Ssi 45 kingdom registration
+
+[33mcommit 37b20bd4914dacd5c618fbc1086c737b45c4073d[m
+Merge: f4242d4 c8e9f3c
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Wed Dec 8 11:44:09 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit dc4921c1ad8bb1d168d751e774d2f838ba9844fe[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 8 11:25:10 2021 +0100
+
+    Minor code corrections
+
+[33mcommit e4bd43ecac211319a21d2710e4217f9124e2095f[m
+Merge: 2948ceb c8e9f3c
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 8 11:23:09 2021 +0100
+
+    Merge branch 'master' into SSI-45-KingdomRegistration
+
+[33mcommit 2948ceb45d275e3b590e927fd5831c8e83bdce81[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Wed Dec 8 11:22:00 2021 +0100
+
+    Moved logic to service and shortened IsKingdomIdValid and DoCoordinatesExist to one line.
+
+[33mcommit 7d791c115dbf978a4f3e5f040f88d542d3594917[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Wed Dec 8 10:31:05 2021 +0100
+
+    add comment to login service
+
+[33mcommit e0d4f246565d9bef88baf9412a94966c01653edd[m
+Merge: 3021ebe c8e9f3c
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Wed Dec 8 10:27:13 2021 +0100
+
+    Merge branch 'master' into SSI-46-MatUrb2-LoginTest
+
+[33mcommit 3021ebe468b3243cfb83feb5c5968b3c9d845e76[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Wed Dec 8 10:24:03 2021 +0100
+
+    Redid loginLogic/test.
+
+[33mcommit c8e9f3cdf2c2affd1b3a0089dc4840bfc37e175e[m
+Merge: 27ef06a e24a8d6
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Wed Dec 8 10:18:20 2021 +0100
+
+    Merge pull request #21 from green-fox-academy/SSI-46-MatUrb2-LoginTest
+    
+    add LoginTest
+
+[33mcommit 27ef06aaefadfcf59ff554d011e2ae23276a4f60[m
+Merge: f5b761e 2dfcbdd
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Tue Dec 7 22:26:28 2021 +0100
+
+    Merge pull request #22 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    SSI-43 Registration
+
+[33mcommit 2dfcbdd472e293615509d4a93143f83af38f41d2[m[33m ([m[1;31morigin/SSI-53-Wuwime-Class&Database[m[33m)[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Tue Dec 7 19:09:14 2021 +0100
+
+    deleted else
+
+[33mcommit d95d29e41daec08c3e43bd12270741ff4d46a150[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Tue Dec 7 19:08:10 2021 +0100
+
+    Deleted "true"
+
+[33mcommit 3e6702e466b9c3f80b00b13c2fa05abf05617336[m
+Merge: 051778e 3b81e77
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 19:00:50 2021 +0100
+
+    Merge branch 'master' into SSI-43-Wuwime-Registration
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 051778eaa391a7f8bcecb27fee4228734e63ffd6[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 18:58:07 2021 +0100
+
+    Added tests for player register
+
+[33mcommit 646fdfdb93d8a9b8b72c0aaffa95f6b3ab957805[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 18:57:41 2021 +0100
+
+    Fixed player register
+
+[33mcommit e24a8d60e9fa4792520ef4dcee9c8dfce9c4ca38[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Tue Dec 7 18:36:04 2021 +0100
+
+    add LoginTest
+
+[33mcommit bff7153310a78cac0031a340453a708af3db73e5[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 18:01:59 2021 +0100
+
+    Updated tests to test status codes as well
+
+[33mcommit 38acaa31929b7fba3412d0f9a5a411236335ffaf[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 16:35:58 2021 +0100
+
+    Finished unit tests for HttpPut Registration method
+
+[33mcommit 705ecd756c30b03f0348b72a8f5c18e51a5ded2e[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 15:39:52 2021 +0100
+
+    First test done
+
+[33mcommit 9dbb7c5030cb9bb90f1b11e47f759a3ee48b4f87[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 14:59:02 2021 +0100
+
+    Merged from Master
+
+[33mcommit 21f418d3bd4467143aebac836d3ff24758668f72[m
+Merge: c3b03bb f5b761e
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 14:52:27 2021 +0100
+
+    Merge branch 'master' into SSI-45-KingdomRegistration
+
+[33mcommit f4242d4143268470edff408f9085b27220ff9b0f[m
+Merge: 7c70c3c f5b761e
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Tue Dec 7 14:28:20 2021 +0100
+
+    Merge branch 'master' into SSI-47_Player_Identity
+    
+    # Conflicts:
+    #       DumDum/DumDum/Services/LoginService.cs
+
+[33mcommit 7c70c3ccfe4a93aa01641c2a458ed77a94691a91[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Tue Dec 7 14:25:33 2021 +0100
+
+    authentication service
+
+[33mcommit 3b81e77f68e558f21b4fefd0692e4097461befdb[m
+Merge: 30ecafc f5b761e
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 14:23:35 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit f5b761eb65878888fd971adcfc4b5fbda136846b[m
+Merge: a6153da 6885a14
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Tue Dec 7 14:22:34 2021 +0100
+
+    Merge pull request #20 from green-fox-academy/SSI-46-MatUrb2-login
+    
+    Ssi 46 mat urb2 login
+
+[33mcommit 6885a14a62a80504c93665cfd1619df18499b280[m[33m ([m[1;31morigin/SSI-46-MatUrb2-login[m[33m)[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Tue Dec 7 14:19:47 2021 +0100
+
+    Fix _appsetting to Appsettings
+
+[33mcommit 305b4e6928db33eb7ac47c5ceb9eb35765204b5c[m
+Merge: 3d1c162 a6153da
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Tue Dec 7 14:13:44 2021 +0100
+
+    Merge branch 'master' into SSI-46-MatUrb2-login
+
+[33mcommit 30ecafc0b224e3eca238170917a205b6128a6586[m
+Merge: e374a6f a6153da
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 14:12:44 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit a6153da4b697f2c4a0ea31cbfd7b8525f67012c4[m
+Merge: 023d2ac a6afad7
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Tue Dec 7 14:10:26 2021 +0100
+
+    Merge pull request #19 from green-fox-academy/SSI-47_Player_Identity
+    
+    add testing with .NET5
+
+[33mcommit a6afad777496c52f0a33a540763cd1c6857e2e32[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Tue Dec 7 14:01:19 2021 +0100
+
+    add testing with .NET5
+
+[33mcommit e374a6f86107efc1dda5710300f456272c354a6c[m
+Merge: 98a6012 023d2ac
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 13:53:25 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit 023d2acbce61ff4e133c22532e1d09bded48f5bc[m
+Merge: 551e635 8507751
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Tue Dec 7 13:52:14 2021 +0100
+
+    Merge pull request #18 from green-fox-academy/MatUrb2-deleted-test-files
+    
+    Delete DumDum/TestProject directory
+
+[33mcommit 85077514122cf52479b347f7725567a3215a6a8e[m[33m ([m[1;31morigin/MatUrb2-deleted-test-files[m[33m)[m
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Tue Dec 7 13:51:10 2021 +0100
+
+    Delete DumDum/TestProject directory
+
+[33mcommit 98a6012b84fc996d819cf4d7d2aeeffb100e7b68[m
+Merge: 748d0f2 551e635
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 13:48:13 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit 551e635fe4c8229f4c5c9b3f8ffa7d60dcdf7c4f[m
+Merge: c9a1eb5 d166624
+Author: Marek Holba <89017199+marapivas@users.noreply.github.com>
+Date:   Tue Dec 7 13:47:55 2021 +0100
+
+    Merge pull request #17 from green-fox-academy/RemovingTestProject
+    
+    Test Project removed due to version incompatibility
+
+[33mcommit 3d1c162bd852c8365bdbc00e6af916e4301f96f8[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Tue Dec 7 13:45:04 2021 +0100
+
+    change if statement
+
+[33mcommit d166624dc44a44ec751080a499642ad27aafe323[m[33m ([m[1;31morigin/RemovingTestProject[m[33m, [m[1;32mRemovingTestProject[m[33m)[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 13:39:05 2021 +0100
+
+    Test Project removed due to version incompatibility
+
+[33mcommit 0c1858d7f75df466d4055109836cb438c78e27ee[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Tue Dec 7 13:32:51 2021 +0100
+
+    Change Login. Added LoginRequest/LoginResponse for working with Json
+
+[33mcommit 748d0f2aec670dcb6fe92016e9e9609ac92dd1d0[m
+Merge: cfa8d89 c9a1eb5
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 13:18:53 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit c9a1eb50de0b7bc754ef3207114628cc8a2e76c7[m
+Merge: d7f8740 87acc5f
+Author: jakubchoc <87580791+jakubchoc@users.noreply.github.com>
+Date:   Tue Dec 7 13:18:22 2021 +0100
+
+    Merge pull request #15 from green-fox-academy/SSI-47_Player_Identity
+    
+    Ssi 47 player identity
+
+[33mcommit cfa8d8901c2e6cd077713ab6db5965cd60b28d83[m
+Merge: 09c366d d7f8740
+Author: Wuwime <wallovas@gmail.com>
+Date:   Tue Dec 7 13:15:04 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit c3b03bb5945a06f662ca6a314353cbe2172150cb[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Tue Dec 7 12:11:01 2021 +0100
+
+    Updated AreCoordinatesValid function
+
+[33mcommit 87acc5fd1c07ff5c0ad6d461f916c70ef5e4bca2[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Tue Dec 7 10:37:16 2021 +0100
+
+    unit testing
+
+[33mcommit 29350d05c8c95850e7f59605179d8dba316f228b[m
+Merge: e5c8d70 d7f8740
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Tue Dec 7 10:36:09 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit f8dd6ca7f23ecdc7aaeffdc4a4b1371b2789edf0[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 21:58:36 2021 +0100
+
+    Update RegisterKingdom endpoint
+
+[33mcommit 9afb17ad080d9b2bd018dacd4f4716beab15b5e6[m
+Merge: e25ac9d d7f8740
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 20:52:17 2021 +0100
+
+    Merge branch 'master' into SSI-45-KingdomRegistration
+
+[33mcommit e25ac9dd578889c7415cc22ced983aa6ada1469f[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 20:50:17 2021 +0100
+
+    Updated RegisterKingdom endpoint
+
+[33mcommit e5c8d707ef2ccb31cfc83d2be972d0193cfcc085[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 19:33:38 2021 +0100
+
+    Add Unit test
+
+[33mcommit d7f874043d69050ff6bbbf39305eb6e29c5f8227[m
+Merge: f712511 3c43c08
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 17:39:38 2021 +0100
+
+    Merge pull request #14 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    Ssi 53 wuwime class&database
+
+[33mcommit b7eb0e6dbbac999ce4dff1b4be4867778c90a3da[m
+Merge: ee7059f f712511
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 17:37:45 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit 09c366d913dff15753fefa9d7878c34a14f8dac8[m
+Merge: f9f54f9 3c43c08
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:36:56 2021 +0100
+
+    Merge branch 'SSI-43-Wuwime-Registration'
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 3c43c0827226aa9e329f2c84dae94629d57e252c[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:34:45 2021 +0100
+
+    Deleted View
+
+[33mcommit 25e52351c8a382d80d438aebddc7de8c3835987e[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:28:15 2021 +0100
+
+    Fixed kingdoms player Id adding
+
+[33mcommit f71251195bf187f3e000c8323bcf6e090407c3ef[m
+Merge: d9dc05b d8ad1c1
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 17:24:34 2021 +0100
+
+    Merge pull request #13 from green-fox-academy/SSI-46-MatUrb2-login
+    
+    Ssi 46 mat urb2 login
+
+[33mcommit d8ad1c136e44225562938efeaf75d2beb680aa78[m
+Merge: 3461add 38e0ad8
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 17:23:10 2021 +0100
+
+    added commit
+
+[33mcommit 38e0ad8c880f222dd7aefa57c809ef96c0fb379a[m
+Merge: 5e33789 d9dc05b
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 17:21:52 2021 +0100
+
+    commit changes
+
+[33mcommit 4edc1d69ab80b4872bb70d1b298a49aafcb6e581[m
+Merge: 40d66ce d9dc05b
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 17:15:22 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-45-KingdomRegistration
+
+[33mcommit 3461adde296c93f907ccd6f41323384bffa71d1b[m
+Merge: 5e33789 5cd6e23
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 17:15:17 2021 +0100
+
+    c
+
+[33mcommit f9f54f9a9da0ddb6f8e2abe5f8d2c349e8c5b70c[m
+Merge: 0362602 d9dc05b
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:14:58 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum
+
+[33mcommit d9dc05bfbbf9ea61f7696c4b580c2dedcadd7361[m
+Merge: 621d4a7 e497dec
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 17:14:30 2021 +0100
+
+    Merge pull request #12 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    SSI-43 Registration
+
+[33mcommit e497dec7bc7ec42bacb2d999dbe3ddbbadba8162[m
+Merge: fac447d 621d4a7
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 17:13:02 2021 +0100
+
+    Merge branch 'master' into SSI-53-Wuwime-Class&Database
+
+[33mcommit 0362602df3b74a01140790f1c1fa4f9cb470291f[m
+Merge: 86e13d2 621d4a7
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:08:49 2021 +0100
+
+    Merge remote-tracking branch 'origin/master'
+    
+    # Conflicts:
+    #       DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 86e13d228445a355bc724dfcad45ecbcd090f9ce[m
+Merge: 6e67a5f fac447d
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:07:34 2021 +0100
+
+    Merge branch 'SSI-43-Wuwime-Registration'
+
+[33mcommit 621d4a716047dd8ab2a467fac5a71188723284a0[m
+Merge: 6e67a5f 5cd6e23
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 17:06:26 2021 +0100
+
+    Merge pull request #11 from green-fox-academy/SSI-46-MatUrb2-login
+    
+    Ssi 46 mat urb2 login
+
+[33mcommit 5cd6e2399fa20204aa699c75b6fc2d59b1def901[m
+Merge: 5e4c3e7 6e67a5f
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 17:05:38 2021 +0100
+
+    Merge branch 'master' into SSI-46-MatUrb2-login
+
+[33mcommit fac447de9d8f0efc0c461d941514d36573dc05d2[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:02:54 2021 +0100
+
+    Finished registration endpoint and function
+
+[33mcommit c08551afba2b6ab45bf6f5b8bc44cc404a7ef575[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 17:02:36 2021 +0100
+
+    Added Json output class
+
+[33mcommit 5e337895cda8a12d39fef619be6fa81c96eaebfa[m
+Merge: 5e4c3e7 6e67a5f
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:59:52 2021 +0100
+
+    merging commit
+
+[33mcommit 5e4c3e796b36f41aaeec8044bdb222380a73ef71[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:55:39 2021 +0100
+
+    Installed nuggets for jwt
+
+[33mcommit 96a3b7745599c5278465b7f97b9c6f38b8177776[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:55:25 2021 +0100
+
+    add service and two lines to Configure
+
+[33mcommit b2a1697ade3eef5683100c820f3068a98d9b9819[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:54:37 2021 +0100
+
+    add login service
+
+[33mcommit c314aae882788d1b936cb428edf1c6908bfe31d7[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:54:23 2021 +0100
+
+    Add Player to dbContexts
+
+[33mcommit d38e7ff32064750ddce968c40e705471f177e82f[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:53:41 2021 +0100
+
+    add LoginController
+
+[33mcommit d71fe6dbba7bb679c341312676e8d52bda58744b[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:53:26 2021 +0100
+
+    delete code duplication
+
+[33mcommit 6e93b80f013ddd8af9e08f94749f37e7f85b7415[m
+Author: MatUrb2 <matejmr.urbanek@gmail.com>
+Date:   Mon Dec 6 16:52:54 2021 +0100
+
+    add new property for player model
+
+[33mcommit 40d66ce2e9e2e54ab0cf19790fb11019b798988f[m
+Merge: da2e233 6e67a5f
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 16:35:48 2021 +0100
+
+    Pulling from Master
+
+[33mcommit 2b9b5cbbd66a57829527b65791a4236c693c47aa[m
+Merge: fb8256b 8e7f61e
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 16:35:35 2021 +0100
+
+    Merge branch 'SSI-53-Wuwime-Class&Database' of https://github.com/green-fox-academy/DumDum into SSI-43-Wuwime-Registration
+    
+     Conflicts:
+    	DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 6e67a5fe858c98bf889b5fc497a8e354522867eb[m
+Merge: 845abb9 8e7f61e
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 16:32:08 2021 +0100
+
+    Merge pull request #10 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    Ssi 53 wuwime class&database
+
+[33mcommit 8e7f61ed0416c5aee4e59ec9f1795bc3b547c7f9[m
+Merge: 53ea174 845abb9
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 16:29:42 2021 +0100
+
+    Merge branch 'master' into SSI-53-Wuwime-Class&Database
+
+[33mcommit da2e2332f4b5a583fa24a55e226e4017eb82e4d1[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 16:23:36 2021 +0100
+
+    Added Kingdom registration
+
+[33mcommit fb8256b6116d65615353290c7e5c5e6ded00a733[m
+Merge: 53ea174 845abb9
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 16:22:11 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-43-Wuwime-Registration
+    
+     Conflicts:
+    	DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit 53ea174f272740b8c444b4dc9a085b04aa61455c[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 16:19:02 2021 +0100
+
+    Injected service to controller
+
+[33mcommit 7ab7f1df7c051741bf61bd3f1840abb17be1443d[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 16:18:27 2021 +0100
+
+    Created function for player validation
+
+[33mcommit 5804aa66a616672b48bdf88170df0b456f3ffd52[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 16:02:57 2021 +0100
+
+    Made username required
+
+[33mcommit 845abb9c5356ffbcf6f18e64d51b226257858de9[m
+Merge: 876ad77 8b097d3
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 15:38:30 2021 +0100
+
+    Merge pull request #9 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    Added KingdomName
+
+[33mcommit 8b097d354f4d2c35c838821dff7ac0a1152e3dc6[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 15:37:05 2021 +0100
+
+    Added KingdomName
+
+[33mcommit 876ad77a26331a329ef2599c1e96ef9c56ded871[m
+Merge: 7c656b1 48aa28d
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 14:58:15 2021 +0100
+
+    Merge pull request #8 from green-fox-academy/SSI-47_Player_Identity
+    
+    Ssi 47 player identity
+
+[33mcommit ee7059f2f8bb445ca1b23bc916c158e7f83ea31a[m
+Merge: 6e300bf 48aa28d
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:55:41 2021 +0100
+
+    Merge branch 'SSI-47_Player_Identity'
+
+[33mcommit 6e300bff851cb1131f95ccfa2c90863f84c46fdb[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:03:45 2021 +0100
+
+    prepare authentication
+
+[33mcommit 70dc9540a9cdbb5c76bc8d22684d832112e1c837[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 13:55:35 2021 +0100
+
+    edit appsettings, edit HomeController, Create starup settings for authentication
+
+[33mcommit 48aa28d01cb68568bdf7a0ccc7b762e7881a9d3d[m
+Merge: 2f0fce7 7693b58
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:49:24 2021 +0100
+
+    Merge remote-tracking branch 'origin/SSI-47_Player_Identity' into SSI-47_Player_Identity
+
+[33mcommit 2f0fce7646c0042d0eb146601d02e8b51109ddd7[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:48:40 2021 +0100
+
+    small change
+
+[33mcommit 5baebec023b8b8cfd2f99cc6c956fb2807f5e5ee[m
+Merge: 98b9e24 7c656b1
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:47:35 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-47_Player_Identity
+
+[33mcommit 7c656b174bd6b30f76bd4016e7d680325232e748[m
+Merge: e34612a 90df641
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 14:43:58 2021 +0100
+
+    Merge pull request #7 from green-fox-academy/SSI-45-KingdomRegistration
+    
+    Updated DBContext
+
+[33mcommit 90df6419d3d481ada2408d5281988c775ad1df1b[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 14:42:56 2021 +0100
+
+    Updated DBContext
+
+[33mcommit e34612a857ebb9a7e83ae2d81360068f6025e883[m
+Merge: 67a8152 7a445be
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 14:41:24 2021 +0100
+
+    Merge pull request #6 from green-fox-academy/SSI-45-KingdomRegistration
+    
+    Added SQL script for Kingdom table
+
+[33mcommit 7a445be238a19820fe2c6a9a9f4634ff43c01342[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 14:38:13 2021 +0100
+
+    Added SQL script for Kingdom table
+
+[33mcommit 67a815277907bdecb1ff9e0873a276d2117b313a[m
+Merge: 8943e47 50e38d7
+Author: MatUrb2 <89649904+MatUrb2@users.noreply.github.com>
+Date:   Mon Dec 6 14:25:36 2021 +0100
+
+    Merge pull request #5 from green-fox-academy/SSI-45-KingdomRegistration
+    
+    Added Kingdom Class and created Db
+
+[33mcommit 50e38d75c3d7c82fe55f9a20126b1bd622f4c2d1[m
+Author: stmlad <81235340+stmlad@users.noreply.github.com>
+Date:   Mon Dec 6 14:24:40 2021 +0100
+
+    Added Kingdom Class and created Db
+
+[33mcommit 7693b58ce935e9d0e96fc732b05f9309e9a4fe16[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 14:19:32 2021 +0100
+
+    renamed controller
+
+[33mcommit 98b9e24764e7d1b53ee5429ee3c91bf45e78433f[m
+Merge: a41b55a 8943e47
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:12:40 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-47_Player_Identity
+    
+     Conflicts:
+    	DumDum/DumDum/Controllers/DumDumController.cs
+
+[33mcommit a41b55a8216d045ea8660c3e3ceec45655790eff[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:03:45 2021 +0100
+
+    prepare authentication
+
+[33mcommit 1d44c53687ebf00e08b974973f0b9b669580e86a[m
+Merge: 4abaa36 3bc5a24
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 14:00:11 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-47_Player_Identity
+    
+     Conflicts:
+    	DumDum/DumDum/Controllers/HomeController.cs
+    	DumDum/DumDum/Startup.cs
+
+[33mcommit 8943e47896652007f42a6e54ffd1f3f7c9c6ad6b[m
+Merge: 3bc5a24 5328bb1
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 13:59:28 2021 +0100
+
+    Merge pull request #3 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    SSI-43 Renamed Controller
+
+[33mcommit 4abaa36b476de6bfac113444be1ab1980c0517fd[m
+Author: jakubchoc <jakub.choc@gmail.com>
+Date:   Mon Dec 6 13:55:35 2021 +0100
+
+    edit appsettings, edit HomeController, Create starup settings for authentication
+
+[33mcommit 5328bb1763d7a1f7cd88e43fcc630c23d4fba2d7[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:55:26 2021 +0100
+
+    Renamed controller to DumDumController
+
+[33mcommit 3bc5a2417b9095e75942a08bd3dc8040daecf536[m
+Merge: 4456198 97411fb
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 13:50:13 2021 +0100
+
+    Merge pull request #2 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    SSI-43  started registration
+
+[33mcommit 962fda500b3870cb3324261b3227c9bf3c018093[m
+Merge: 97411fb 4456198
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:34:33 2021 +0100
+
+    Merge branch 'master' of https://github.com/green-fox-academy/DumDum into SSI-53-Wuwime-Class&Database
+
+[33mcommit 97411fbda269ce47e90651fd8ccf6f7fbb08fe8e[m
+Merge: 05fd471 9af97e9
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:27:29 2021 +0100
+
+    Merge remote-tracking branch 'origin/SSI-53-Wuwime-Class&Database' into SSI-53-Wuwime-Class&Database
+
+[33mcommit 05fd471995bc191f35575086271d09546605a6ba[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:27:05 2021 +0100
+
+    Created Service and injected dbContext, added service to startup and created DbSet
+
+[33mcommit 113fc1404fd1dca6eb386d63a88f77842d77d320[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:26:23 2021 +0100
+
+    updated Id to PlayerId,
+
+[33mcommit fcaec163a1384dafe20b69d4d3a64d78f0291181[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 13:25:00 2021 +0100
+
+    Created endpoint "registration"
+
+[33mcommit 44561983ede0359b5bca1856243ccd02692d1559[m
+Merge: d04f542 9af97e9
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 12:58:01 2021 +0100
+
+    Merge pull request #1 from green-fox-academy/SSI-53-Wuwime-Class&Database
+    
+    SSI-53  class&database
+
+[33mcommit 9af97e965b84ccd4260bbca5e99957a941f9de79[m
+Author: Silvia Walla <74986270+Wuwime@users.noreply.github.com>
+Date:   Mon Dec 6 12:56:54 2021 +0100
+
+    Update 2021-12-06_save_script_1-create_database.sql
+    
+    fixed mistake
+
+[33mcommit 835ce19789aaab3e25a2ea2a2ebfa62e7ff62470[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 12:55:26 2021 +0100
+
+    Fixed KingdomId in sql
+
+[33mcommit 24994ef96eeb6d75c1494471de9fd17bb8d0f79c[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 12:44:48 2021 +0100
+
+    Created class Player
+
+[33mcommit c238c7f765e1779453806b3346657ec971f9c7db[m
+Author: Wuwime <wallovas@gmail.com>
+Date:   Mon Dec 6 11:51:27 2021 +0100
+
+    Created database script
+
+[33mcommit d04f5420b2411ad84f49e2c24b32f367d3e89894[m
+Author: unknown <mladenstupar@gmail.com>
+Date:   Mon Dec 6 11:32:38 2021 +0100
+
+    Added empty solution
+
+[33mcommit c8696fde26a468ae5cd08cae0546e96ea02072fa[m
+Author: unknown <mladenstupar@gmail.com>
+Date:   Mon Dec 6 11:28:19 2021 +0100
+
+    Added git ignore

@@ -1,6 +1,7 @@
 ﻿using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,17 +19,42 @@ namespace DumDum.Services
             DumDumService = dumService;
         }
 
-        public List<TroopsResponse> GetTroops(int kingdomId)
+        internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
         {
-            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).
+            var response = new GetTroopsResponse();
+            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
+
+            if (player != null && player.KingdomId == kingdomId)
+            {
+                var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
+                response.Kingdom = new KingdomResponse
+                {
+                    KingdomId = player.KingdomId,
+                    KingdomName = player.KingdomName,
+                    Ruler = player.Ruler,
+                    Location = new Location() { CoordinateX = plyersKingdom.CoordinateX, CoordinateY = plyersKingdom.CoordinateY }
+                };
+                response.Troops = GetTroops(player.KingdomId);
+
+                statusCode = 200;
+                return response;
+            }
+
+            statusCode = 401;
+            return response;
+        }
+
+        internal List<TroopsResponse> GetTroops(int kingdomId)
+        {
+            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType).ToList().
                 Select(t => new TroopsResponse()
                 {
                     TroopId = t.TroopId,
-                    TroopType = t.TroopType,
+                    TroopType = t.TroopType.TroopType,
                     Level = t.Level,
-                    HP = t.HP,
-                    Attack = t.Attack,
-                    Defence = t.Defence,
+                    HP = t.TroopType.TroopLevel.Level,
+                    Attack = t.TroopType.TroopLevel.Attack,
+                    Defence = t.TroopType.TroopLevel.Defence,
                     StartedAt = t.StartedAt,
                     FinishedAt = t.FinishedAt
                 }).ToList();
@@ -39,34 +65,70 @@ namespace DumDum.Services
             return new List<TroopsResponse>();
         }
 
-        internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
+        internal List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
         {
-            var response = new GetTroopsResponse();
-            if (authorization != "")
+            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
+            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var createdTroops = new List<TroopsResponse>();
+            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
+
+            if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
-                
+                statusCode = 404;
+                return new List<TroopsResponse>();
+            }
+            if (player != null && player.KingdomId == kingdomId)
+            {
+                int newTroopCost = GetTroopCost(troopCreationReq.Type.ToLower());
 
-                if (player != null && player.KingdomId == kingdomId)
+                if (goldAmount < newTroopCost * troopCreationReq.Quantity)
                 {
-                    var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
-                    response.Kingdom = new KingdomResponse();
-                    response.Kingdom.KingdomId = player.KingdomId;
-                    response.Kingdom.KingdomName = player.KingdomName;
-                    response.Kingdom.Ruler = player.Ruler;
-                    response.Kingdom.Location = new Location();
-                    response.Kingdom.Location.CoordinateX = plyersKingdom.CoordinateX;
-                    response.Kingdom.Location.CoordinateY = plyersKingdom.CoordinateY;
-                    response.Troops = GetTroops(player.KingdomId);
-
-                    statusCode = 200;
-                    return response;
+                    statusCode = 400;
+                    return new List<TroopsResponse>();
                 }
+                for (int i = 0; i < troopCreationReq.Quantity; i++)
+                {
+                    var newTroop = CreateNewTroop(troopCreationReq.Type.ToLower(), kingdomId);
+                    DbContext.Troops.Add(newTroop);
+                    DbContext.SaveChanges();
+                    DumDumService.TakeGold(kingdomId, newTroopCost);
+                    createdTroops.Add(new TroopsResponse()
+                    {
+                        TroopId = newTroop.TroopId,
+                        TroopType = newTroop.TroopType.TroopType,
+                        Level = newTroop.Level,
+                        HP = newTroop.TroopType.TroopLevel.HP,
+                        Attack = newTroop.TroopType.TroopLevel.Attack,
+                        Defence = newTroop.TroopType.TroopLevel.Defence,
+                        StartedAt = newTroop.StartedAt,
+                        FinishedAt = newTroop.FinishedAt
+                    });
+                }
+                statusCode = 200;
+                return createdTroops;
             }
             statusCode = 401;
-            return  response;
+            return new List<TroopsResponse>();
+        }
+
+        internal Troop CreateNewTroop(string troopType, int kingdomId)
+        {
+            var requiredTroopType = DbContext.TroopTypes.Include(t => t.TroopLevel)
+                .Where(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
+
+            return new()
+            {
+                TroopTypeId = requiredTroopType.TroopTypeId,
+                Level = requiredTroopType.TroopLevel.Level,
+                StartedAt = 888,
+                FinishedAt = 999,
+                KingdomId = kingdomId
+            };
+        }
+
+        internal int GetTroopCost(string troopType)
+        {
+            return DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower()).FirstOrDefault().Cost;
         }
     }
 }
