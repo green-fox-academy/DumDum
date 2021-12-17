@@ -75,7 +75,7 @@ namespace DumDum.Services
             var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower(), kingdomId);
             var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
             var troopIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
-            var currentLevelOfTownhall = CurrentLevelOTownhall(kingdomId);
+            var currentLevelOfTownhall = CurrentLevelOfTownhall(kingdomId);
             var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopUpdateReq.Type.ToLower());
             var maximumLevelPossible = DbContext.TroopLevel.Select(t => t.Level).Max();
 
@@ -245,7 +245,7 @@ namespace DumDum.Services
             return 0;
         }
 
-        internal int CurrentLevelOTownhall(int kingdomId)
+        internal int CurrentLevelOfTownhall(int kingdomId)
         {
             var townhallLevel = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType.ToLower() == "townhall").FirstOrDefault();
             if (townhallLevel != null)

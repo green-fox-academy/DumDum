@@ -54,27 +54,11 @@ namespace DumDum.Controllers
         {
             var response = TroopService.UpgradeTroops(authorization, TroopUpdateReq, kingdomId, out int statusCode);
 
-            if (statusCode == 200)
+            if (statusCode is 200)
             {
                 return Ok(new StatusResponse() { Status = response });
             }
-            if (statusCode == 400)
-            {
-                return BadRequest(new ErrorResponse { Error = response });
-            }
-            if (statusCode == 402)
-            {
-                return BadRequest(new ErrorResponse { Error = response });
-            }
-            if (statusCode == 403)
-            {
-                return BadRequest(new ErrorResponse { Error = response });
-            }
-            if (statusCode == 404)
-            {
-                return BadRequest(new ErrorResponse { Error = response });
-            }
-            if (statusCode == 406)
+            if (statusCode is 400 or 402 or 403 or 404 or 406)
             {
                 return BadRequest(new ErrorResponse { Error = response });
             }
