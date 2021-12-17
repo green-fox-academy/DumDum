@@ -1,6 +1,7 @@
 ﻿using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Troops;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -129,6 +130,26 @@ namespace DumDum.Services
         internal int GetTroopCost(string troopType)
         {
             return DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower()).FirstOrDefault().Cost;
+        }
+
+        public TroopsLeaderboardResponse GetTroopsLeaderboard()
+        {
+            TroopsLeaderboardResponse response = new TroopsLeaderboardResponse();
+
+            response.Result = DbContext.Kingdoms.Select(k => new TroopsPointResponse()
+            {
+                Ruler = k.Player.Username,
+                Kingdom = k.KingdomName,
+                Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
+                //Points = DbContext.Troops
+                //            .Include(t => t.TroopTypeId)
+                //            .Include(t => t.Level)
+                //            .Include(t => t.)
+                //            .Where(t => t.KingdomId == k.KingdomId)
+                //            .Sum(t => t.)
+            }).ToList();
+
+            return response;
         }
     }
 }

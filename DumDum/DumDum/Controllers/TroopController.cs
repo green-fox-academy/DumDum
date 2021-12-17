@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DumDum.Controllers
 {
-    [Authorize]
     public class TroopController : Controller
     {
         private TroopService TroopService { get; set; }
@@ -46,6 +45,14 @@ namespace DumDum.Controllers
                 return BadRequest(new ErrorResponse { Error = "Request was not done correctly!" });
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+        }
+
+        [HttpGet("leaderboards/troops")]
+        public IActionResult TroopsLeaderboard()
+        {
+            var troopsLeaderboard = TroopService.GetTroopsLeaderboard();
+
+            return Ok(troopsLeaderboard);
         }
     }
 }
