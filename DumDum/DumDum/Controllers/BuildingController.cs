@@ -36,21 +36,30 @@ namespace DumDum.Controllers
         [HttpPut("kingdoms/{kingdomId=int}/buildings/{buildingId=int}")]
         public IActionResult UpgradeBuildings([FromHeader] string authorization, [FromRoute] int kingdomId, int buildingId)
         {
-            int statusCode;
-            var response = BuildingService.UpgradeBuildingsLogic(authorization, kingdomId,buildingId,out statusCode);
+            var response = BuildingService.LevelUp(kingdomId, buildingId, out int statusCode, authorization, out string exception);
 
-            if (statusCode == 401)
+            if (statusCode == 401 && exception == "authentication")
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player!" });
             } 
-            if(statusCode == 400)
+            if(statusCode == 400 && exception == "enoughGold")
             {
                 return StatusCode(statusCode, new ErrorResponse { Error = "You don't have enough gold to upgrade that!" });
             }
 
-            if (statusCode == 404)
+            if (statusCode == 400 && exception == "notBuilding")
             {
                 return StatusCode(statusCode, new ErrorResponse { Error = "Kingdom not found" });
+            }
+
+            if (statusCode == 400 && exception == "maxLevel")
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "Your building is on maximal leve!." });
+            }
+
+            if (statusCode == 400 && exception == "townHall")
+            {
+                return StatusCode(statusCode, new ErrorResponse { Error = "Your building can't have higher level than your townhall! upgrade townhall first."});
             }
             return Ok(response);
         }

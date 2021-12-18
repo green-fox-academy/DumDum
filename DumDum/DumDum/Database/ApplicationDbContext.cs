@@ -48,6 +48,12 @@ namespace DumDum.Database
                 .WithOne(a => a.BuildingType)
                 .HasForeignKey(a => a.BuildingLevelId)
                 .IsRequired(true);
+            
+            modelBuilder.Entity<Building>()
+                .HasMany<BuildingType>(b =>b.BuildingTypes)
+                .WithOne(a => a.Building)
+                .HasForeignKey(a => a.BuildingTypeId)
+                .IsRequired(true);
         }
     }
 }

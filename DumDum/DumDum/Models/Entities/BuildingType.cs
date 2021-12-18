@@ -9,5 +9,6 @@ namespace DumDum.Models.Entities
         public int BuildingLevelId { get; set; }
         public List<BuildingLevel> BuildingLevels { get; set; }
         public BuildingLevel BuildingLevel { get; set; }
+        public Building Building { get; set; }
     }
 }

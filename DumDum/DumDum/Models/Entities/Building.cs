@@ -1,4 +1,6 @@
-﻿namespace DumDum.Models.Entities
+﻿using System.Collections.Generic;
+
+namespace DumDum.Models.Entities
 {
     public class Building
     {
@@ -10,5 +12,9 @@
         public long FinishedAt { get; set; }
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
+        public BuildingType BuildingTyp { get; set; }
+        public List<BuildingType> BuildingTypes { get; set; }
+        public int BuildingTypeId { get; set; }
+        
     }
 }
