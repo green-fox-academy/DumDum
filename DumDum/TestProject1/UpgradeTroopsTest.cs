@@ -4,17 +4,18 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace TestProject1
 {
-    public class KingdomRegistrationTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class UpgradeTroopsTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         private HttpClient HttpClient { get; set; }
 
-        public KingdomRegistrationTest(WebApplicationFactory<Startup> factory)
+        public UpgradeTroopsTest(WebApplicationFactory<Startup> factory)
         {
             HttpClient = factory.CreateClient();
         }
@@ -31,53 +32,20 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsStatusOkAndCorrectResponse()
+        public void HttpPostCreateTroops_ReturnsUnauhtorizedAndError()
         {
             //arrange
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
-            StatusResponse expectedStatusResult = new();
-            expectedStatusResult.Status = "Ok";
-            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+            ErrorResponse expectedErrorResult = new();
+            expectedErrorResult.Error = "This kingdom does not belong to authenticated player";
+            HttpStatusCode expectedStatusCode = HttpStatusCode.Unauthorized;
 
-            KingdomRegistrationRequest requestBody = new();
-            requestBody.CoordinateY = 88;
-            requestBody.CoordinateX = 88;
-            requestBody.KingdomId = 1;
+            TroopUpgradeRequest requestBody = new();
+            requestBody.Type = "phalanx";
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
-            request.Method = HttpMethod.Put;
-            request.Content = requestContent;
-            request.Headers.Add("authorization", $"bearer {tokenResult}");
-
-            //act
-            var response = HttpClient.SendAsync(request).Result;
-            string responseBodyContent = response.Content.ReadAsStringAsync().Result;
-            StatusResponse responseData = JsonConvert.DeserializeObject<StatusResponse>(responseBodyContent);
-
-            //assert
-            Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedStatusResult.Status, responseData.Status);
-        }
-
-        [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse1()
-        {
-            //arrange
-            var request = new HttpRequestMessage();
-            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
-            ErrorResponse expectedError = new();
-            expectedError.Error = "One or both coordinates are out of valid range(0 - 99).";
-            HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
-
-            KingdomRegistrationRequest requestBody = new();
-            requestBody.CoordinateY = 88;
-            requestBody.CoordinateX = 88;
-            requestBody.KingdomId = 1;
-            string requestBodyContent = JsonConvert.SerializeObject(requestBody);
-            StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/2/troops");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -89,26 +57,24 @@ namespace TestProject1
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedError.Error, responseData.Error);
+            Assert.Equal(expectedErrorResult.Error, responseData.Error);
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse2()
+        public void HttpPostCreateTroops_ReturnsBadRequestAndError()
         {
             //arrange
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
-            ErrorResponse expectedError = new();
-            expectedError.Error = "Given coordinates are already taken!";
+            ErrorResponse expectedErrorResult = new();
+            expectedErrorResult.Error = "Request was not done correctly!";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
-            KingdomRegistrationRequest requestBody = new();
-            requestBody.CoordinateY = 88;
-            requestBody.CoordinateX = 88;
-            requestBody.KingdomId = 1;
+            TroopUpgradeRequest requestBody = new();
+            requestBody.Type = "phalanxios";
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -120,7 +86,8 @@ namespace TestProject1
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expectedError.Error, responseData.Error);
+            Assert.Equal(expectedErrorResult.Error, responseData.Error);
         }
     }
 }
+
