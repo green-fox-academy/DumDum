@@ -42,7 +42,7 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1, BuildingId = 1}); 
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/1");
+            request.RequestUri = new Uri("http://localhost:5000/kingdoms/1/buildings/1");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -59,7 +59,7 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1, BuildingId = 1});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/1");
+            request.RequestUri = new Uri("http://localhost:5000/kingdoms/1/buildings/1");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -68,7 +68,13 @@ namespace TestProject1
             ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("Kingdom not found", error.Error);
+            Assert.Equal("This kingdom does not belong to authenticated player!", error.Error);
+            Assert.Equal("Your building is on maximal leve!.", error.Error);
             Assert.Equal("You don't have enough gold to upgrade that!", error.Error);
+            Assert.Equal("Your building is not ready yet for update", error.Error);
+            Assert.Equal("Your building can't have higher level than your townhall! Upgrade townhall first.", error.Error);
+            
         }
         
         [Fact]

@@ -10,5 +10,6 @@
         public long FinishedAt { get; set; }
         public int Production { get; set; }
         public int Consumption { get; set; }
+        public bool IsActive { get; set; }
     }
 }

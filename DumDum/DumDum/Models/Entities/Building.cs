@@ -15,6 +15,7 @@ namespace DumDum.Models.Entities
         public BuildingType BuildingTyp { get; set; }
         public List<BuildingType> BuildingTypes { get; set; }
         public int BuildingTypeId { get; set; }
+        public bool IsActive { get; set; }
         
     }
 }

@@ -18,6 +18,7 @@ namespace DumDum.Services
         private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
+        public DateTime WhenCreated { get; set; }
 
         public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService,
             DumDumService dumService)
@@ -36,6 +37,7 @@ namespace DumDum.Services
                 Level = b.Level,
                 StartedAt = b.StartedAt,
                 FinishedAt = b.FinishedAt
+                
             }).ToList();
         }
 
@@ -80,64 +82,71 @@ namespace DumDum.Services
             return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
         }
         
-        public BuildingList LevelUp(int kingdomId, int buildingId, out int statusCode, string authorization, out string exception)
+        public BuildingList LevelUp(int kingdomId, int buildingId, string authorization, out int statusCode, out string errormessage)
         {
             AuthRequest request = new AuthRequest();
+            BuildingList response = new BuildingList();
             request.Token = authorization;
             var player = AuthenticateService.GetUserInfo(request);
-            BuildingList response = new BuildingList();
             var building = GetBuildingById(buildingId);
-            var kingdomGoldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var nextLevelInfo = InformationForNextLevel(building.BuildingTypeId, building.Level);
             
-
-            if (player == null)
-            {
-                statusCode = 401;
-                exception = "authentication";
-                return null;
-            }
             if (building == null)
             {
                 statusCode = 400;
-                exception = "notBuilding";
+                errormessage = "Kingdom not found";
                 return null;
             }
-
+            var kingdomGoldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var nextLevelInfo = InformationForNextLevel(building.BuildingTypeId, building.Level);
+            
+            if (player == null)
+            {
+                statusCode = 401;
+                errormessage = "This kingdom does not belong to authenticated player!";
+                return null;
+            }
+            
             if (nextLevelInfo == null)
             {
                 statusCode = 400;
-                exception = "maxLevel";
+                errormessage = "Your building is on maximal leve!.";
                 return null;
             }
             if (kingdomGoldAmount < nextLevelInfo.Cost) 
             {
                 statusCode = 400;
-                exception = "enoughGold";
+                errormessage = "You don't have enough gold to upgrade that!";
                 return null;
+            }
+
+            if (building.IsActive != true)
+            {
+                statusCode = 400;
+                errormessage = "Your building is not ready yet for update";
             }
 
             if ( nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId))
             {
                 statusCode = 400;
-                exception = "townHall";
+                errormessage = "Your building can't have higher level than your townhall! Upgrade townhall first.";
                 return null;
             }
-            
-            var editedBuilding = DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
-            editedBuilding.Level = nextLevelInfo.LevelNumber;
+            building.Level = nextLevelInfo.LevelNumber;
+            building.StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds();
+            building.FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + nextLevelInfo.ConstTime;
+            building.IsActive = false;    
             DbContext.SaveChanges();
             
             response.BuildingId = building.BuildingId;
             response.BuildingType = building.BuildingType;
-            response.Level = editedBuilding.Level;
+            response.Level = nextLevelInfo.LevelNumber;
             response.Hp = 1;
             response.StartedAt = 112;
             response.FinishedAt = 123;
             response.Production = nextLevelInfo.Production;
             response.Consumption = nextLevelInfo.Consumption;
             statusCode = 200;
-            exception = "ok";
+            errormessage = "ok";
             return response;
         }
 
@@ -163,7 +172,7 @@ namespace DumDum.Services
 
         public List<string> ExistingTypeOfBuildings()
         {
-            return DbContext.BuildingTypes.Select(b => b.BuildingTypeName).ToList();
+            return DbContext.BuildingTypes.Select(b => b.BuildingTypeName.ToLower()).ToList();
         }
 
         public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
@@ -187,7 +196,7 @@ namespace DumDum.Services
                 return null;
             }
             
-            if (!ExistingTypeOfBuildings().Contains(building.First().ToString().ToUpper() + building.Substring(1)))
+            if (!ExistingTypeOfBuildings().Contains(building))
             {
                 statusCode = 406;
                 return null;
@@ -200,14 +209,16 @@ namespace DumDum.Services
             }
             var build = DbContext.Buildings.Add(new Building()
                         {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,
-                        Hp = 1, Level = buildingType.BuildingLevel.LevelNumber, BuildingTypeId = buildingType.BuildingTypeId});
+                        Hp = 1, Level = buildingType.BuildingLevel.LevelNumber, BuildingTypeId = buildingType.BuildingTypeId,
+                        StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds(), FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() 
+                            + buildingType.BuildingLevel.ConstTime, IsActive = false});
             DbContext.SaveChanges();
             response.BuildingId = build.Entity.BuildingId;
             response.BuildingType = building;
             response.Level = buildingType.BuildingLevel.LevelNumber;
             response.Hp = 1;
-            response.StartedAt = 112;
-            response.FinishedAt = 123;
+            response.StartedAt = build.Entity.StartedAt;
+            response.FinishedAt = build.Entity.FinishedAt;
             response.Production = buildingType.BuildingLevel.Production;
             response.Consumption = buildingType.BuildingLevel.Consumption;
             statusCode = 200;
