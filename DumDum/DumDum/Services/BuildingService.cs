@@ -50,7 +50,7 @@ namespace DumDum.Services
         public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
         {
             var response = new BuildingResponse();
-            if (authorization != null && kingdomId != null)
+            if (authorization != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization;
