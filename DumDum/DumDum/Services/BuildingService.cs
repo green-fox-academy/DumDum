@@ -197,7 +197,7 @@ namespace DumDum.Services
                 Kingdom = k.KingdomName,
                 Buildings = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Count(),
                 Points = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)
-            }).ToList();
+            }).OrderByDescending(t => t.Points).ToList();
 
             return response;
         }        

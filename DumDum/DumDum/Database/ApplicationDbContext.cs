@@ -54,6 +54,7 @@ namespace DumDum.Database
                .WithOne(t => t.TroopLevel)
                .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
                .IsRequired(true);
+
         }
     }
 }

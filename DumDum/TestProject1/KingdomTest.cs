@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
@@ -164,5 +165,45 @@ namespace TestProject1
             Assert.Equal(requestBody.Kingdoms[0].KingdomName,responseDataObj.Kingdoms[0].KingdomName);
 
         }
+
+        [Fact]
+        public void KingdomsLeaderboardReturOKAndLeaderboardList()
+        {
+
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/kingdoms");
+            request.Method = HttpMethod.Get;
+
+            KingdomsLeaderboardResponse requestBody = new KingdomsLeaderboardResponse();
+
+            requestBody.Response = new List<KingdomPointsResponse>()
+            {
+                new KingdomPointsResponse()
+                {
+                    Ruler = "Nya",
+                    Kingdom = "Nya Nya Land",
+                    Points = 0
+                }
+            };
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            KingdomsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<KingdomsLeaderboardResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Response[0].Ruler, responseDataObj.Response[0].Ruler);
+            Assert.Equal(requestBody.Response[0].Kingdom, responseDataObj.Response[0].Kingdom);
+            Assert.Equal(requestBody.Response[0].Points, responseDataObj.Response[0].Points);
+
+        }
+
     }
 }

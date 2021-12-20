@@ -95,10 +95,10 @@ namespace TestProject1
             {
                 new BuildingPointsResponse()
                 {
-                    Ruler = "Nya",
-                    Kingdom = "Nya Nya Land",
-                    Buildings = 3,
-                    Points = 4
+                    Ruler = "Marek",
+                    Kingdom = "Pivko",
+                    Buildings = 4,
+                    Points = 152
                 }
             };
 

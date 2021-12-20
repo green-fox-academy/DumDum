@@ -141,15 +141,22 @@ namespace DumDum.Services
                 Ruler = k.Player.Username,
                 Kingdom = k.KingdomName,
                 Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
-                //Points = DbContext.Troops
-                //            .Include(t => t.TroopTypeId)
-                //            .Include(t => t.Level)
-                //            .Include(t => t.)
+                //Points = (int)DbContext.Troops
                 //            .Where(t => t.KingdomId == k.KingdomId)
-                //            .Sum(t => t.)
-            }).ToList();
+                //            .Where(t => t.TroopType.TroopLevel.Level == t.Level)
+                //            .Sum(t => t.TroopType.TroopLevel.Consumption)                           
+            }).OrderByDescending(t => t.Points).ToList();
 
             return response;
+        }
+
+        public int GetPointsFromKingdom(int kingdomId)
+        {
+            var result = 0;
+
+
+
+            return 0;
         }
     }
 }

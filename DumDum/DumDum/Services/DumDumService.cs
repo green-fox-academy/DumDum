@@ -5,6 +5,7 @@ using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -242,6 +243,22 @@ namespace DumDum.Services
                 DbContext.Resources.Update(gold);
                 DbContext.SaveChanges();
             }
+        }
+
+        public KingdomsLeaderboardResponse GetKingdomsLeaderboard()
+        {
+            KingdomsLeaderboardResponse response = new()
+            {
+                Response = DbContext.Kingdoms.Select(k => new KingdomPointsResponse()
+                {
+                    Ruler = k.Player.Username,
+                    Kingdom = k.KingdomName,
+                    Points = 0
+
+                }).OrderByDescending(p => p.Points).ToList()
+            };
+
+            return response;
         }
 
     }
