@@ -3,7 +3,6 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
-using Newtonsoft.Json;
 
 namespace DumDum.Controllers
 {
@@ -31,10 +30,11 @@ namespace DumDum.Controllers
             //TimeService.GetRegistrationTime();
             if (statusCode == 200)
             {
+                TimeService.GetRegistrationTime(player.Username);
                 return Ok(player);
             }
 
-            return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
+            return BadRequest(new ErrorResponse(){Error = "The credentials don't match required"});
         }
 
         [Authorize]
@@ -43,7 +43,7 @@ namespace DumDum.Controllers
         {
             
             int statusCode;
-            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out statusCode);
+            var message = DumDumService.RegisterKingdomLogic(authorization, kingdomRequest, out statusCode);
 
             if (statusCode == 200)
             {
@@ -56,32 +56,19 @@ namespace DumDum.Controllers
         [HttpPut("kingdoms")]
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
         {
-            AuthRequest request = new AuthRequest() { Token = authorization };
+            AuthRequest request = new AuthRequest(){Token = authorization};
             var player = AuthenticateService.GetUserInfo(request);
             if (player == null)
             {
-                return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+                return Unauthorized(new ErrorResponse{Error = "This kingdom does not belong to authenticated player"});
             }
             if (String.IsNullOrEmpty(requestName.KingdomName))
             {
-                return BadRequest(new ErrorResponse { Error = "Field kingdomName was empty!" });
+                return BadRequest(new ErrorResponse{ Error = "Field kingdomName was empty!"});
             }
             var response = AuthenticateService.RenameKingdom(requestName, player);
             return Ok(response);
         }
-
-        [HttpGet("kingdoms")]
-        public IActionResult KingdomsList()
-        {
-            var kingdoms = DumDumService.GetAllKingdoms();
-
-            if (kingdoms == null)
-            {
-                return StatusCode(500);
-            }
-            return Ok(kingdoms);
-        }
-
         [Authorize]
         [HttpGet("kingdoms/{id=int}")]
         public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
@@ -92,7 +79,7 @@ namespace DumDum.Controllers
             {
                 return Ok(details);
             }
-            return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+            return Unauthorized(new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
         }
     }
 }
