@@ -12,6 +12,8 @@ namespace DumDum.Database
         public DbSet<Building> Buildings { get; set; }
         public DbSet<BuildingLevel> BuildingLevels { get; set; }
         public DbSet<BuildingType> BuildingTypes { get; set; }
+        public DbSet<TroopLevel> TroopLevel { get; set; }
+        public DbSet<TroopTypes> TroopTypes { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -54,6 +56,18 @@ namespace DumDum.Database
                 .WithOne(a => a.Building)
                 .HasForeignKey(a => a.BuildingTypeId)
                 .IsRequired(true);
+
+            modelBuilder.Entity<Troop>()
+                 .HasOne<TroopTypes>(t => t.TroopType)
+                 .WithMany(t => t.Troops)
+                 .HasForeignKey(t => t.TroopTypeId)
+                 .IsRequired(true);
+
+            modelBuilder.Entity<TroopLevel>()
+               .HasOne<TroopTypes>(t=>t.TroopType)
+               .WithOne(t => t.TroopLevel)
+               .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
+               .IsRequired(true);
         }
     }
 }

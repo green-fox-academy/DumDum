@@ -74,7 +74,7 @@ namespace DumDum.Services
 
             catch (Exception)
             {
-                return null;
+                return new AuthResponse();
             }
         }
 
