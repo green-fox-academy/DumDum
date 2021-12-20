@@ -4,17 +4,18 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace TestProject1
 {
-    public class CreateTroopsTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class UpgradeTroopsTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         private HttpClient HttpClient { get; set; }
 
-        public CreateTroopsTest(WebApplicationFactory<Startup> factory)
+        public UpgradeTroopsTest(WebApplicationFactory<Startup> factory)
         {
             HttpClient = factory.CreateClient();
         }
@@ -31,34 +32,6 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPostCreateTroops_ReturnsStatusOk()
-        {
-            //arrange
-            var request = new HttpRequestMessage();
-            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
-            StatusResponse expectedStatusResult = new();
-            expectedStatusResult.Status = "Ok";
-            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-
-            TroopCreationRequest requestBody = new();
-            requestBody.Type = "phalanx";
-            requestBody.Quantity = 1;
-            string requestBodyContent = JsonConvert.SerializeObject(requestBody);
-            StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
-            request.Method = HttpMethod.Post;
-            request.Content = requestContent;
-            request.Headers.Add("authorization", $"bearer {tokenResult}");
-
-            //act
-            var response = HttpClient.SendAsync(request).Result;
-            string responseBodyContent = response.Content.ReadAsStringAsync().Result;
-
-            //assert
-            Assert.Equal(expectedStatusCode, response.StatusCode);
-        }
-
-        [Fact]
         public void HttpPostCreateTroops_ReturnsUnauhtorizedAndError()
         {
             //arrange
@@ -68,13 +41,12 @@ namespace TestProject1
             expectedErrorResult.Error = "This kingdom does not belong to authenticated player";
             HttpStatusCode expectedStatusCode = HttpStatusCode.Unauthorized;
 
-            TroopCreationRequest requestBody = new();
+            TroopUpgradeRequest requestBody = new();
             requestBody.Type = "phalanx";
-            requestBody.Quantity = 2;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/2/troops");
-            request.Method = HttpMethod.Post;
+            request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
 
@@ -95,16 +67,15 @@ namespace TestProject1
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             ErrorResponse expectedErrorResult = new();
-            expectedErrorResult.Error = "You don't have enough gold to train all these units!";
+            expectedErrorResult.Error = "Request was not done correctly!";
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
-            TroopCreationRequest requestBody = new();
-            requestBody.Type = "senator";
-            requestBody.Quantity = 20;
+            TroopUpgradeRequest requestBody = new();
+            requestBody.Type = "phalanxios";
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
-            request.Method = HttpMethod.Post;
+            request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
 
