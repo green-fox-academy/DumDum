@@ -269,30 +269,32 @@ namespace DumDum.Services
         public TroopsLeaderboardResponse GetTroopsLeaderboard()
         {
             TroopsLeaderboardResponse response = new();
-            //List<TroopsPointResponse> pointsList = new();
-            //var kingdoms = DbContext.Kingdoms.ToList();
+            ////var kingdomToopsConsumption = DbContext.Kingdoms.Select(k => k.KingdomId)
+            ////                                .ToDictionary(k => k, k => GetAllTroopsConsumptionInKingdom(k));
+            List<TroopsPointResponse> pointsList = new();
+            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
 
-            //foreach (var kingdom in kingdoms)
-            //{
-            //    var troopPoint = new TroopsPointResponse()
-            //    {
-            //        Ruler = kingdom.Player.Username,
-            //        Kingdom = kingdom.KingdomName,
-            //        Troops = DbContext.Troops.Where(t => t.KingdomId == kingdom.KingdomId).Count(),
-            //        Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
-            //    };
-            //    pointsList.Add(troopPoint);
-            //}
-
-            //response.Result = pointsList;
-
-            response.Result = DbContext.Kingdoms.Select(k => new TroopsPointResponse()
+            foreach (var kingdom in kingdoms)
             {
-                Ruler = k.Player.Username,
-                Kingdom = k.KingdomName,
-                Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
-                Points = GetAllTroopsConsumptionInKingdom(k.KingdomId)
-            }).ToList();
+                var troopPoint = new TroopsPointResponse()
+                {
+                    Ruler = kingdom.Player.Username,
+                    Kingdom = kingdom.KingdomName,
+                    Troops = DbContext.Troops.Where(t => t.KingdomId == kingdom.KingdomId).Count(),
+                    Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
+                };
+                pointsList.Add(troopPoint);
+            }
+
+            response.Result = pointsList.OrderByDescending(x => x.Points).ToList();
+
+            //response.Result = DbContext.Kingdoms.Select(k => new TroopsPointResponse()
+            //{
+            //    Ruler = k.Player.Username,
+            //    Kingdom = k.KingdomName,
+            //    Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
+            //    Points = kingdomToopsConsumption[k.KingdomId]
+            //}).ToList();
 
             return response;
         }

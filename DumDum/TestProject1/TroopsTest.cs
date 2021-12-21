@@ -92,8 +92,8 @@ namespace TestProject1
                 {
                     Ruler = "Nya",
                     Kingdom = "Nya Nya Land",
-                    Troops = 7,
-                    Points = 0
+                    Troops = 5,
+                    Points = 11.8
                 }
             };
 
