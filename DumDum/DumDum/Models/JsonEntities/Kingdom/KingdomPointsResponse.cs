@@ -4,6 +4,6 @@
     {
         public string Ruler { get; set; }
         public string Kingdom { get; set; }
-        public int Points { get; set; }
+        public double Points { get; set; }
     }
 }

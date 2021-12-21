@@ -268,29 +268,48 @@ namespace DumDum.Services
 
         public TroopsLeaderboardResponse GetTroopsLeaderboard()
         {
-            TroopsLeaderboardResponse response = new TroopsLeaderboardResponse();
+            TroopsLeaderboardResponse response = new();
+            //List<TroopsPointResponse> pointsList = new();
+            //var kingdoms = DbContext.Kingdoms.ToList();
+
+            //foreach (var kingdom in kingdoms)
+            //{
+            //    var troopPoint = new TroopsPointResponse()
+            //    {
+            //        Ruler = kingdom.Player.Username,
+            //        Kingdom = kingdom.KingdomName,
+            //        Troops = DbContext.Troops.Where(t => t.KingdomId == kingdom.KingdomId).Count(),
+            //        Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
+            //    };
+            //    pointsList.Add(troopPoint);
+            //}
+
+            //response.Result = pointsList;
 
             response.Result = DbContext.Kingdoms.Select(k => new TroopsPointResponse()
             {
                 Ruler = k.Player.Username,
                 Kingdom = k.KingdomName,
                 Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
-                //Points = (int)DbContext.Troops
-                //            .Where(t => t.KingdomId == k.KingdomId)
-                //            .Where(t => t.TroopType.TroopLevel.Level == t.Level)
-                //            .Sum(t => t.TroopType.TroopLevel.Consumption)                           
-            }).OrderByDescending(t => t.Points).ToList();
+                Points = GetAllTroopsConsumptionInKingdom(k.KingdomId)
+            }).ToList();
 
             return response;
         }
 
-        public int GetPointsFromKingdom(int kingdomId)
+        public double GetAllTroopsConsumptionInKingdom(int kingdomId)
         {
-            var result = 0;
+            var consumptionOfAllTroopsInKingdom = 0.0;
 
+                var troopsInKingdom = DbContext.Troops.Where(t => t.KingdomId == kingdomId).ToList();
+                foreach (var troop in troopsInKingdom)
+                {
+                    consumptionOfAllTroopsInKingdom += DbContext.TroopLevel.Where(t => t.TroopTypeId == troop.TroopTypeId && t.Level == troop.Level)
+                        .Select(t => t.Consumption)
+                        .FirstOrDefault();
+                }
 
-
-            return 0;
+            return consumptionOfAllTroopsInKingdom;
         }
     }
 }
