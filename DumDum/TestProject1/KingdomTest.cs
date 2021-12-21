@@ -184,9 +184,9 @@ namespace TestProject1
             {
                 new KingdomPointsResponse()
                 {
-                    Ruler = "Nya",
-                    Kingdom = "Nya Nya Land",
-                    Points = 0
+                    Ruler = "Marek",
+                    Kingdom = "Pivko",
+                    Points = 157.0
                 }
             };
 

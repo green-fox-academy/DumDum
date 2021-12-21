@@ -92,12 +92,6 @@ namespace DumDum.Controllers
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
 
-        [HttpGet("leaderboards/kingdoms")]
-        public IActionResult KingdomsLeaderboard()
-        {
-            var kingdomsLeaderboard = DumDumService.GetKingdomsLeaderboard();
 
-            return Ok(kingdomsLeaderboard);
-        }
     }
 }

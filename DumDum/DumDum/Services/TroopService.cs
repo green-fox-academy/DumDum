@@ -5,7 +5,7 @@ using DumDum.Models.JsonEntities.Troops;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using DumDum.Models.JsonEntities.Kingdom;
 
 namespace DumDum.Services
 {
@@ -269,8 +269,6 @@ namespace DumDum.Services
         public TroopsLeaderboardResponse GetTroopsLeaderboard()
         {
             TroopsLeaderboardResponse response = new();
-            ////var kingdomToopsConsumption = DbContext.Kingdoms.Select(k => k.KingdomId)
-            ////                                .ToDictionary(k => k, k => GetAllTroopsConsumptionInKingdom(k));
             List<TroopsPointResponse> pointsList = new();
             var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
 
@@ -288,14 +286,6 @@ namespace DumDum.Services
 
             response.Result = pointsList.OrderByDescending(x => x.Points).ToList();
 
-            //response.Result = DbContext.Kingdoms.Select(k => new TroopsPointResponse()
-            //{
-            //    Ruler = k.Player.Username,
-            //    Kingdom = k.KingdomName,
-            //    Troops = DbContext.Troops.Where(t => t.KingdomId == k.KingdomId).Count(),
-            //    Points = kingdomToopsConsumption[k.KingdomId]
-            //}).ToList();
-
             return response;
         }
 
@@ -312,6 +302,30 @@ namespace DumDum.Services
                 }
 
             return consumptionOfAllTroopsInKingdom;
+        }
+
+        public KingdomsLeaderboardResponse GetKingdomsLeaderboard()
+        {
+            KingdomsLeaderboardResponse response = new();
+
+            List<KingdomPointsResponse> pointsList = new();
+            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
+
+            foreach (var kingdom in kingdoms)
+            {
+                var kingdomPoint = new KingdomPointsResponse()
+                {
+                    Ruler = kingdom.Player.Username,
+                    Kingdom = kingdom.KingdomName,
+                    Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
+                            + DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level)
+                };
+                pointsList.Add(kingdomPoint);
+            }
+
+            response.Response = pointsList.OrderByDescending(x => x.Points).ToList();
+
+            return response;
         }
     }
 }

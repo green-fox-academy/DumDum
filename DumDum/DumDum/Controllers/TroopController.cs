@@ -72,5 +72,13 @@ namespace DumDum.Controllers
 
             return Ok(troopsLeaderboard);
         }
+
+        [HttpGet("leaderboards/kingdoms")]
+        public IActionResult KingdomsLeaderboard()
+        {
+            var kingdomsLeaderboard = TroopService.GetKingdomsLeaderboard();
+
+            return Ok(kingdomsLeaderboard);
+        }
     }
 }
