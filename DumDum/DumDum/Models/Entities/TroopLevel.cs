@@ -19,6 +19,7 @@ namespace DumDum.Models.Entities
         public int CarryCap { get; set; }
         public int Cost { get; set; }
         public int SpecialSkills { get; set; }
+        public int ConstTime { get; set; }
         public int TroopTypeId { get; set; }
         public TroopTypes TroopType { get; set; }
 
