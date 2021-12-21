@@ -12,12 +12,12 @@
         public int Production { get; set; }
         public int Consumption { get; set; }
         public decimal DefBoost { get; set; }
-        public long Axemen { get; set; }
-        public long Phalanx { get; set; }
-        public long Knights { get; set; }
-        public long Catapult { get; set; }
-        public long TheSpy { get; set; }
-        public long Senator { get; set; }
+        public long CreatedTimeAxemen { get; set; }
+        public long CreatedTimePhalanx { get; set; }
+        public long CreatedTimeKnights { get; set; }
+        public long CreatedTimeCatapult { get; set; }
+        public long CreatedTimeTheSpy { get; set; }
+        public long CreatedTimeSenator { get; set; }
         public BuildingType BuildingType { get; set; }
     }
 }

@@ -10,12 +10,12 @@ Create table BuildingLevels(
     Production int,
     Consumption int,
     DefBoost decimal,
-    Axemen bigint,
-    Phalanx bigint,
-    Knights bigint,
-    Catapult bigint,
-    TheSpy bigint,
-    Senator bigint
+    CreatedTimeAxemen bigint,
+    CreatedTimePhalanx bigint,
+    CreatedTimeKnights bigint,
+    CreatedTimeCatapult bigint,
+    CreatedTimeTheSpy bigint,
+    CreatedTimeSenator bigint
 );
 insert into BuildingLevels(BuildingLevelId, LevelNumber, Cost, ConstTime, ResearchTime, MaxStorage, Defense, Production, Consumption, DefBoost, Axemen, Phalanx, Knights, Catapult, TheSpy, Senator)
 Values (1, 1, 120, 3600, 0, 1200, 10, 0, 1, 0, 0, 0, 0, 0, 0, 0),

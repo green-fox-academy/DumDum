@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DumDum.Models.Entities
 {
@@ -15,7 +16,29 @@ namespace DumDum.Models.Entities
         public BuildingType BuildingTyp { get; set; }
         public List<BuildingType> BuildingTypes { get; set; }
         public int BuildingTypeId { get; set; }
-        public bool IsActive { get; set; }
-        
+
+        public List<Building> GetActiveBuildings(List<Building> allBuildings)
+        {
+            List<Building> activeBuildings = new List<Building>();
+            for (int i = 0; i < allBuildings.Count; i++)
+            {
+                if (allBuildings[i].FinishedAt < (int) DateTimeOffset.Now.ToUnixTimeSeconds())
+                {
+                    activeBuildings.Add(allBuildings[i]);
+                }
+            }
+
+            return activeBuildings;
+        }
+        public bool IsActive(Building building)
+        {
+            if (building.FinishedAt < (int) DateTimeOffset.Now.ToUnixTimeSeconds())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

@@ -112,29 +112,31 @@ namespace DumDum.Services
                 errormessage = "Your building is on maximal leve!.";
                 return null;
             }
+            
             if (kingdomGoldAmount < nextLevelInfo.Cost) 
             {
                 statusCode = 400;
                 errormessage = "You don't have enough gold to upgrade that!";
                 return null;
             }
-
-            if (building.IsActive != true)
-            {
-                statusCode = 400;
-                errormessage = "Your building is not ready yet for update";
-            }
-
-            if ( nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId))
+            
+            if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId))
             {
                 statusCode = 400;
                 errormessage = "Your building can't have higher level than your townhall! Upgrade townhall first.";
                 return null;
             }
+
+            int timeNow = (int) DateTimeOffset.Now.ToUnixTimeSeconds();
+            if (building.FinishedAt > timeNow)
+            {
+                statusCode = 400;
+                errormessage = "Your building is updating";
+                return null;
+            }
             building.Level = nextLevelInfo.LevelNumber;
             building.StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds();
             building.FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + nextLevelInfo.ConstTime;
-            building.IsActive = false;    
             DbContext.SaveChanges();
             
             response.BuildingId = building.BuildingId;
@@ -152,7 +154,8 @@ namespace DumDum.Services
 
         public BuildingLevel InformationForNextLevel(int levelTypeId, int buildingLevel)
         {
-            return DbContext.BuildingLevels.Where(p => p.BuildingLevelId == levelTypeId).FirstOrDefault(p => p.LevelNumber == buildingLevel + 1);
+            return DbContext.BuildingLevels.Where(p => p.BuildingLevelId == levelTypeId)
+                                            .FirstOrDefault(p => p.LevelNumber == buildingLevel + 1);
         }
 
         public Kingdom FindPlayerByKingdomId(int id)
@@ -211,7 +214,7 @@ namespace DumDum.Services
                         {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,
                         Hp = 1, Level = buildingType.BuildingLevel.LevelNumber, BuildingTypeId = buildingType.BuildingTypeId,
                         StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds(), FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() 
-                            + buildingType.BuildingLevel.ConstTime, IsActive = false});
+                            + buildingType.BuildingLevel.ConstTime});
             DbContext.SaveChanges();
             response.BuildingId = build.Entity.BuildingId;
             response.BuildingType = building;

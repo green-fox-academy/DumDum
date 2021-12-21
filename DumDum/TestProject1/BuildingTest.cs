@@ -101,9 +101,9 @@ namespace TestProject1
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "church"});
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "arm"});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings/");
             request.Method = HttpMethod.Post;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -118,12 +118,13 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "farm"});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings");
+            request.RequestUri = new Uri("https://localhost:5000/kingdoms/1/buildings/");
             request.Method = HttpMethod.Post;
             request.Content = requestContent;
             var response = HttpClient.SendAsync(request).Result;
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
+
     }
 }
