@@ -1,4 +1,8 @@
-﻿namespace DumDum.Models.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DumDum.Models.Entities
 {
     public class Troop
     {
@@ -10,6 +14,9 @@
         public Kingdom Kingdom { get; set; }
         public int TroopTypeId { get; set; }
         public TroopTypes TroopType { get; set; }
+
+
+
     }
 }
 

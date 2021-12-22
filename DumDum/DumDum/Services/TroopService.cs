@@ -72,33 +72,33 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var possibleTroopTypes = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
-            var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower(), kingdomId);
-            var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
-            var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
-            var currentLevelOfTownhall = CurrentLevelOfTownhall(kingdomId);
-            var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopUpdateReq.Type.ToLower());
-            var maximumLevelPossible = DbContext.TroopLevel.Select(t => t.Level).Max();
-            var timeRequiredToUpgradeTroop = DbContext.TroopLevel.Where(t => t.Level== currentLevelOfTroops+1 && t.TroopTypeId== troopTypeIdToBeUpgraded)
-                .Select(t=>t.ConstTime).FirstOrDefault();
 
-            if (player != null && player.KingdomId == kingdomId)
+            if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {
-                if (string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
-                {
-                    statusCode = 404;
-                    return "Request was not done correctly!";
-                }
+                statusCode = 404;
+                return "Request was not done correctly!";
+            }
+            if (player != null && player.KingdomId == kingdomId && troopUpdateReq != null)
+            {
+                var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
+                var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower(), kingdomId);
+                var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
+                var currentLevelOfTownhall = CurrentLevelOfTownhall(kingdomId);
+                var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopUpdateReq.Type.ToLower());
+                var maximumLevelPossible = DbContext.TroopLevel.Select(t => t.Level).Max();
+                var timeRequiredToUpgradeTroop = DbContext.TroopLevel.Where(t => t.Level == currentLevelOfTroops + 1 && t.TroopTypeId == troopTypeIdToBeUpgraded)
+                    .Select(t => t.ConstTime).FirstOrDefault();
+           
                 if (IsUpgradeInProgress(kingdomId, troopUpdateReq.Type))
                 {
                     statusCode = 407;
-                    return "Upgrade in progress";
+                    return "Creation or upgrade of this type of troop is already in progress";
                 }
                 if (!DoesAcademyExist(kingdomId))
                 {
                     statusCode = 406;
                     return "Build Academy first";
                 }
-
                 if (maximumLevelPossible <= currentLevelOfTroops)
                 {
                     statusCode = 405;
@@ -139,15 +139,16 @@ namespace DumDum.Services
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var createdTroops = new List<TroopsResponse>();
             var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
-            var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopCreationReq.Type.ToLower());
+           
 
-            if (troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
+            if (troopCreationReq == null || troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
                 statusCode = 404;
                 return new List<TroopsResponse>();
             }
             if (player != null && player.KingdomId == kingdomId)
             {
+                var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopCreationReq.Type.ToLower());
                 int newTroopCost = GetTroopCreationCost(troopCreationReq.Type.ToLower(), currentLevelOfTroops);
 
                 if (goldAmount < newTroopCost * troopCreationReq.Quantity)
@@ -246,7 +247,7 @@ namespace DumDum.Services
         internal int CountTroopsByType(string troopType, int kingdomId)
         {
             var troopsCountByType = DbContext.Troops.Where(t => t.TroopType.TroopType == troopType.ToLower() && t.KingdomId == kingdomId);
-            if (troopsCountByType != null)
+            if (troopsCountByType != null && troopType != null)
             {
                 return troopsCountByType.Count();
             }
@@ -282,6 +283,15 @@ namespace DumDum.Services
                 return currentLevelOTroops.Level;
             }
             return 0;
+        }
+
+        public List<Troop> GetActiveTroops(List<Troop> allTroops)
+        {
+            return allTroops.Where(t => t.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds()).ToList();
+        }
+        public bool IsTroopActive(Troop troop)
+        {
+            return troop.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds();
         }
     }
 }
