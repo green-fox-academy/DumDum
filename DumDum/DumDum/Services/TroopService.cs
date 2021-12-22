@@ -269,12 +269,12 @@ namespace DumDum.Services
         public TroopsLeaderboardResponse GetTroopsLeaderboard()
         {
             TroopsLeaderboardResponse response = new();
-            List<TroopsPointResponse> pointsList = new();
+            List<TroopsPoint> pointsList = new();
             var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
 
             foreach (var kingdom in kingdoms)
             {
-                var troopPoint = new TroopsPointResponse()
+                var troopPoint = new TroopsPoint()
                 {
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,
@@ -308,12 +308,12 @@ namespace DumDum.Services
         {
             KingdomsLeaderboardResponse response = new();
 
-            List<KingdomPointsResponse> pointsList = new();
+            List<KingdomPoints> pointsList = new();
             var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
 
             foreach (var kingdom in kingdoms)
             {
-                var kingdomPoint = new KingdomPointsResponse()
+                var kingdomPoint = new KingdomPoints()
                 {
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,

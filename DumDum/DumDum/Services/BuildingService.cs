@@ -190,7 +190,7 @@ namespace DumDum.Services
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
 
-            response.Result = DbContext.Kingdoms.Select(k => new BuildingPointsResponse()
+            response.Result = DbContext.Kingdoms.Select(k => new BuildingPoints()
             {
                 Ruler = k.Player.Username,
                 Kingdom = k.KingdomName,

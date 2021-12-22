@@ -1,6 +1,6 @@
 ﻿namespace DumDum.Models.JsonEntities.Buildings
 {
-    public class BuildingPointsResponse
+    public class BuildingPoints
     {
         public string Ruler { get; set; }
         public string Kingdom { get; set; }

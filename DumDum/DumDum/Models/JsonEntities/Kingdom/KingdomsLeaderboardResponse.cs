@@ -4,7 +4,7 @@ namespace DumDum.Models.JsonEntities.Kingdom
 {
     public class KingdomsLeaderboardResponse
     {
-        public List<KingdomPointsResponse> Response { get; set; }
+        public List<KingdomPoints> Response { get; set; }
 
     }
 }

@@ -4,6 +4,6 @@ namespace DumDum.Models.JsonEntities.Troops
 {
     public class TroopsLeaderboardResponse
     {
-        public List<TroopsPointResponse> Result { get; set; }
+        public List<TroopsPoint> Result { get; set; }
     }
 }

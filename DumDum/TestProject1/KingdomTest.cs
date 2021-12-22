@@ -180,9 +180,9 @@ namespace TestProject1
 
             KingdomsLeaderboardResponse requestBody = new KingdomsLeaderboardResponse();
 
-            requestBody.Response = new List<KingdomPointsResponse>()
+            requestBody.Response = new List<KingdomPoints>()
             {
-                new KingdomPointsResponse()
+                new KingdomPoints()
                 {
                     Ruler = "Marek",
                     Kingdom = "Pivko",

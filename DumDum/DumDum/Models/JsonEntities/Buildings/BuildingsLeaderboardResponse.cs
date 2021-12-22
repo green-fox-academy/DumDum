@@ -4,6 +4,6 @@ namespace DumDum.Models.JsonEntities.Buildings
 {
     public class BuildingsLeaderboardResponse
     {
-        public List<BuildingPointsResponse> Result { get; set; }
+        public List<BuildingPoints> Result { get; set; }
     }
 }

@@ -91,9 +91,9 @@ namespace TestProject1
 
             BuildingsLeaderboardResponse requestBody = new BuildingsLeaderboardResponse();
 
-            requestBody.Result = new List<BuildingPointsResponse>()
+            requestBody.Result = new List<BuildingPoints>()
             {
-                new BuildingPointsResponse()
+                new BuildingPoints()
                 {
                     Ruler = "Marek",
                     Kingdom = "Pivko",

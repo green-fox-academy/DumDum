@@ -86,9 +86,9 @@ namespace TestProject1
 
             TroopsLeaderboardResponse requestBody = new TroopsLeaderboardResponse();
 
-            requestBody.Result = new List<TroopsPointResponse>()
+            requestBody.Result = new List<TroopsPoint>()
             {
-                new TroopsPointResponse()
+                new TroopsPoint()
                 {
                     Ruler = "Nya",
                     Kingdom = "Nya Nya Land",
