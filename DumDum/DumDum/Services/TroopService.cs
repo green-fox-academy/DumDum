@@ -285,9 +285,9 @@ namespace DumDum.Services
             return 0;
         }
 
-        public List<Troop> GetActiveTroops(List<Troop> allTroops)
+        public List<Troop> GetActiveTroops()
         {
-            return allTroops.Where(t => t.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds()).ToList();
+            return DbContext.Troops.Where(t => t.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds()).ToList();
         }
         public bool IsTroopActive(Troop troop)
         {

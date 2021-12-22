@@ -23,7 +23,7 @@ namespace TestProject1
         {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
@@ -62,7 +62,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse1()
+        public void HttpPutRegistration_ReturnsBadRequestAndErrorResponse()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -72,7 +72,7 @@ namespace TestProject1
             HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
             KingdomRegistrationRequest requestBody = new();
-            requestBody.CoordinateY = 88;
+            requestBody.CoordinateY = 100;
             requestBody.CoordinateX = 88;
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
@@ -93,19 +93,19 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutRegistration_ReturnsBadRequestAndCorrectResponse2()
+        public void HttpPutRegistration_ReturnsUnauthorizedtAndErrorResponse()
         {
             //arrange
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
             ErrorResponse expectedError = new();
-            expectedError.Error = "Given coordinates are already taken!";
-            HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
+            expectedError.Error = "This kingdom does not belong to authenticated player";
+            HttpStatusCode expectedStatusCode = HttpStatusCode.Unauthorized;
 
             KingdomRegistrationRequest requestBody = new();
             requestBody.CoordinateY = 88;
             requestBody.CoordinateX = 88;
-            requestBody.KingdomId = 1;
+            requestBody.KingdomId = 3;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/registration");
