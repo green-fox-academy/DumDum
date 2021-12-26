@@ -12,6 +12,7 @@ namespace DumDum.Services
     {
         private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
+
         public DumDumService(ApplicationDbContext dbContext, AuthenticateService authService)
         {
             DbContext = dbContext;
@@ -31,7 +32,7 @@ namespace DumDum.Services
         public Player Register(string username, string password, string kingdomName)
         {
             var kingdom = CreateKingdom(kingdomName, username);
-            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
+            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
             DbContext.Players.Add(player);
             DbContext.SaveChanges();
             var playerToReturn = GetPlayerByUsername(username);
@@ -45,20 +46,46 @@ namespace DumDum.Services
             var kingdom = new Kingdom();
             if (kingdomname.IsNullOrEmpty())
             {
-                kingdom.KingdomName = $"{username}'s kingdom";
-                DbContext.Kingdoms.Add(kingdom);
+                kingdom.KingdomName = $"{username}'s Kingdom";
+                var kingdomToSave = DbContext.Kingdoms.Add(kingdom).Entity;
+                var gold = new Resource()
+                {
+                    Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
+                    KingdomId = kingdomToSave.KingdomId
+                };
+                var food = new Resource()
+                {
+                    Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
+                    KingdomId = kingdomToSave.KingdomId
+                };
+                DbContext.Resources.Add(gold);
+                DbContext.Resources.Add(food);
+                DbContext.SaveChanges();
+                return kingdomToSave;
             }
 
             kingdom.KingdomName = kingdomname;
-            DbContext.Kingdoms.Add(kingdom);
+            var kingdomTo = DbContext.Kingdoms.Add(kingdom).Entity;
+            var golds = new Resource()
+            {
+                Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
+                KingdomId = kingdomTo.KingdomId
+            };
+            var foods = new Resource()
+            {
+                Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
+                KingdomId = kingdomTo.KingdomId
+            };
+            DbContext.Resources.Add(golds);
+            DbContext.Resources.Add(foods);
             DbContext.SaveChanges();
-            return kingdom;
+            return kingdomTo;
         }
 
         public bool AreCredentialsValid(string username, string password)
         {
             return DbContext.Players.Any(p => p.Username != username) &&
-                !string.IsNullOrWhiteSpace(username) && password.Length >= 8 ;
+                   !string.IsNullOrWhiteSpace(username) && password.Length >= 8;
         }
 
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
@@ -74,7 +101,8 @@ namespace DumDum.Services
 
         internal bool IsKingdomIdValid(int kingdomId)
         {
-            return DbContext.Players.Any(p => p.KingdomId == kingdomId) && DbContext.Kingdoms.Any(k=>k.KingdomId==kingdomId && k.CoordinateX==0 && k.CoordinateY==0) ;
+            return DbContext.Players.Any(p => p.KingdomId == kingdomId) && DbContext.Kingdoms.Any(k =>
+                k.KingdomId == kingdomId && k.CoordinateX == 0 && k.CoordinateY == 0);
         }
 
         public Kingdom GetKingdomById(int kingdomId)
@@ -102,7 +130,8 @@ namespace DumDum.Services
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
-        public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
+        public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest,
+            out int statusCode)
         {
             if (authorization != "")
             {
@@ -110,16 +139,19 @@ namespace DumDum.Services
                 request.Token = authorization.Remove(0, 7);
                 var player = AuthenticateService.GetUserInfo(request);
 
-                if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
+                if (kingdomRequest == null || kingdomRequest.GetType().GetProperties()
+                    .All(p => p.GetValue(kingdomRequest) == null))
                 {
                     statusCode = 400;
                     return "Request was not done correctly!";
                 }
+
                 if (player.KingdomId != kingdomRequest.KingdomId)
                 {
                     statusCode = 401;
                     return "This kingdom does not belong to authenticated player";
                 }
+
                 if (!AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
                 {
                     statusCode = 400;
@@ -131,21 +163,24 @@ namespace DumDum.Services
                     statusCode = 400;
                     return "Given coordinates are already taken!";
                 }
+
                 if (!IsKingdomIdValid(kingdomRequest.KingdomId))
                 {
                     statusCode = 400;
                     return "Kingdom has coordinates assigned already";
                 }
+
                 if (AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
-                   IsKingdomIdValid(kingdomRequest.KingdomId) &&
-                   !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
-                   player != null && player.KingdomId == kingdomRequest.KingdomId)
+                    IsKingdomIdValid(kingdomRequest.KingdomId) &&
+                    !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
+                    player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
                     RegisterKingdom(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
                     statusCode = 200;
                     return "Ok";
                 }
             }
+
             statusCode = 400;
             return "";
         }
@@ -163,9 +198,11 @@ namespace DumDum.Services
                         statusCode = 400;
                         return null;
                     }
+
                     statusCode = 200;
-                    return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
+                    return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
                 }
+
                 statusCode = 400;
                 return null;
             }
@@ -178,18 +215,20 @@ namespace DumDum.Services
                     statusCode = 400;
                     return null;
                 }
+
                 statusCode = 200;
-                return new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
+                return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
             }
 
             statusCode = 400;
             return null;
         }
+
         public Location AddLocations(Kingdom kingdom)
         {
-            return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
+            return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
         }
-        
+
         public int GetGoldAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)
@@ -199,6 +238,23 @@ namespace DumDum.Services
                 if (gold != null)
                 {
                     return gold.Amount;
+                }
+
+                return 0;
+            }
+
+            return 0;
+        }
+
+        public int GetFoodAmountOfKingdom(int kingdomId)
+        {
+            if (kingdomId != 0)
+            {
+                var food = DbContext.Resources.FirstOrDefault(r =>
+                    r.KingdomId == kingdomId && r.ResourceType == "Food");
+                if (food != null)
+                {
+                    return food.Amount;
                 }
 
                 return 0;
@@ -217,5 +273,34 @@ namespace DumDum.Services
             }
         }
 
+        public void TakeFood(int kingdomId, int amount)
+        {
+            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+            if (food != null)
+            {
+                food.Amount -= amount;
+                DbContext.SaveChanges();
+            }
+        }
+
+        public void GiveFood(int kingdomId, int amount)
+        {
+            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+            if (food != null)
+            {
+                food.Amount += amount;
+                DbContext.SaveChanges();
+            }
+        }
+
+        public void GiveGold(int kingdomId, int amount)
+        {
+            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+            if (food != null)
+            {
+                food.Amount += amount;
+                DbContext.SaveChanges();
+            }
+        }
     }
 }
