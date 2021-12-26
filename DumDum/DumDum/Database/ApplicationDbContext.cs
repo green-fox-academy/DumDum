@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Battles;
 
 namespace DumDum.Database
 {
@@ -10,6 +11,9 @@ namespace DumDum.Database
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
         public DbSet<Building> Buildings { get; set; }
+        public DbSet<Battle> Battles { get; set; }
+        public DbSet<Attacker> Attackers { get; set; }
+        public DbSet<Defender> Defenders { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -18,9 +22,9 @@ namespace DumDum.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Player>()
-                .HasOne<Kingdom>(q => q.Kingdom)
-                .WithOne(a => a.Player)
-                .HasForeignKey<Player>(a => a.KingdomId)
+                .HasOne<Kingdom>(p => p.Kingdom)
+                .WithOne(k => k.Player)
+                .HasForeignKey<Player>(p => p.KingdomId)
                 .IsRequired(true);
 
             modelBuilder.Entity<Kingdom>()
@@ -40,6 +44,19 @@ namespace DumDum.Database
                 .WithOne(a => a.Kingdom)
                 .HasForeignKey(a => a.KingdomId)
                 .IsRequired(true);
+            
+            modelBuilder.Entity<Attacker>()
+                .HasOne<Battle>(a => a.Battle)
+                .WithOne(b => b.Attacker)
+                .HasForeignKey<Attacker>(a => a.BattleId)
+                .IsRequired(true);
+            
+            modelBuilder.Entity<Defender>()
+                .HasOne<Battle>(d => d.Battle)
+                .WithOne(b => b.Defender)
+                .HasForeignKey<Defender>(d => d.BattleId)
+                .IsRequired(true);
+            
         }
     }
 }
