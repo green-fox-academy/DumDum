@@ -5,6 +5,8 @@ using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+
 
 namespace DumDum.Services
 {
@@ -12,7 +14,6 @@ namespace DumDum.Services
     {
         private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
-
         public DumDumService(ApplicationDbContext dbContext, AuthenticateService authService)
         {
             DbContext = dbContext;
@@ -116,7 +117,7 @@ namespace DumDum.Services
             return new Kingdom() { };
         }
 
-        public Kingdom RegisterKingdom(int coordinateX, int coordinateY, int kingdomId)
+        public Kingdom RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId)
         {
             var kingdom = GetKingdomById(kingdomId);
             kingdom.CoordinateX = coordinateX;
@@ -130,8 +131,7 @@ namespace DumDum.Services
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
-        public string RegisterKingdomLogic(string authorization, KingdomRegistrationRequest kingdomRequest,
-            out int statusCode)
+        public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
         {
             if (authorization != "")
             {
@@ -139,8 +139,7 @@ namespace DumDum.Services
                 request.Token = authorization.Remove(0, 7);
                 var player = AuthenticateService.GetUserInfo(request);
 
-                if (kingdomRequest == null || kingdomRequest.GetType().GetProperties()
-                    .All(p => p.GetValue(kingdomRequest) == null))
+                if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
                 {
                     statusCode = 400;
                     return "Request was not done correctly!";
@@ -175,7 +174,7 @@ namespace DumDum.Services
                     !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
                     player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
-                    RegisterKingdom(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
                     statusCode = 200;
                     return "Ok";
                 }
@@ -224,6 +223,29 @@ namespace DumDum.Services
             return null;
         }
 
+
+        public KingdomsListResponse GetAllKingdoms()
+        {
+
+            KingdomsListResponse response = new KingdomsListResponse();
+
+            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
+            {
+                KingdomId = k.KingdomId,
+                KingdomName = k.KingdomName,
+                Ruler = k.Player.Username,
+                Population = 0,
+                Location = new Location()
+                {
+                    CoordinateX = k.CoordinateX,
+                    CoordinateY = k.CoordinateY,
+                }
+            }).ToList();
+
+            return response;
+
+        }
+
         public Location AddLocations(Kingdom kingdom)
         {
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
@@ -269,6 +291,7 @@ namespace DumDum.Services
             if (gold != null)
             {
                 gold.Amount -= amount;
+                DbContext.Resources.Update(gold);
                 DbContext.SaveChanges();
             }
         }
@@ -279,6 +302,7 @@ namespace DumDum.Services
             if (food != null)
             {
                 food.Amount -= amount;
+                DbContext.Resources.Update(food);
                 DbContext.SaveChanges();
             }
         }
@@ -289,16 +313,18 @@ namespace DumDum.Services
             if (food != null)
             {
                 food.Amount += amount;
+                DbContext.Resources.Update(food);
                 DbContext.SaveChanges();
             }
         }
 
         public void GiveGold(int kingdomId, int amount)
         {
-            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
-            if (food != null)
+            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+            if (gold != null)
             {
-                food.Amount += amount;
+                gold.Amount += amount;
+                DbContext.Resources.Update(gold);
                 DbContext.SaveChanges();
             }
         }
