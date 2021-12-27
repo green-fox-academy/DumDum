@@ -14,9 +14,6 @@ namespace DumDum.Models.Entities
         public Kingdom Kingdom { get; set; }
         public int TroopTypeId { get; set; }
         public TroopTypes TroopType { get; set; }
-
-
-
     }
 }
 
