@@ -12,12 +12,6 @@
         public int Production { get; set; }
         public int Consumption { get; set; }
         public decimal DefBoost { get; set; }
-        public long CreatedTimeAxemen { get; set; }
-        public long CreatedTimePhalanx { get; set; }
-        public long CreatedTimeKnights { get; set; }
-        public long CreatedTimeCatapult { get; set; }
-        public long CreatedTimeTheSpy { get; set; }
-        public long CreatedTimeSenator { get; set; }
         public BuildingType BuildingType { get; set; }
     }
 }

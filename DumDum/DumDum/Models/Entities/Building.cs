@@ -13,7 +13,6 @@ namespace DumDum.Models.Entities
         public long FinishedAt { get; set; }
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
-        public BuildingType BuildingTyp { get; set; }
         public List<BuildingType> BuildingTypes { get; set; }
         public int BuildingTypeId { get; set; }
 
@@ -32,13 +31,7 @@ namespace DumDum.Models.Entities
         }
         public bool IsActive(Building building)
         {
-            if (building.FinishedAt < (int) DateTimeOffset.Now.ToUnixTimeSeconds())
-            {
-                return true;
-            }
-
-            return false;
+            return building.FinishedAt < (int) DateTimeOffset.Now.ToUnixTimeSeconds();
         }
-
     }
 }

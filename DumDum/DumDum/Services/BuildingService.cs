@@ -1,11 +1,9 @@
 ﻿using System;
 using DumDum.Database;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core.Internal;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +16,6 @@ namespace DumDum.Services
         private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
-        public DateTime WhenCreated { get; set; }
 
         public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService,
             DumDumService dumService)
@@ -82,10 +79,9 @@ namespace DumDum.Services
             return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
         }
         
-        public BuildingList LevelUp(int kingdomId, int buildingId, string authorization, out int statusCode, out string errormessage)
+        public BuildingList LevelUp(int kingdomId, int buildingId, string authorization, out int statusCode, out string errorMessage)
         {
             AuthRequest request = new AuthRequest();
-            BuildingList response = new BuildingList();
             request.Token = authorization;
             var player = AuthenticateService.GetUserInfo(request);
             var building = GetBuildingById(buildingId);
@@ -93,37 +89,37 @@ namespace DumDum.Services
             if (building == null)
             {
                 statusCode = 400;
-                errormessage = "Kingdom not found";
+                errorMessage = "Kingdom not found";
                 return null;
             }
             var kingdomGoldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var nextLevelInfo = InformationForNextLevel(building.BuildingTypeId, building.Level);
             
-            if (player == null)
+            if (player == null || player.KingdomId != kingdomId)
             {
                 statusCode = 401;
-                errormessage = "This kingdom does not belong to authenticated player!";
+                errorMessage = "This kingdom does not belong to authenticated player!";
                 return null;
             }
             
             if (nextLevelInfo == null)
             {
                 statusCode = 400;
-                errormessage = "Your building is on maximal leve!.";
+                errorMessage = "Your building is on maximal leve!.";
                 return null;
             }
             
             if (kingdomGoldAmount < nextLevelInfo.Cost) 
             {
                 statusCode = 400;
-                errormessage = "You don't have enough gold to upgrade that!";
+                errorMessage = "You don't have enough gold to upgrade that!";
                 return null;
             }
             
             if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId))
             {
                 statusCode = 400;
-                errormessage = "Your building can't have higher level than your townhall! Upgrade townhall first.";
+                errorMessage = "Your building can't have higher level than your townhall! Upgrade townhall first.";
                 return null;
             }
 
@@ -131,24 +127,26 @@ namespace DumDum.Services
             if (building.FinishedAt > timeNow)
             {
                 statusCode = 400;
-                errormessage = "Your building is updating";
+                errorMessage = "Your building is updating";
                 return null;
             }
             building.Level = nextLevelInfo.LevelNumber;
-            building.StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds();
-            building.FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() + nextLevelInfo.ConstTime;
+            building.StartedAt = timeNow;
+            building.FinishedAt = timeNow + nextLevelInfo.ConstTime;
             DbContext.SaveChanges();
-            
-            response.BuildingId = building.BuildingId;
-            response.BuildingType = building.BuildingType;
-            response.Level = nextLevelInfo.LevelNumber;
-            response.Hp = 1;
-            response.StartedAt = 112;
-            response.FinishedAt = 123;
-            response.Production = nextLevelInfo.Production;
-            response.Consumption = nextLevelInfo.Consumption;
+            BuildingList response = new BuildingList
+            {
+                BuildingId = building.BuildingId,
+                BuildingType = building.BuildingType,
+                Level = nextLevelInfo.LevelNumber,
+                Hp = 1,
+                StartedAt = building.StartedAt,
+                FinishedAt = building.FinishedAt,
+                Production = nextLevelInfo.Production,
+                Consumption = nextLevelInfo.Consumption
+            };
             statusCode = 200;
-            errormessage = "ok";
+            errorMessage = "ok";
             return response;
         }
 
@@ -181,7 +179,7 @@ namespace DumDum.Services
         public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
         {
             var buildingType = FindLevelingByBuildingType(building.ToLower());
-            BuildingList response = new BuildingList();
+            
             var kingdom = FindPlayerByKingdomId(id);
 
             AuthRequest authRequest = new AuthRequest() {Token = authorization};
@@ -191,20 +189,15 @@ namespace DumDum.Services
             if (player == null)
             {
                 statusCode = 401;
+                return null;
             }
 
-            if (building.IsNullOrEmpty())
+            if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Contains(building))
             {
                 statusCode = 406;
                 return null;
             }
             
-            if (!ExistingTypeOfBuildings().Contains(building))
-            {
-                statusCode = 406;
-                return null;
-            }
-
             if (gold?.Amount < buildingType.BuildingLevel.Cost)
             {
                 statusCode = 400;
@@ -216,14 +209,17 @@ namespace DumDum.Services
                         StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds(), FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() 
                             + buildingType.BuildingLevel.ConstTime});
             DbContext.SaveChanges();
-            response.BuildingId = build.Entity.BuildingId;
-            response.BuildingType = building;
-            response.Level = buildingType.BuildingLevel.LevelNumber;
-            response.Hp = 1;
-            response.StartedAt = build.Entity.StartedAt;
-            response.FinishedAt = build.Entity.FinishedAt;
-            response.Production = buildingType.BuildingLevel.Production;
-            response.Consumption = buildingType.BuildingLevel.Consumption;
+            BuildingList response = new BuildingList
+            {
+                BuildingId = build.Entity.BuildingId,
+                BuildingType = building,
+                Level = buildingType.BuildingLevel.LevelNumber,
+                Hp = 1,
+                StartedAt = build.Entity.StartedAt,
+                FinishedAt = build.Entity.FinishedAt,
+                Production = buildingType.BuildingLevel.Production,
+                Consumption = buildingType.BuildingLevel.Consumption
+            };
             statusCode = 200;
             return response;
         }

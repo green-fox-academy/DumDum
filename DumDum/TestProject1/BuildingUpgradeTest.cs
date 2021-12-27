@@ -27,7 +27,7 @@ namespace TestProject1
         {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = userName, Password = password});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
@@ -42,7 +42,7 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1, BuildingId = 1}); 
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:5000/kingdoms/1/buildings/1");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/1");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -59,7 +59,7 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:5000/kingdoms/1/buildings/");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");

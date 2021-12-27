@@ -13,9 +13,9 @@ using Xunit;
 
 namespace TestProject1
 {
-        public class AuthenticationTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class AuthenticationTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-               private HttpClient HttpClient { get; set; }
+        private HttpClient HttpClient { get; set; }
 
         public AuthenticationTest(WebApplicationFactory<Startup> factory)
         {
@@ -26,7 +26,7 @@ namespace TestProject1
         {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = userName, Password = password});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
@@ -41,7 +41,7 @@ namespace TestProject1
 
             var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("https://localhost:5000/auth");
+            request.RequestUri = new Uri("https://localhost:20625/auth");
             request.Method = HttpMethod.Post;
             request.Content = requestContent;
             var response = HttpClient.SendAsync(request).Result;
@@ -52,19 +52,18 @@ namespace TestProject1
         [Fact]
         public void AuthPostEndpoint_ShouldReturnInfoAboutPLayer()
         {
-            var statusCodeExpected = HttpStatusCode.OK;
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
             var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/auth", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/auth", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             AuthResponse player = JsonConvert.DeserializeObject<AuthResponse>(contentResponse);
 
             Assert.Equal("Nya", player.Ruler);
             Assert.Equal(1, player.KingdomId);
             Assert.Equal("Nya Nya Land", player.KingdomName);
-            Assert.Equal(statusCodeExpected, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }

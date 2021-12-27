@@ -49,7 +49,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -80,7 +80,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -111,7 +111,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
