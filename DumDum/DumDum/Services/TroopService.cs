@@ -71,7 +71,8 @@ namespace DumDum.Services
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var possibleTroopTypes = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
+            var possibleTroopTypes = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator")
+                .Select(t => t.TroopType.ToLower()).ToList();
 
             if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {
@@ -141,7 +142,8 @@ namespace DumDum.Services
             var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
            
 
-            if (troopCreationReq == null || troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
+            if (troopCreationReq == null || troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || 
+                !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
                 statusCode = 404;
                 return new List<TroopsResponse>();
