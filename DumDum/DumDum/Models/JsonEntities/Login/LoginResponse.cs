@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Login
 {
     public class LoginResponse
     {

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Kingdom;
 using Newtonsoft.Json;
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Troops
 {
     public class GetTroopsResponse
     {

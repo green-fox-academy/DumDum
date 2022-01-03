@@ -58,11 +58,27 @@ namespace DumDum.Controllers
             {
                 return Ok(new StatusResponse() { Status = response });
             }
-            if (statusCode is 400 or 402 or 403 or 404 or 406)
+            if (statusCode is 400 or 402 or 403 or 404 or 406 or 407)
             {
                 return BadRequest(new ErrorResponse { Error = response });
             }
             return Unauthorized(new ErrorResponse { Error = response });
+        }
+
+        [HttpGet("leaderboards/troops")]
+        public IActionResult TroopsLeaderboard()
+        {
+            var troopsLeaderboard = TroopService.GetTroopsLeaderboard();
+
+            return Ok(troopsLeaderboard);
+        }
+
+        [HttpGet("leaderboards/kingdoms")]
+        public IActionResult KingdomsLeaderboard()
+        {
+            var kingdomsLeaderboard = TroopService.GetKingdomsLeaderboard();
+
+            return Ok(kingdomsLeaderboard);
         }
     }
 }

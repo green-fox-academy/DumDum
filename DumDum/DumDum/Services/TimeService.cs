@@ -1,21 +1,29 @@
 ﻿using DumDum.Database;
 using DumDum.Models.Entities;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace DumDum.Services
 {
-    public class TimeService
+    public class TimeService : IHostedService
     {
         private ApplicationDbContext DbContext { get; set; }
         private DumDumService DumDumService { get; set; }
+        private System.Timers.Timer IamTimeLord { get; set; }
 
         public TimeService(ApplicationDbContext dbContext, DumDumService dumdumService)
         {
             DbContext = dbContext;
             DumDumService = dumdumService;
+        }
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            GetThingsDoneForAllKingdoms();
         }
 
         public LastChange GetPlayersTime(int PlayerId)
@@ -60,9 +68,18 @@ namespace DumDum.Services
             return Cycles;
         }
 
-        public void GetThingsDone(int kingdomId, int cycles)
+        public void GetThingsDoneForAllKingdoms()
         {
+            var Kingdoms = DbContext.Kingdoms.ToList();
+            foreach (var kingdom in Kingdoms)
+            {
+                GetThingsDone(kingdom.KingdomId);
+            }
+        }
 
+        public void GetThingsDone(int kingdomId)
+        {
+            int cycles = 1;
             var ActualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var ActualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId);
             //kód na produkci
@@ -72,8 +89,8 @@ namespace DumDum.Services
             var ProductionOfGold = GetGoldFromMines(kingdomId, cycles);
 
             //kód na konzumaci
-            var ConsumptionOfTroops = 3;
-            var ConsumptionOfBuildings = 3;
+            var ConsumptionOfTroops = 0;
+            var ConsumptionOfBuildings = 0;
             var AllConsumption = ConsumptionOfBuildings + ConsumptionOfTroops;
             //Výsledek
             var NewAmountOfFood = ActualKingdomsFood + (ProductionOfFood - AllConsumption);
@@ -88,13 +105,13 @@ namespace DumDum.Services
             DbContext.SaveChanges();
         }
 
-        public int GetFoodFromFarms(int kingdomId,int cycles)
+        public int GetFoodFromFarms(int kingdomId, int cycles)
         {
             var FoodPerFarms = 0;
             var NumberOfFarms = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Farm").ToList();
             foreach (var farm in NumberOfFarms)
             {
-               FoodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
+                FoodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
             }
 
             var ProducedFood = FoodPerFarms * cycles;
@@ -102,7 +119,7 @@ namespace DumDum.Services
             return ProducedFood;
         }
 
-        public int GetGoldFromMines(int kingdomId,int cycles)
+        public int GetGoldFromMines(int kingdomId, int cycles)
         {
             var GoldPerMine = 0;
             var NumberOfMines = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Mine").ToList();
@@ -118,13 +135,27 @@ namespace DumDum.Services
 
         public int HomMuchFoodOneFarmProduce(int lvl)
         {
-            return lvl * (5 + lvl);
+            return lvl * (1 + lvl);
         }
 
         public int HomMuchGoldOneMineProduce(int lvl)
         {
-            return lvl * (5 + lvl);
+            return lvl * (1 + lvl);
         }
 
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            IamTimeLord = new System.Timers.Timer(2000);
+            IamTimeLord.Elapsed += OnTimedEvent;
+            IamTimeLord.AutoReset = true;
+            IamTimeLord.Enabled = true;
+
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

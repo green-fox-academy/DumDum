@@ -1,12 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Helpers;
 using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Web.Helpers;
 
 
 namespace DumDum.Services
@@ -102,16 +103,14 @@ namespace DumDum.Services
 
         public Player GetPlayerById(int id)
         {
-            return DbContext.Players.Include(p => p.Kingdom).Include(p=>p.LastChange).FirstOrDefault(p => p.PlayerId == id);
+            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
         public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
         {
             if (authorization != "")
             {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
                 if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
                 {
