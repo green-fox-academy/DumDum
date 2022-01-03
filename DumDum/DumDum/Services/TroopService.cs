@@ -147,7 +147,7 @@ namespace DumDum.Services
             var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
            
 
-            if (troopCreationReq == null || troopCreationReq.Type == null || troopCreationReq.Quantity == 0 || 
+            if (troopCreationReq == null || String.IsNullOrEmpty(troopCreationReq.Type) || troopCreationReq.Quantity == 0 || 
                 !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
             {
                 statusCode = 404;
