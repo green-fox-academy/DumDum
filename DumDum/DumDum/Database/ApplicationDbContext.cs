@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Battles;
 
 namespace DumDum.Database
 {

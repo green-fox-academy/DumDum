@@ -6,6 +6,7 @@ using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Battles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace DumDum.Services
@@ -152,7 +153,11 @@ namespace DumDum.Services
                 return 0;
             }
 
-            return GetTroopsByKingdomId(kingdom.KingdomId).Min(t => t.Speed);
+            var minSpeed = DbContext.Troops.Include(t => t.TroopType)
+                    .Where(t => t.KingdomId == kingdomId && t.TroopType.TroopLevel.Level == t.Level)
+                    .Min(t => t.TroopType.TroopLevel.Speed);
+
+            return minSpeed;
         }
 
         private int GetSumOfAttackPower(Player player)
@@ -162,7 +167,10 @@ namespace DumDum.Services
                 return 0;
             }
 
-            return GetTroopsByKingdomId(player.KingdomId).Sum(t => t.Attack);
+            var attackPower= DbContext.Troops.Include(t => t.TroopType)
+                .Where(t => t.KingdomId == player.KingdomId && t.TroopType.TroopLevel.Level == t.Level)
+                .Sum(t => t.TroopType.TroopLevel.Attack);
+            return (int)attackPower;
         }
 
         private List<Troop> GetTroopsByKingdomId(int id)
@@ -182,7 +190,10 @@ namespace DumDum.Services
                 return 0;
             }
 
-            return GetTroopsByKingdomId(kingdom.KingdomId).Sum(t => t.Defence);
+            var defensePower= DbContext.Troops.Include(t => t.TroopType)
+                .Where(t => t.KingdomId == kingdom.KingdomId && t.TroopType.TroopLevel.Level == t.Level)
+                .Sum(t => t.TroopType.TroopLevel.Defence);
+            return (int)defensePower;
         }
 
         public string GetWinner(Player player, Kingdom kingdom, out string loser, out List<TroopsList> winnerLostTroops,
@@ -222,8 +233,8 @@ namespace DumDum.Services
                     var lost = new TroopsList()
                     {
                         Quantity = GetTroopsByKingdomId(winner.KingdomId)
-                            .Count(t => t.TroopType.Equals(troop.TroopType)),
-                        Type = troop.TroopType
+                            .Count(t => t.TroopTypeId.Equals(troop.TroopTypeId)),
+                        Type = GetTroopTypeById(troop.TroopTypeId).TroopType
                     };
                     winnerLostTroops.Add(lost);
                     DbContext.Troops.Remove(troop);
@@ -248,8 +259,8 @@ namespace DumDum.Services
                 {
                     var troopToAdd = new TroopsList()
                     {
-                        Quantity = loser.Troops.Count(t => t.TroopType.Equals(troop.TroopType)),
-                        Type = troop.TroopType
+                        Quantity = loser.Troops.Count(t => t.TroopTypeId.Equals(troop.TroopTypeId)),
+                        Type = GetTroopTypeById(troop.TroopTypeId).TroopType
                     };
 
                     if (!loserTroopsLost.Contains(troopToAdd))
@@ -260,18 +271,8 @@ namespace DumDum.Services
                     DbContext.SaveChanges();
                 }
 
-                DbContext.Troops.RemoveRange(GetResourcesByKingdomId(loser.KingdomId));
+                DbContext.Troops.RemoveRange(GetTroopsByKingdomId(loser.KingdomId));
             }
-        }
-
-        private List<Troop> GetResourcesByKingdomId(int id)
-        {
-            if (DbContext.Troops.Where(t => t.KingdomId == id).ToList().Count == 0)
-            {
-                return null;
-            }
-
-            return DbContext.Troops.Where(t => t.KingdomId == id).ToList();
         }
 
         public void TakeAndGiveLoot(string winner, string loser, out float goldStolen, out float foodStolen)
@@ -313,6 +314,11 @@ namespace DumDum.Services
             defenderToReturn.TroopsLost = troopsLost;
             DbContext.SaveChanges();
             return defenderToReturn;
+        }
+
+        private TroopTypes GetTroopTypeById(int troopTypeId)
+        {
+            return DbContext.TroopTypes.FirstOrDefault(t => t.TroopTypeId == troopTypeId);
         }
     }
 }
