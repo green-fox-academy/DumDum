@@ -42,8 +42,7 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromHeader] string authorization, [FromBody] KingdomRegistrationRequest kingdomRequest)
         {
-            int statusCode;
-            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out statusCode);
+            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out int statusCode);
 
             if (statusCode == 200)
             {

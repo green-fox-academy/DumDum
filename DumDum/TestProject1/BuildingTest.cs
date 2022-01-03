@@ -10,6 +10,7 @@ using System.Text;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
 using Xunit;
+using System.Collections.Generic;
 
 namespace TestProject1
 {

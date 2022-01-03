@@ -110,9 +110,7 @@ namespace DumDum.Services
         {
             if (authorization != "")
             {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
                 if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
                 {

@@ -102,7 +102,7 @@ namespace TestProject1
 
             TroopCreationRequest requestBody = new();
             requestBody.Type = "senator";
-            requestBody.Quantity = 20;
+            requestBody.Quantity = 200000;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
