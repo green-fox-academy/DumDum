@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using Xunit;
 
 namespace TestProject1

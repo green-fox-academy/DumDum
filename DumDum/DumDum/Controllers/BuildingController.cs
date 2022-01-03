@@ -1,4 +1,5 @@
 ﻿using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,21 +36,37 @@ namespace DumDum.Controllers
         [HttpPut("kingdoms/{kingdomId=int}/buildings/{buildingId=int}")]
         public IActionResult UpgradeBuildings([FromHeader] string authorization, [FromRoute] int kingdomId, int buildingId)
         {
-            int statusCode;
-            var response = BuildingService.UpgradeBuildingsLogic(authorization, kingdomId,buildingId,out statusCode);
+            var response = BuildingService.LevelUp(kingdomId, buildingId,authorization, out int statusCode, out string errormessage);
 
             if (statusCode == 401)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+                return StatusCode(statusCode, new ErrorResponse { Error = errormessage });
             } 
             if(statusCode == 400)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = "You don't have enough gold to upgrade that!" });
+                return StatusCode(statusCode, new ErrorResponse { Error = errormessage });
+            }
+            return Ok(response);
+        }
+        
+        [Authorize]
+        [HttpPost("kingdoms/{id=int}/buildings")]
+        public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] BuildingAddRequest type)
+        {
+            var response = BuildingService.AddBuilding(type.Type, id, authorization, out int statusCode);
+            if (statusCode == 400)
+            {
+                return StatusCode(statusCode, new ErrorResponse {Error = "You don't have enough gold to build that!"});
             }
 
-            if (statusCode == 404)
+            if (statusCode == 406)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = "Kingdom not found" });
+                return StatusCode(statusCode, new ErrorResponse {Error = "Type is required."});
+            }
+
+            if (statusCode == 401)
+            {
+                return StatusCode(statusCode, new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
             }
             return Ok(response);
         }
