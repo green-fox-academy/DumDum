@@ -4,6 +4,9 @@ using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -33,7 +36,7 @@ namespace DumDum.Services
         public Player Register(string username, string password, string kingdomName)
         {
             var kingdom = CreateKingdom(kingdomName, username);
-            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
+            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
             DbContext.Players.Add(player);
             DbContext.SaveChanges();
             var playerToReturn = GetPlayerByUsername(username);
@@ -135,9 +138,7 @@ namespace DumDum.Services
         {
             if (authorization != "")
             {
-                AuthRequest request = new AuthRequest();
-                request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
                 if (kingdomRequest == null || kingdomRequest.GetType().GetProperties().All(p=>p.GetValue(kingdomRequest) == null))
                 {
@@ -222,8 +223,7 @@ namespace DumDum.Services
             statusCode = 400;
             return null;
         }
-
-
+        
         public KingdomsListResponse GetAllKingdoms()
         {
 
@@ -294,6 +294,7 @@ namespace DumDum.Services
                 DbContext.Resources.Update(gold);
                 DbContext.SaveChanges();
             }
+        }      
         }
 
         public void TakeFood(int kingdomId, int amount)

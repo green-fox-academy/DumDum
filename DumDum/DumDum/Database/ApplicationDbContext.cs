@@ -11,6 +11,8 @@ namespace DumDum.Database
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Troop> Troops { get; set; }
         public DbSet<Building> Buildings { get; set; }
+        public DbSet<BuildingLevel> BuildingLevels { get; set; }
+        public DbSet<BuildingType> BuildingTypes { get; set; }
         public DbSet<TroopLevel> TroopLevel { get; set; }
         public DbSet<TroopTypes> TroopTypes { get; set; }
         public DbSet<Battle> Battles { get; set; }
@@ -70,7 +72,6 @@ namespace DumDum.Database
                 .WithOne(b => b.Defender)
                 .HasForeignKey<Defender>(d => d.BattleId)
                 .IsRequired(true);
-            
         }
     }
 }

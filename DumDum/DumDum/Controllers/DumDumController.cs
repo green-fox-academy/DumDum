@@ -2,6 +2,9 @@
 using System;
 using Microsoft.AspNetCore.Authorization;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using DumDum.Services;
 using Newtonsoft.Json;
 
@@ -39,8 +42,7 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromHeader] string authorization, [FromBody] KingdomRegistrationRequest kingdomRequest)
         {
-            int statusCode;
-            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out statusCode);
+            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out int statusCode);
 
             if (statusCode == 200)
             {
@@ -91,5 +93,7 @@ namespace DumDum.Controllers
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
+
+
     }
 }
