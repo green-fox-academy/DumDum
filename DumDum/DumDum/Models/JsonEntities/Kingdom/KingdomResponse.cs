@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Kingdom
 {
     public class KingdomResponse
     {

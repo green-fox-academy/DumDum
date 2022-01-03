@@ -1,4 +1,8 @@
-﻿namespace DumDum.Models.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace DumDum.Models.Entities
 {
     public class Troop
     {

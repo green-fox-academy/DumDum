@@ -1,4 +1,4 @@
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Kingdom
 {
     public class KingdomRenameRequest
     {
