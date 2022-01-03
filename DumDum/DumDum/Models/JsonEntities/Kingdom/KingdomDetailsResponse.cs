@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using DumDum.Models.JsonEntities.Buildings;
+using DumDum.Models.JsonEntities.Resources;
+using DumDum.Models.JsonEntities.Troops;
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Kingdom
 {
     public class KingdomDetailsResponse
     {

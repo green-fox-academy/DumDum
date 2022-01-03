@@ -1,12 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Helpers;
 using Castle.Core.Internal;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Web.Helpers;
 
 
 namespace DumDum.Services
@@ -240,7 +241,6 @@ namespace DumDum.Services
                 DbContext.Resources.Update(gold);
                 DbContext.SaveChanges();
             }
-        }
-
+        }      
     }
 }

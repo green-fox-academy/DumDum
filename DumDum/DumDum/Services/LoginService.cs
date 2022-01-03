@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Web.Helpers;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
 
 namespace DumDum.Services
 {

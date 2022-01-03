@@ -64,5 +64,21 @@ namespace DumDum.Controllers
             }
             return Unauthorized(new ErrorResponse { Error = response });
         }
+
+        [HttpGet("leaderboards/troops")]
+        public IActionResult TroopsLeaderboard()
+        {
+            var troopsLeaderboard = TroopService.GetTroopsLeaderboard();
+
+            return Ok(troopsLeaderboard);
+        }
+
+        [HttpGet("leaderboards/kingdoms")]
+        public IActionResult KingdomsLeaderboard()
+        {
+            var kingdomsLeaderboard = TroopService.GetKingdomsLeaderboard();
+
+            return Ok(kingdomsLeaderboard);
+        }
     }
 }

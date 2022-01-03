@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
