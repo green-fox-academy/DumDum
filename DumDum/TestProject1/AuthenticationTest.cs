@@ -1,23 +1,23 @@
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
-using DumDum.Models.JsonEntities.Resources;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace TestProject1
 {
-    public class ResourcesTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class AuthenticationTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         private HttpClient HttpClient { get; set; }
 
-        public ResourcesTest(WebApplicationFactory<Startup> factory)
+        public AuthenticationTest(WebApplicationFactory<Startup> factory)
         {
             HttpClient = factory.CreateClient();
         }
@@ -26,48 +26,44 @@ namespace TestProject1
         {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = userName, Password = password});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
             return tokenResult;
         }
-        
+
         [Fact]
-        public void ResourcesReturnsAuthenticatedKingdom()
+        public void LoginTest_ReturnUser()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new ResourceRequest() { Id = 1}); 
+            var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/resources");
-            request.Method = HttpMethod.Get;
+            request.RequestUri = new Uri("https://localhost:20625/auth");
+            request.Method = HttpMethod.Post;
             request.Content = requestContent;
-            request.Headers.Add("authorization", $"bearer {tokenResult}");
             var response = HttpClient.SendAsync(request).Result;
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-        
+
         [Fact]
-        public void ResourcesReturnsError()
+        public void AuthPostEndpoint_ShouldReturnInfoAboutPLayer()
         {
-            var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new ResourceRequest() { Id = 1 }); 
+            var inputObj = JsonConvert.SerializeObject(new AuthRequest() {Token = tokenResult});
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/kingdoms/2/resources");
-            request.Method = HttpMethod.Get;
-            request.Content = requestContent;
-            request.Headers.Add("authorization", $"bearer {tokenResult}");
-            var response = HttpClient.SendAsync(request).Result;
-            string respond = response.Content.ReadAsStringAsync().Result;
-            ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
+            var response = HttpClient.PostAsync("https://localhost:20625/auth", requestContent).Result;
+            string contentResponse = response.Content.ReadAsStringAsync().Result;
+            AuthResponse player = JsonConvert.DeserializeObject<AuthResponse>(contentResponse);
 
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-            Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
+            Assert.Equal("Nya", player.Ruler);
+            Assert.Equal(1, player.KingdomId);
+            Assert.Equal("Nya Nya Land", player.KingdomName);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }
