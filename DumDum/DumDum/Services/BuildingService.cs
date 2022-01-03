@@ -2,6 +2,7 @@
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Models.JsonEntities.Authorization;
@@ -229,5 +230,20 @@ namespace DumDum.Services
             var townHall = DbContext.Buildings.FirstOrDefault(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall");
             return townHall.Level;
         }
+
+        public BuildingsLeaderboardResponse GetBuildingsLeaderboard()
+        {
+            BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
+
+            response.Result = DbContext.Kingdoms.Select(k => new BuildingPoints()
+            {
+                Ruler = k.Player.Username,
+                Kingdom = k.KingdomName,
+                Buildings = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Count(),
+                Points = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)
+            }).OrderByDescending(t => t.Points).ToList();
+
+            return response;
+        }        
     }
 }

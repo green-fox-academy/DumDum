@@ -155,8 +155,6 @@ namespace TestProject1
                 }
             };
 
-            var requestBodyContent = JsonConvert.SerializeObject(requestBody);
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
             string responseData = response.Content.ReadAsStringAsync().Result;
@@ -169,5 +167,45 @@ namespace TestProject1
             Assert.Equal(requestBody.Kingdoms[0].KingdomName,responseDataObj.Kingdoms[0].KingdomName);
 
         }
+
+        [Fact]
+        public void KingdomsLeaderboardReturOKAndLeaderboardList()
+        {
+
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/kingdoms");
+            request.Method = HttpMethod.Get;
+
+            KingdomsLeaderboardResponse requestBody = new KingdomsLeaderboardResponse();
+
+            requestBody.Response = new List<KingdomPoints>()
+            {
+                new KingdomPoints()
+                {
+                    Ruler = "Marek",
+                    Kingdom = "Pivko",
+                    Points = 157.0
+                }
+            };
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            KingdomsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<KingdomsLeaderboardResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Response[0].Ruler, responseDataObj.Response[0].Ruler);
+            Assert.Equal(requestBody.Response[0].Kingdom, responseDataObj.Response[0].Kingdom);
+            Assert.Equal(requestBody.Response[0].Points, responseDataObj.Response[0].Points);
+
+        }
+
     }
 }

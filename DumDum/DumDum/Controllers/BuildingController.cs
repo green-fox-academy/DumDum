@@ -71,5 +71,13 @@ namespace DumDum.Controllers
             return Ok(response);
         }
 
+        [HttpGet("leaderboards/buildings")]
+        public IActionResult BuildingsLeaderboard()
+        {
+            var buildingsLeaderboard = BuildingService.GetBuildingsLeaderboard();
+
+            return Ok(buildingsLeaderboard);
+        }
+
     }
 }
