@@ -58,7 +58,7 @@ namespace DumDum.Controllers
             {
                 return Ok(new StatusResponse() { Status = response });
             }
-            if (statusCode >= 400 && statusCode <= 407)
+            if (statusCode is 400 or 402 or 403 or 404 or 406 or 407)
             {
                 return BadRequest(new ErrorResponse { Error = response });
             }

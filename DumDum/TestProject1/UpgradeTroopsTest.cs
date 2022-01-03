@@ -34,7 +34,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPostCreateTroops_ReturnsUnauhtorizedAndError()
+        public void HttpPutUpgradeTroops_ReturnsUnauhtorizedAndError()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -44,7 +44,7 @@ namespace TestProject1
             HttpStatusCode expectedStatusCode = HttpStatusCode.Unauthorized;
 
             TroopUpgradeRequest requestBody = new();
-            requestBody.Type = "phalanx";
+            requestBody.Type = "Phalanx";
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/2/troops");
@@ -63,7 +63,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPostCreateTroops_ReturnsBadRequestAndError()
+        public void HttpPutUpgradeTroops_ReturnsBadRequestAndError()
         {
             //arrange
             var request = new HttpRequestMessage();
