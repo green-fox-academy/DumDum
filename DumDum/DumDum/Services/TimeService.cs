@@ -50,23 +50,23 @@ namespace DumDum.Services
             return DbContext.LastChanges.Where(x => x.PlayerId == PlayerId).FirstOrDefault().LastChangeTime;
         }
 
-        public long GetCycle(int id)
-        {
-            int TimeNow = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        //public long GetCycle(int id)   //zatim nepotrebujeme
+        //{
+        //    int TimeNow = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
-            var time = GetPlayersTime(id);
-            var TimeOfLastChange = time.LastChangeTime;
+        //    var time = GetPlayersTime(id);
+        //    var TimeOfLastChange = time.LastChangeTime;
 
-            var DifferenceBettweenTimes = TimeNow - TimeOfLastChange;
-            var Cycles = DifferenceBettweenTimes / 600; //aktualni cas minus cas posledni zmeny
+        //    var DifferenceBettweenTimes = TimeNow - TimeOfLastChange;
+        //    var Cycles = DifferenceBettweenTimes / 600; //aktualni cas minus cas posledni zmeny
 
-            var ModuloResult = DifferenceBettweenTimes % 600;
-            var TimeOfLastChangeWithRestOfCycle = TimeOfLastChange - ModuloResult;
-            time.LastChangeTime = TimeOfLastChangeWithRestOfCycle;
-            DbContext.SaveChanges();
+        //    var ModuloResult = DifferenceBettweenTimes % 600;
+        //    var TimeOfLastChangeWithRestOfCycle = TimeOfLastChange - ModuloResult;
+        //    time.LastChangeTime = TimeOfLastChangeWithRestOfCycle;
+        //    DbContext.SaveChanges();
 
-            return Cycles;
-        }
+        //    return Cycles;
+        //}
 
         public void GetThingsDoneForAllKingdoms()
         {
