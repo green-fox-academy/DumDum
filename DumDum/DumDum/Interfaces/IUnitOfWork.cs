@@ -11,6 +11,7 @@ namespace DumDum.Interfaces
         ITroopRepository Troops { get; }
         IPlayerRepository Players { get; }
         IKingdomRepository Kingdoms { get; }
+        IResourceRepository Resources { get; }
         int Complete();
     }
 }

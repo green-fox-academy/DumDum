@@ -11,5 +11,6 @@ namespace DumDum.Interfaces
     {
         Player GetPlayerByUsername(string username);
         bool AreCredentialsValid(string username, string password);
+        Player GetPlayerById(int id);
     }
 }

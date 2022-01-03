@@ -8,5 +8,8 @@ namespace DumDum.Interfaces
 {
     public interface IResourceRepository : IRepository<Resource>
     {
+        Resource GetGoldAmountOfKingdom(int kingdomId);
+
+        void UpdateGoldAmountOfKingdom(Resource resource);
     }
 }

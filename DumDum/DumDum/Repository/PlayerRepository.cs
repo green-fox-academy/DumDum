@@ -25,5 +25,10 @@ namespace DumDum.Repository
             return DbContext.Players.Any(p => p.Username != username) &&
                 !string.IsNullOrWhiteSpace(username) && password.Length >= 8;
         }
+
+        public Player GetPlayerById(int id)
+        {
+            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
+        }
     }
 }
