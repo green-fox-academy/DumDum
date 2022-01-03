@@ -1,12 +1,11 @@
 ﻿using DumDum.Models.Entities;
-using System;
+using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Interfaces
 {
     public interface IBuildingRepository : IRepository<Building>
     {
+        List<BuildingList> GetBuildings(int Id);
     }
 }

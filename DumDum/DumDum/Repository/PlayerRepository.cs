@@ -30,5 +30,6 @@ namespace DumDum.Repository
         {
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
+
     }
 }

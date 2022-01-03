@@ -1,35 +1,27 @@
-﻿using DumDum.Database;
+﻿using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DumDum.Services
 {
     public class BuildingService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
+        public BuildingService(AuthenticateService authService, DumDumService dumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AuthenticateService = authService;
             DumDumService = dumService;
+            UnitOfWork = unitOfWork;
         }
 
-        public List<BuildingList> GetBuildings(int Id)
+        public List<BuildingList> GetBuildings(int kingdomId)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList()
-            {
-                BuildingId = b.BuildingId,
-                BuildingType = b.BuildingType,
-                Level = b.Level,
-                StartedAt = b.StartedAt,
-                FinishedAt = b.FinishedAt
-            }).ToList();
+            return UnitOfWork.Buildings.GetBuildings(kingdomId);
         }
 
         public KingdomResponse GetKingdom(int id)
@@ -50,7 +42,7 @@ namespace DumDum.Services
         public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
         {
             var response = new BuildingResponse();
-            if (authorization != null && kingdomId != null)
+            if (authorization != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization;
@@ -70,7 +62,7 @@ namespace DumDum.Services
         
         private Building GetBuildingById(int buildingId)
         {
-            return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
+            return UnitOfWork.Buildings.GetById(buildingId);
         }
 
         public UpgradeBuildingsResponse UpgradeBuildingsLogic(string authorization, int kingdomId, int buildingId,
@@ -182,7 +174,7 @@ namespace DumDum.Services
             }
 
             statusCode = code;
-            DbContext.SaveChanges();
+            UnitOfWork.Complete();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Database;
+using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 
@@ -8,27 +9,21 @@ namespace DumDum.Services
 {
     public class ResourceService
     {
-        private ApplicationDbContext DbContext { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
         public DumDumService DumDumService { get; set; }
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public ResourceService(ApplicationDbContext dbContext, AuthenticateService authenticateService,
-            DumDumService dumDumService)
+        public ResourceService(AuthenticateService authenticateService, DumDumService dumDumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
+            UnitOfWork = unitOfWork;
             AuthenticateService = authenticateService;
             DumDumService = dumDumService;
+            UnitOfWork = unitOfWork;
         }
 
-        public List<ResourceList> GetResources(int id)
+        public List<ResourceList> GetResources(int kingdomId)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
-            {
-                ResourceType = r.ResourceType,
-                Amount = r.Amount,
-                Generation = r.Generation,
-                UpdatedAt = r.UpdatedAt
-            }).ToList();
+            return UnitOfWork.Resources.GetResources(kingdomId);
         }
 
         public Location AddLocations(Kingdom kingdom)

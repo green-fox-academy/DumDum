@@ -6,19 +6,20 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using DumDum.Interfaces;
 
 namespace DumDum.Services
 {
     public class TroopService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
-        public TroopService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
+        private IUnitOfWork UnitOfWork { get; set; }
+        public TroopService(AuthenticateService authService, DumDumService dumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AuthenticateService = authService;
             DumDumService = dumService;
+            UnitOfWork = unitOfWork;
         }
 
         internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
@@ -48,30 +49,14 @@ namespace DumDum.Services
 
         internal List<TroopsResponse> GetTroops(int kingdomId)
         {
-            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).ToList().
-                Select(t => new TroopsResponse()
-                {
-                    TroopId = t.TroopId,
-                    TroopType = t.TroopType.TroopType,
-                    Level = t.Level,
-                    HP = t.TroopType.TroopLevel.Level,
-                    Attack = t.TroopType.TroopLevel.Attack,
-                    Defence = t.TroopType.TroopLevel.Defence,
-                    StartedAt = t.StartedAt,
-                    FinishedAt = t.FinishedAt
-                }).ToList();
-            if (troops != null)
-            {
-                return troops;
-            }
-            return new List<TroopsResponse>();
+            return UnitOfWork.Troops.GetTroops(kingdomId);
         }
 
         internal string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode)
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var possibleTroopTypes = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
+            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
 
             if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {
@@ -85,10 +70,10 @@ namespace DumDum.Services
                 var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
                 var currentLevelOfTownhall = CurrentLevelOfTownhall(kingdomId);
                 var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopUpdateReq.Type.ToLower());
-                var maximumLevelPossible = DbContext.TroopLevel.Select(t => t.Level).Max();
-                var timeRequiredToUpgradeTroop = DbContext.TroopLevel.Where(t => t.Level == currentLevelOfTroops + 1 && t.TroopTypeId == troopTypeIdToBeUpgraded)
-                    .Select(t => t.ConstTime).FirstOrDefault();
-           
+                var maximumLevelPossible = UnitOfWork.TroopLevels.MaximumLevelPossible();
+                var timeRequiredToUpgradeTroop = UnitOfWork.TroopLevels.Find(t => t.Level == currentLevelOfTroops + 1 && t.TroopTypeId == troopTypeIdToBeUpgraded)
+                   .Select(t => t.ConstTime).FirstOrDefault();
+
                 if (IsUpgradeInProgress(kingdomId, troopUpdateReq.Type))
                 {
                     statusCode = 407;
@@ -119,11 +104,8 @@ namespace DumDum.Services
                     statusCode = 403;
                     return "Upgrade townhall first";
                 }
-                DbContext.Troops.Where(t => t.TroopTypeId == troopTypeIdToBeUpgraded && t.KingdomId == kingdomId).ToList()
-                    .ForEach(t => { t.Level = t.Level + 1;
-                    t.StartedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-                    t.FinishedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds() + timeRequiredToUpgradeTroop;});
-                DbContext.SaveChanges();
+                UnitOfWork.Troops.UpgradeTroops(troopTypeIdToBeUpgraded, kingdomId, timeRequiredToUpgradeTroop);
+                UnitOfWork.Complete();
                 DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
                 statusCode = 200;
                 return "Ok";
@@ -160,7 +142,7 @@ namespace DumDum.Services
                 {
                     var newTroop = CreateNewTroop(troopCreationReq.Type.ToLower(), kingdomId);
                     DbContext.Troops.Add(newTroop);
-                    DbContext.SaveChanges();
+                    UnitOfWork.Complete();
                     DumDumService.TakeGold(kingdomId, newTroopCost);
                     createdTroops.Add(new TroopsResponse()
                     {

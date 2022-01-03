@@ -1,21 +1,16 @@
-﻿using DumDum.Database;
-using DumDum.Models.JsonEntities;
+﻿using DumDum.Models.JsonEntities;
 
 namespace DumDum.Services
 {
     public class DetailService
     {
-        private ApplicationDbContext DbContext { get; set; }
         public BuildingService BuildingService { get; set; }
         public ResourceService ResourceService { get; set; }
         public TroopService TroopService { get; set; }
         public AuthenticateService AuthenticateService { get; set; }
-        
-
-        public DetailService(ApplicationDbContext dbContext, BuildingService buildingService,
+        public DetailService( BuildingService buildingService,
             ResourceService resourceService, TroopService troopService, AuthenticateService authenticateService)
         {
-            DbContext = dbContext;
             ResourceService = resourceService;
             BuildingService = buildingService;
             TroopService = troopService;

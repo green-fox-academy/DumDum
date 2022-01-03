@@ -1,6 +1,8 @@
 ﻿using DumDum.Database;
 using DumDum.Interfaces;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DumDum.Repository
@@ -19,6 +21,16 @@ namespace DumDum.Repository
         public void UpdateGoldAmountOfKingdom(Resource gold)
         {
             DbContext.Resources.Update(gold);
+        }
+        public List<ResourceList> GetResources(int id)
+        {
+            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
+            {
+                ResourceType = r.ResourceType,
+                Amount = r.Amount,
+                Generation = r.Generation,
+                UpdatedAt = r.UpdatedAt
+            }).ToList();
         }
     }
 }

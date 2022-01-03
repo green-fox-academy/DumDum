@@ -1,8 +1,4 @@
-﻿using DumDum.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace DumDum.Interfaces
 {
@@ -12,6 +8,10 @@ namespace DumDum.Interfaces
         IPlayerRepository Players { get; }
         IKingdomRepository Kingdoms { get; }
         IResourceRepository Resources { get; }
+        IBuildingRepository Buildings { get; }
+        ITroopTypesRepository TroopTypes { get; }
+        ITroopLevelRepository TroopLevels { get; }
+
         int Complete();
     }
 }

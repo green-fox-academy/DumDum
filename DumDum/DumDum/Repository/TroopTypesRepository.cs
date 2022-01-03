@@ -13,5 +13,10 @@ namespace DumDum.Repository
         public TroopTypesRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        public List<string> PossibleTroopTypesToUpgrade()
+        {
+            return DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
+        }
     }
 }
