@@ -4,6 +4,9 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
@@ -46,7 +49,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -77,7 +80,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");
@@ -108,7 +111,7 @@ namespace TestProject1
             requestBody.KingdomId = 3;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
-            request.RequestUri = new Uri("http://localhost:20625/registration");
+            request.RequestUri = new Uri("http://localhost:5000/registration");
             request.Method = HttpMethod.Put;
             request.Content = requestContent;
             request.Headers.Add("authorization", $"bearer {tokenResult}");

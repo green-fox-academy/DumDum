@@ -1,4 +1,4 @@
-﻿namespace DumDum.Models.JsonEntities
+﻿namespace DumDum.Models.JsonEntities.Authorization
 {
     public class AuthResponse
     {

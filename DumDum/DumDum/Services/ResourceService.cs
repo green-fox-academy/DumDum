@@ -4,6 +4,9 @@ using DumDum.Database;
 using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Resources;
 
 namespace DumDum.Services
 {

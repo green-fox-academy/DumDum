@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
@@ -23,7 +25,7 @@ namespace TestProject1
         {
             var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
+            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
             string contentResponse = response.Content.ReadAsStringAsync().Result;
             LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
             string tokenResult = token.Token;
@@ -100,7 +102,7 @@ namespace TestProject1
 
             TroopCreationRequest requestBody = new();
             requestBody.Type = "senator";
-            requestBody.Quantity = 20;
+            requestBody.Quantity = 200000;
             string requestBodyContent = JsonConvert.SerializeObject(requestBody);
             StringContent requestContent = new(requestBodyContent, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
