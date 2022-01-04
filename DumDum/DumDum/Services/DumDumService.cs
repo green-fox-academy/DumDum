@@ -295,7 +295,7 @@ namespace DumDum.Services
                 DbContext.SaveChanges();
             }
         }      
-        }
+        
 
         public void TakeFood(int kingdomId, int amount)
         {

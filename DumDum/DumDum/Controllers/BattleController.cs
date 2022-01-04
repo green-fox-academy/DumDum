@@ -32,8 +32,8 @@ namespace DumDum.Controllers
             return BadRequest(new ErrorResponse() {Error = "Invalid credentials"});
         }
         
-        [HttpGet("kingdoms/{defenderKingdomId=int}/battles{battleId=int}")]
-        public IActionResult BattleResult(string authorization, [FromRoute] int defenderKingdomId, int battleId)
+        [HttpGet("kingdoms/{defenderKingdomId=int}/battles/{battleId=int}")]
+        public IActionResult BattleResult([FromHeader] string authorization, [FromRoute] int defenderKingdomId, int battleId)
         {
             int statusCode = 0;
             var response = BattleService.GetBattleResult(authorization, defenderKingdomId, battleId, out statusCode);

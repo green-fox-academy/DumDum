@@ -41,7 +41,7 @@ namespace DumDum.Database
                 .HasOne<Kingdom>(t => t.Kingdom)
                 .WithMany(k => k.Troops)
                 .HasForeignKey(t => t.KingdomId)
-                .IsRequired(false);
+                .IsRequired(true);
 
             modelBuilder.Entity<Kingdom>()
                 .HasMany<Building>(k => k.Buildings)

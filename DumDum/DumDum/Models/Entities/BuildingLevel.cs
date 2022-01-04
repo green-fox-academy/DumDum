@@ -1,4 +1,6 @@
-﻿namespace DumDum.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DumDum.Models.Entities
 {
     public class BuildingLevel
     {
@@ -12,6 +14,6 @@
         public int Production { get; set; }
         public int Consumption { get; set; }
         public decimal DefBoost { get; set; }
-        public BuildingType BuildingType { get; set; }
+        [NotMapped]public BuildingType BuildingType { get; set; }
     }
 }

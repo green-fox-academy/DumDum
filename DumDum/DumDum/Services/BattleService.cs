@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Battles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
@@ -92,20 +93,23 @@ namespace DumDum.Services
                     var battle = AddBattle(battleRequest, player.Ruler, resolutionTime, winner, timeToStartTheBattle);
                     if (player.Ruler == winner)
                     {
-                        AddAttacker(player.Ruler, battle.BattleId, winnerLostTroops);
-                        var attackerByBattleId = GetAttackerByBattleId(battle.BattleId);
-                        attackerByBattleId.ResourcesStolen.Food = (int)foodStolen;
-                        attackerByBattleId.ResourcesStolen.Gold = (int)goldStolen;
-
-                        AddDefender(battleRequest.Target.Ruler, battle.BattleId, loserLostTroops);
+                        var resourcesStolen = new ResourcesStolen() {Food = (int) foodStolen, Gold = (int) goldStolen};
+                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, winnerLostTroops);
+                        addedAttacker.ResourcesStolen = resourcesStolen;
+                        var addedDefender = AddDefender(battleRequest.Target.Ruler, battle.BattleId, loserLostTroops);
+                        battle.Attacker = addedAttacker;
+                        battle.Defender = addedDefender;
+                        DbContext.SaveChanges();
                     }
                     else
                     {
-                        AddAttacker(player.Ruler, battle.BattleId, loserLostTroops);
-                        AddDefender(battleRequest.Target.Ruler, battle.BattleId, winnerLostTroops);
-                        var attackerByBattleId = GetAttackerByBattleId(battle.BattleId);
-                        attackerByBattleId.ResourcesStolen.Food = 0;
-                        attackerByBattleId.ResourcesStolen.Gold = 0;
+                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, loserLostTroops);
+                        var addedDefender = AddDefender(battleRequest.Target.Ruler, battle.BattleId, winnerLostTroops);
+                        var loserResourcesStolen = new ResourcesStolen() {Food = 0, Gold = 0};
+                        addedAttacker.ResourcesStolen = loserResourcesStolen;
+                        battle.Attacker = addedAttacker;
+                        battle.Defender = addedDefender;
+                        DbContext.SaveChanges();
                     }
 
                     statusCode = 200;
@@ -154,8 +158,8 @@ namespace DumDum.Services
             }
 
             var minSpeed = DbContext.Troops.Include(t => t.TroopType)
-                    .Where(t => t.KingdomId == kingdomId && t.TroopType.TroopLevel.Level == t.Level)
-                    .Min(t => t.TroopType.TroopLevel.Speed);
+                .Where(t => t.KingdomId == kingdomId && t.TroopType.TroopLevel.Level == t.Level)
+                .Min(t => t.TroopType.TroopLevel.Speed);
 
             return minSpeed;
         }
@@ -167,10 +171,10 @@ namespace DumDum.Services
                 return 0;
             }
 
-            var attackPower= DbContext.Troops.Include(t => t.TroopType)
+            var attackPower = DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.KingdomId == player.KingdomId && t.TroopType.TroopLevel.Level == t.Level)
                 .Sum(t => t.TroopType.TroopLevel.Attack);
-            return (int)attackPower;
+            return (int) attackPower;
         }
 
         private List<Troop> GetTroopsByKingdomId(int id)
@@ -190,10 +194,10 @@ namespace DumDum.Services
                 return 0;
             }
 
-            var defensePower= DbContext.Troops.Include(t => t.TroopType)
+            var defensePower = DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.KingdomId == kingdom.KingdomId && t.TroopType.TroopLevel.Level == t.Level)
                 .Sum(t => t.TroopType.TroopLevel.Defence);
-            return (int)defensePower;
+            return (int) defensePower;
         }
 
         public string GetWinner(Player player, Kingdom kingdom, out string loser, out List<TroopsList> winnerLostTroops,
@@ -240,6 +244,7 @@ namespace DumDum.Services
                     DbContext.Troops.Remove(troop);
                     DbContext.SaveChanges();
                 }
+
                 winner.Troops.RemoveRange(1, (int) amountWinner);
             }
             else
@@ -253,9 +258,9 @@ namespace DumDum.Services
             }
 
             loserTroopsLost = new List<TroopsList>();
-            if (GetTroopsByKingdomId(loser.KingdomId) is not null)
+            if (GetTroopsByKingdomId(loserKingdomId) is not null)
             {
-                foreach (var troop in GetTroopsByKingdomId(loser.KingdomId))
+                foreach (var troop in GetTroopsByKingdomId(loserKingdomId))
                 {
                     var troopToAdd = new TroopsList()
                     {
@@ -263,15 +268,14 @@ namespace DumDum.Services
                         Type = GetTroopTypeById(troop.TroopTypeId).TroopType
                     };
 
-                    if (!loserTroopsLost.Contains(troopToAdd))
+                    if (!loserTroopsLost.Any(t => t.Type == troopToAdd.Type))
                     {
                         loserTroopsLost.Add(troopToAdd);
                     }
+
                     DbContext.Troops.Remove(troop);
                     DbContext.SaveChanges();
                 }
-
-                DbContext.Troops.RemoveRange(GetTroopsByKingdomId(loser.KingdomId));
             }
         }
 
@@ -280,15 +284,15 @@ namespace DumDum.Services
             var kingdomOfWinner = DumDumService.GetPlayerByUsername(winner).Kingdom;
             var kingdomOfLoser = DumDumService.GetPlayerByUsername(loser).Kingdom;
             var amountOfGold = DumDumService.GetGoldAmountOfKingdom(kingdomOfLoser.KingdomId);
-            float amountOfGoldToTakeOrGive =  amountOfGold/ 100f ;
-            goldStolen = amountOfGoldToTakeOrGive* 20;
-            DumDumService.TakeGold(kingdomOfLoser.KingdomId, (int)goldStolen);
+            float amountOfGoldToTakeOrGive = amountOfGold / 100f;
+            goldStolen = amountOfGoldToTakeOrGive * 20;
+            DumDumService.TakeGold(kingdomOfLoser.KingdomId, (int) goldStolen);
             float amountOfFood = DumDumService.GetFoodAmountOfKingdom(kingdomOfLoser.KingdomId);
-            var amountOfFoodToTakeOrGive = amountOfFood / 100 ;
+            var amountOfFoodToTakeOrGive = amountOfFood / 100;
             foodStolen = amountOfFoodToTakeOrGive * 20;
-            DumDumService.TakeFood(kingdomOfLoser.KingdomId, (int)foodStolen);
-            DumDumService.GiveGold(kingdomOfWinner.KingdomId, (int)goldStolen);
-            DumDumService.GiveFood(kingdomOfWinner.KingdomId, (int)foodStolen);
+            DumDumService.TakeFood(kingdomOfLoser.KingdomId, (int) foodStolen);
+            DumDumService.GiveGold(kingdomOfWinner.KingdomId, (int) goldStolen);
+            DumDumService.GiveFood(kingdomOfWinner.KingdomId, (int) foodStolen);
         }
 
         public Battle GetBattleById(int id)
