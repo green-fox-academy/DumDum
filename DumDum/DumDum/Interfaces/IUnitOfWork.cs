@@ -11,6 +11,8 @@ namespace DumDum.Interfaces
         IBuildingRepository Buildings { get; }
         ITroopTypesRepository TroopTypes { get; }
         ITroopLevelRepository TroopLevels { get; }
+        IBuildingLevelRepository BuildingLevels { get; }
+        IBuildingTypeRepository BuildingTypes { get; }
 
         int Complete();
     }

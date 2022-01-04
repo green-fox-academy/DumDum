@@ -1,6 +1,7 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;

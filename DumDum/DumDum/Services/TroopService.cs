@@ -1,6 +1,8 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
 using System;
 using System.Collections.Generic;
@@ -205,10 +207,8 @@ namespace DumDum.Services
         {
             if (troopCreationLevel > 0)
             {
-                var troopToCreateHigherLevel = UnitOfWork.TroopLevels.Find(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel).FirstOrDefault();
-                return troopToCreateHigherLevel.Cost;
+                return UnitOfWork.TroopLevels.TroopCreationHigherLevel(troopType, troopCreationLevel).Cost;
             }
-            var troopToCreateLevelOne = UnitOfWork.TroopLevels.Find(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel).FirstOrDefault();
             return 0;
         }
 
@@ -269,15 +269,14 @@ namespace DumDum.Services
         {
             TroopsLeaderboardResponse response = new();
             List<TroopsPoint> pointsList = new();
-            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
-
+            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in kingdoms)
             {
                 var troopPoint = new TroopsPoint()
                 {
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,
-                    Troops = DbContext.Troops.Where(t => t.KingdomId == kingdom.KingdomId).Count(),
+                    Troops = UnitOfWork.Troops.Find(t => t.KingdomId == kingdom.KingdomId).Count(),
                     Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
                 };
                 pointsList.Add(troopPoint);
@@ -292,10 +291,10 @@ namespace DumDum.Services
         {
             var consumptionOfAllTroopsInKingdom = 0.0;
 
-                var troopsInKingdom = DbContext.Troops.Where(t => t.KingdomId == kingdomId).ToList();
+                var troopsInKingdom = UnitOfWork.Troops.Find(t => t.KingdomId == kingdomId).ToList();
                 foreach (var troop in troopsInKingdom)
                 {
-                    consumptionOfAllTroopsInKingdom += DbContext.TroopLevel.Where(t => t.TroopTypeId == troop.TroopTypeId && t.Level == troop.Level)
+                    consumptionOfAllTroopsInKingdom += UnitOfWork.TroopLevels.Find(t => t.TroopTypeId == troop.TroopTypeId && t.Level == troop.Level)
                         .Select(t => t.Consumption)
                         .FirstOrDefault();
                 }
@@ -308,7 +307,7 @@ namespace DumDum.Services
             KingdomsLeaderboardResponse response = new();
 
             List<KingdomPoints> pointsList = new();
-            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
+            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
 
             foreach (var kingdom in kingdoms)
             {
@@ -317,7 +316,7 @@ namespace DumDum.Services
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,
                     Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
-                            + DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level)
+                            + UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom)
                 };
                 pointsList.Add(kingdomPoint);
             }

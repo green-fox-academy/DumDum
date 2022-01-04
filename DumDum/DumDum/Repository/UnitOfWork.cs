@@ -19,11 +19,15 @@ namespace DumDum.Repository
         public ITroopLevelRepository TroopLevels { get; private set; }
         public ITroopRepository Troops { get; private set; }
         public ITroopTypesRepository TroopTypes { get; private set; }
+        public IBuildingLevelRepository BuildingLevels { get; private set; }
+        public IBuildingTypeRepository BuildingTypes { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             DbContext = context;
             Buildings = new BuildingRepository(DbContext);
+            BuildingLevels = new BuildingLevelRepository(DbContext);
+            BuildingTypes = new BuildingTypeRepository(DbContext);
             Kingdoms = new KingdomRepository(DbContext);
             Players = new PlayerRepository(DbContext);
             Resources = new ResourceRepository(DbContext);
@@ -31,7 +35,7 @@ namespace DumDum.Repository
             Troops = new TroopRepository(DbContext);
             TroopTypes = new TroopTypesRepository(DbContext);
         }
-       
+
         public int Complete()
         {
             return DbContext.SaveChanges();
