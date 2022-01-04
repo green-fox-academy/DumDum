@@ -47,5 +47,12 @@ namespace DumDum.Repository
                          t.FinishedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds() + timeRequiredToUpgradeTroop;
                      });
         }
+
+        public int FinishedAtTimeTroop(string troopType, int kingdomId)
+        {
+            return DbContext.Troops.Include(t => t.TroopType)
+                .Where(t => t.TroopType.TroopType.ToLower() == troopType.ToLower() && t.KingdomId == kingdomId)
+                .Select(t => t.FinishedAt).FirstOrDefault();
+        }
     }
 }

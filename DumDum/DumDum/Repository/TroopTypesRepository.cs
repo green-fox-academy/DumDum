@@ -18,5 +18,10 @@ namespace DumDum.Repository
         {
             return DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
         }
+
+        public List<string> PossibleTroopTypes()
+        {
+            return DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
+        }
     }
 }

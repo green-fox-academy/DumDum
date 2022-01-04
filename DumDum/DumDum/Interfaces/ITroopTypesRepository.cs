@@ -6,5 +6,6 @@ namespace DumDum.Interfaces
     public interface ITroopTypesRepository : IRepository<TroopTypes>
     {
         List<string> PossibleTroopTypesToUpgrade();
+        List<string> PossibleTroopTypes();
     }
 }
