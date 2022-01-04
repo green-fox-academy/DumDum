@@ -1,4 +1,6 @@
-﻿using DumDum.Database;
+﻿using System;
+using System.Threading.Tasks;
+using DumDum.Database;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
@@ -24,7 +26,7 @@ namespace DumDum.Services
             AuthenticateService = authenticateService;
         }
         
-        public KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization, out int statusCode)
+        public async Task<(KingdomDetailsResponse, int)> KingdomInformation(int kingdomId, string authorization)
         {
             KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse();
             AuthRequest response = new AuthRequest();
@@ -36,11 +38,9 @@ namespace DumDum.Services
                 kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
                 kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
                 kingdomDetailsResponse.Troops = TroopService.GetTroops(kingdomId);
-                statusCode = 200;
-                return kingdomDetailsResponse;
+                return (kingdomDetailsResponse, 200);
             }
-            statusCode = 401;
-            return kingdomDetailsResponse;
+            return (kingdomDetailsResponse, 401);
         }
     }
 }

@@ -17,7 +17,7 @@ Create table BuildingLevels(
     CreatedTimeTheSpy bigint,
     CreatedTimeSenator bigint
 );
-insert into BuildingLevels(BuildingLevelId, LevelNumber, Cost, ConstTime, ResearchTime, MaxStorage, Defense, Production, Consumption, DefBoost, Axemen, Phalanx, Knights, Catapult, TheSpy, Senator)
+insert into BuildingLevels(BuildingLevelId, LevelNumber, Cost, ConstTime, ResearchTime, MaxStorage, Defense, Production, Consumption, DefBoost, CreatedTimeAxemen, CreatedTimePhalanx, CreatedTimeKnights, CreatedTimeCatapult, CreatedTimeTheSpy, CreatedTimeSenator)
 Values (1, 1, 120, 3600, 0, 1200, 10, 0, 1, 0, 0, 0, 0, 0, 0, 0),
 (1, 2, 135, 4500, 0, 2400, 12, 0, 2, 0, 0, 0, 0, 0, 0, 0),
 (1, 3, 271, 5400, 0, 3600, 15, 0, 3, 0, 0, 0, 0, 0, 0, 0),

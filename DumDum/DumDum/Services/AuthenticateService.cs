@@ -40,7 +40,6 @@ namespace DumDum.Services
                 string token = request.Token;
                 request.Token = token.Remove(0, 7);
             }
-            var responseEnt = new AuthResponse();
             
             try
             {
@@ -62,16 +61,10 @@ namespace DumDum.Services
 
                 var principal = tokenHandler.ValidateToken(request.Token, validationParameters, out _);
                 
-
                 var identity = principal.Identity.Name;    //vraci username tokenu
-                var player = FindPlayerByTokenName(identity);
-                responseEnt.Ruler = player.Username;
-                responseEnt.KingdomId = player.KingdomId;
-                responseEnt.KingdomName = player.Kingdom.KingdomName;
-                
+                var responseEnt = new AuthResponse(FindPlayerByTokenName(identity));
                 return responseEnt;
             }
-
             catch (Exception)
             {
                 return new AuthResponse();
@@ -80,13 +73,8 @@ namespace DumDum.Services
 
         public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            KingdomRenameResponse response = new KingdomRenameResponse();
-            var player = FindPlayerByTokenName(authResponse.Ruler);
-            player.Kingdom.KingdomName = requestKingdomName.KingdomName;
+            KingdomRenameResponse response = new KingdomRenameResponse(FindPlayerByTokenName(authResponse.Ruler), requestKingdomName);
             DbContext.SaveChanges();
-            response.KingdomId = player.KingdomId;
-            response.KingdomName = player.Kingdom.KingdomName;
-
             return response;
         }
     

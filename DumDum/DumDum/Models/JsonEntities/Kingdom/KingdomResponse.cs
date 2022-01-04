@@ -14,5 +14,14 @@ namespace DumDum.Models.JsonEntities.Kingdom
         public string Ruler { get; set; }
         public int Population { get; set; }
         public Location Location { get; set; }
+
+        public KingdomResponse(Entities.Kingdom kingdom, Entities.Player player, Location locations)
+        {
+            KingdomId = kingdom.KingdomId;
+            KingdomName = kingdom.KingdomName;
+            Ruler = player.Username;
+            Population = 0;
+            Location = locations;
+        }
     }
 }

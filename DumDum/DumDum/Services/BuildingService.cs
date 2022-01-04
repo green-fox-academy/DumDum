@@ -41,16 +41,8 @@ namespace DumDum.Services
         public KingdomResponse GetKingdom(int id)
         {
             var kingdom = DumDumService.GetKingdomById(id);
-            var player = DumDumService.GetPlayerById(kingdom.PlayerId);
-            var locations = DumDumService.AddLocations(kingdom);
-            return new KingdomResponse()
-            {
-                KingdomId = kingdom.KingdomId,
-                KingdomName = kingdom.KingdomName,
-                Ruler = player.Username,
-                Population = 0,
-                Location = locations,
-            };
+            return new KingdomResponse(DumDumService.GetKingdomById(id), DumDumService.GetPlayerById(kingdom.PlayerId),
+                DumDumService.AddLocations(kingdom));
         }
 
         public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)

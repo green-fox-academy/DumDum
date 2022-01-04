@@ -87,8 +87,8 @@ namespace DumDum.Controllers
         public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
         {
             int statusCode;
-            var details = DetailService.KingdomInformation(id, authorization, out statusCode);
-            if (statusCode == 200)
+            var details = DetailService.KingdomInformation(id, authorization);
+            if (details.Result.Item2 == 200)
             {
                 return Ok(details);
             }
