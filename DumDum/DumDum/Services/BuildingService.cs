@@ -27,15 +27,8 @@ namespace DumDum.Services
 
         public List<BuildingList> GetBuildings(int id)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == id).Select(b => new BuildingList()
-            {
-                BuildingId = b.BuildingId,
-                BuildingType = b.BuildingType,
-                Level = b.Level,
-                StartedAt = b.StartedAt,
-                FinishedAt = b.FinishedAt
-                
-            }).ToList();
+            var building =  DbContext.Buildings.Where(b => b.KingdomId == id).ToList();
+            return new List<BuildingList()>;
         }
 
         public KingdomResponse GetKingdom(int id)
@@ -47,23 +40,20 @@ namespace DumDum.Services
 
         public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
         {
-            var response = new BuildingResponse();
             if (authorization != null && kingdomId != null)
             {
+                
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization;
                 var player = AuthenticateService.GetUserInfo(request);
                 if (player != null && player.KingdomId == kingdomId)
                 {
-                    response.Kingdom = GetKingdom(kingdomId);
-                    response.Buildings = GetBuildings(kingdomId);
                     statusCode = 200;
-                    return response;
+                    return new BuildingResponse(GetKingdom(kingdomId), GetBuildings(kingdomId));
                 }
             }
-
             statusCode = 401;
-            return response;
+            return null;
         }
 
         private Building GetBuildingById(int buildingId)
@@ -126,20 +116,10 @@ namespace DumDum.Services
             building.StartedAt = timeNow;
             building.FinishedAt = timeNow + nextLevelInfo.ConstTime;
             DbContext.SaveChanges();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = building.BuildingId,
-                BuildingType = building.BuildingType,
-                Level = nextLevelInfo.LevelNumber,
-                Hp = 1,
-                StartedAt = building.StartedAt,
-                FinishedAt = building.FinishedAt,
-                Production = nextLevelInfo.Production,
-                Consumption = nextLevelInfo.Consumption
-            };
+            
             statusCode = 200;
             errorMessage = "ok";
-            return response;
+            return new BuildingList(GetBuildingById(buildingId), InformationForNextLevel(building.BuildingTypeId, building.Level));
         }
 
         public BuildingLevel InformationForNextLevel(int levelTypeId, int buildingLevel)
@@ -201,19 +181,9 @@ namespace DumDum.Services
                         StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds(), FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() 
                             + buildingType.BuildingLevel.ConstTime});
             DbContext.SaveChanges();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = build.Entity.BuildingId,
-                BuildingType = building,
-                Level = buildingType.BuildingLevel.LevelNumber,
-                Hp = 1,
-                StartedAt = build.Entity.StartedAt,
-                FinishedAt = build.Entity.FinishedAt,
-                Production = buildingType.BuildingLevel.Production,
-                Consumption = buildingType.BuildingLevel.Consumption
-            };
+            
             statusCode = 200;
-            return response;
+            return new BuildingList(build,buildingType);
         }
 
         public int GetTownHallLevel(int kingdomId)

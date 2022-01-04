@@ -1,4 +1,9 @@
-﻿namespace DumDum.Models.JsonEntities.Buildings
+﻿using System.Collections.Generic;
+using System.Linq;
+using DumDum.Models.Entities;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+namespace DumDum.Models.JsonEntities.Buildings
 {
     public class BuildingList
     {
@@ -10,6 +15,38 @@
         public long FinishedAt { get; set; }
         public int Production { get; set; }
         public int Consumption { get; set; }
-        public bool IsActive { get; set; }
+
+        public BuildingList(Building building, BuildingLevel nextLevelInfo)
+        {
+            BuildingId = building.BuildingId;
+            BuildingType = building.BuildingType;
+            Level = nextLevelInfo.LevelNumber;
+            Hp = 1;
+            StartedAt = building.StartedAt;
+            FinishedAt = building.FinishedAt;
+            Production = nextLevelInfo.Production;
+            Consumption = nextLevelInfo.Consumption;
+        }
+
+        public BuildingList(EntityEntry<Building> build, BuildingType buildingType )
+        {
+            BuildingId = build.Entity.BuildingId;
+            BuildingType = buildingType.BuildingTypeName;
+            Level = buildingType.BuildingLevel.LevelNumber;
+            Hp = 1;
+            StartedAt = build.Entity.StartedAt;
+            FinishedAt = build.Entity.FinishedAt;
+            Production = buildingType.BuildingLevel.Production;
+            Consumption = buildingType.BuildingLevel.Consumption;
+        }
+
+        public BuildingList(Building building)
+        {
+            BuildingId = building.BuildingId;
+            BuildingType = building.BuildingType;
+            Level = building.Level;
+            StartedAt = building.StartedAt;
+            FinishedAt = building.FinishedAt;
+        }
     }
 }

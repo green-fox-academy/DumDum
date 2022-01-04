@@ -7,5 +7,12 @@ namespace DumDum.Models.JsonEntities.Buildings
     {
         public KingdomResponse Kingdom { get; set; }
         public List<BuildingList> Buildings { get; set; }
+
+        public BuildingResponse(KingdomResponse kingdomResponse, List<BuildingList> buildings)
+        {
+            Kingdom = kingdomResponse;
+            Buildings = buildings;
+        }
     }
+    
 }
