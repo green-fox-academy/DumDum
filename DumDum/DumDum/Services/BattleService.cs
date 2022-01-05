@@ -94,22 +94,20 @@ namespace DumDum.Services
                     if (player.Ruler == winner)
                     {
                         var resourcesStolen = new ResourcesStolen() {Food = (int) foodStolen, Gold = (int) goldStolen};
-                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, winnerLostTroops);
-                        addedAttacker.ResourcesStolen = resourcesStolen;
+                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, winnerLostTroops, resourcesStolen);
                         var addedDefender = AddDefender(battleRequest.Target.Ruler, battle.BattleId, loserLostTroops);
                         battle.Attacker = addedAttacker;
                         battle.Defender = addedDefender;
-                        DbContext.SaveChanges();
+                        DbContext.Update(battle);
                     }
                     else
                     {
-                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, loserLostTroops);
-                        var addedDefender = AddDefender(battleRequest.Target.Ruler, battle.BattleId, winnerLostTroops);
                         var loserResourcesStolen = new ResourcesStolen() {Food = 0, Gold = 0};
-                        addedAttacker.ResourcesStolen = loserResourcesStolen;
+                        var addedAttacker = AddAttacker(player.Ruler, battle.BattleId, loserLostTroops, loserResourcesStolen);
+                        var addedDefender = AddDefender(battleRequest.Target.Ruler, battle.BattleId, winnerLostTroops);
                         battle.Attacker = addedAttacker;
                         battle.Defender = addedDefender;
-                        DbContext.SaveChanges();
+                        DbContext.Update(battle);
                     }
 
                     statusCode = 200;
@@ -301,13 +299,15 @@ namespace DumDum.Services
         }
 
         private Attacker AddAttacker(string attackerName, int battleId,
-            List<TroopsList> troopsLost)
+            List<TroopsList> troopsLost, ResourcesStolen resourcesStolen)
         {
             var attacker = new Attacker()
                 {AttackerName = attackerName, BattleId = battleId};
             var attackerToReturn = DbContext.Attackers.Add(attacker).Entity;
-            attackerToReturn.TroopsLost = troopsLost;
             DbContext.SaveChanges();
+            attackerToReturn.TroopsLost = troopsLost;
+            attackerToReturn.ResourcesStolen = resourcesStolen;
+            DbContext.Update(attackerToReturn);
             return attackerToReturn;
         }
 
