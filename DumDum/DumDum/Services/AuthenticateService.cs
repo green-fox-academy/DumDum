@@ -1,34 +1,31 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Text;
-using DumDum.Database;
+﻿using DumDum.Interfaces;
 using DumDum.Models;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace DumDum.Services
 {
     public class AuthenticateService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private readonly AppSettings _appSettings;
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public AuthenticateService(ApplicationDbContext dbContext,IOptions<AppSettings> appSettings)
+        public AuthenticateService(IOptions<AppSettings> appSettings, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             _appSettings = appSettings.Value;
+            UnitOfWork = unitOfWork;
         }
 
         public Player FindPlayerByTokenName(string userName)
         {
-            var player = DbContext.Players.Include(p =>p.Kingdom).FirstOrDefault(p => p.Username == userName);
-            return player;
+            return UnitOfWork.Players.GetPlayerByUsername(userName);
         }
         
         public AuthResponse GetUserInfo(AuthRequest request)
@@ -73,8 +70,13 @@ namespace DumDum.Services
 
         public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            KingdomRenameResponse response = new KingdomRenameResponse(FindPlayerByTokenName(authResponse.Ruler), requestKingdomName);
-            DbContext.SaveChanges();
+            KingdomRenameResponse response = new KingdomRenameResponse();
+            var player = FindPlayerByTokenName(authResponse.Ruler);
+            player.Kingdom.KingdomName = requestKingdomName.KingdomName;
+            UnitOfWork.Complete();
+            response.KingdomId = player.KingdomId;
+            response.KingdomName = player.Kingdom.KingdomName;
+
             return response;
         }
     

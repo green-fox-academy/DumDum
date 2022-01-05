@@ -16,6 +16,8 @@ using DumDum.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using DumDum.Services;
+using DumDum.Interfaces;
+using DumDum.Repository;
 
 namespace DumDum
 {
@@ -37,6 +39,17 @@ namespace DumDum
             services.AddTransient<TroopService>();
             services.AddTransient<BuildingService>();
             services.AddTransient<DetailService>();
+
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IBuildingRepository, BuildingRepository>();
+            services.AddTransient<IKingdomRepository, KingdomRepository>();
+            services.AddTransient<IPlayerRepository, PlayerRepository>();
+            services.AddTransient<IResourceRepository, ResourceRepository>();
+            services.AddTransient<ITroopLevelRepository, TroopLevelRepository>();
+            services.AddTransient<ITroopRepository, TroopRepository>();
+            services.AddTransient<ITroopTypesRepository, TroopTypesRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 
             ConfigureDb(services);
 

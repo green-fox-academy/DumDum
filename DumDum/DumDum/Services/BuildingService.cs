@@ -2,32 +2,33 @@
 using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using DumDum.Interfaces;
 
 namespace DumDum.Services
 {
     public class BuildingService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public BuildingService(ApplicationDbContext dbContext, AuthenticateService authService,
-            DumDumService dumService)
+        public BuildingService(AuthenticateService authService,
+            DumDumService dumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AuthenticateService = authService;
             DumDumService = dumService;
+            UnitOfWork = unitOfWork;
         }
 
         public List<BuildingList> GetBuildings(int id)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == id).Select(b => new BuildingList(b)).ToList();
+            return UnitOfWork.Buildings.GetBuildings(id);
         }
 
         public KingdomResponse GetKingdom(int id)
@@ -57,7 +58,7 @@ namespace DumDum.Services
 
         private Building GetBuildingById(int buildingId)
         {
-            return DbContext.Buildings.FirstOrDefault(b => b.BuildingId == buildingId);
+            return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
         }
         
         public BuildingList LevelUp(int kingdomId, int buildingId, string authorization, out int statusCode, out string errorMessage)
@@ -114,37 +115,42 @@ namespace DumDum.Services
             building.Level = nextLevelInfo.LevelNumber;
             building.StartedAt = timeNow;
             building.FinishedAt = timeNow + nextLevelInfo.ConstTime;
-            DbContext.SaveChanges();
-            
+            UnitOfWork.Complete();
+            BuildingList response = new BuildingList
+            {
+                BuildingId = building.BuildingId,
+                BuildingType = building.BuildingType,
+                Level = nextLevelInfo.LevelNumber,
+                Hp = 1,
+                StartedAt = building.StartedAt,
+                FinishedAt = building.FinishedAt,
+                Production = nextLevelInfo.Production,
+                Consumption = nextLevelInfo.Consumption
+            };
             statusCode = 200;
             errorMessage = "ok";
-            return new BuildingList(GetBuildingById(buildingId), InformationForNextLevel(building.BuildingTypeId, building.Level));
+            return response;
         }
 
         public BuildingLevel InformationForNextLevel(int levelTypeId, int buildingLevel)
         {
-            return DbContext.BuildingLevels.Where(p => p.BuildingLevelId == levelTypeId)
+            return UnitOfWork.BuildingLevels.Find(p => p.BuildingLevelId == levelTypeId)
                                             .FirstOrDefault(p => p.LevelNumber == buildingLevel + 1);
         }
 
         public Kingdom FindPlayerByKingdomId(int id)
         {
-            var kingdom = DbContext.Kingdoms.Include(p => p.Player)
-                .Include(r => r.Resources)
-                .FirstOrDefault(k => k.KingdomId == id);
-            return kingdom;
+            return UnitOfWork.Kingdoms.FindPlayerByKingdomId(id);
         }
 
         public BuildingType FindLevelingByBuildingType(string buildingType)
         {
-            var level = DbContext.BuildingTypes.Include(b => b.BuildingLevels)
-                .FirstOrDefault(p => p.BuildingTypeName == buildingType);
-            return level;
+            return UnitOfWork.BuildingTypes.FindLevelingByBuildingType(buildingType);
         }
 
         public List<string> ExistingTypeOfBuildings()
         {
-            return DbContext.BuildingTypes.Select(b => b.BuildingTypeName.ToLower()).ToList();
+            return UnitOfWork.BuildingTypes.ExistingTypeOfBuildings();
         }
 
         public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
@@ -174,21 +180,33 @@ namespace DumDum.Services
                 statusCode = 400;
                 return null;
             }
-            var build = DbContext.Buildings.Add(new Building()
-                        {BuildingType = building, KingdomId = kingdom.KingdomId, Kingdom = kingdom,
-                        Hp = 1, Level = buildingType.BuildingLevel.LevelNumber, BuildingTypeId = buildingType.BuildingTypeId,
-                        StartedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds(), FinishedAt = (int) DateTimeOffset.Now.ToUnixTimeSeconds() 
-                            + buildingType.BuildingLevel.ConstTime});
-            DbContext.SaveChanges();
-            
+            var build = UnitOfWork.Buildings.AddBuilding(building, kingdom, buildingType);
+            UnitOfWork.Complete();
+            BuildingList response = new BuildingList
+            {
+                BuildingId = build.BuildingId,
+                BuildingType = building,
+                Level = buildingType.BuildingLevel.LevelNumber,
+                Hp = 1,
+                StartedAt = build.StartedAt,
+                FinishedAt = build.FinishedAt,
+                Production = buildingType.BuildingLevel.Production,
+                Consumption = buildingType.BuildingLevel.Consumption
+            };
             statusCode = 200;
-            return new BuildingList(build,buildingType);
+            return response;
         }
 
         public int GetTownHallLevel(int kingdomId)
         {
-            var townHall = DbContext.Buildings.FirstOrDefault(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall");
-            return townHall.Level;
+            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").FirstOrDefault().Level;
         }
+
+        public BuildingsLeaderboardResponse GetBuildingsLeaderboard()
+        {
+            BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
+            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints();
+            return response;
+        }        
     }
 }

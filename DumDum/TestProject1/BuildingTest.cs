@@ -10,6 +10,7 @@ using System.Text;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
 using Xunit;
+using System.Collections.Generic;
 
 namespace TestProject1
 {
@@ -120,5 +121,46 @@ namespace TestProject1
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
+
+        [Fact]
+        public void BuildingLeaderboardReturOKAndLeaderboardList()
+        {
+
+            //arrange
+
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/buildings");
+            request.Method = HttpMethod.Get;
+
+            BuildingsLeaderboardResponse requestBody = new BuildingsLeaderboardResponse();
+
+            requestBody.Result = new List<BuildingPoints>()
+            {
+                new BuildingPoints()
+                {
+                    Ruler = "Marek",
+                    Kingdom = "Pivko",
+                    Buildings = 4,
+                    Points = 152
+                }
+            };
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+            string responseData = response.Content.ReadAsStringAsync().Result;
+            BuildingsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<BuildingsLeaderboardResponse>(responseData);
+
+            Assert.NotNull(responseDataObj);
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(requestBody.Result[0].Ruler, responseDataObj.Result[0].Ruler);
+            Assert.Equal(requestBody.Result[0].Kingdom, responseDataObj.Result[0].Kingdom);
+            Assert.Equal(requestBody.Result[0].Buildings, responseDataObj.Result[0].Buildings);
+            Assert.Equal(requestBody.Result[0].Points, responseDataObj.Result[0].Points);
+
+        }
     }
 }
