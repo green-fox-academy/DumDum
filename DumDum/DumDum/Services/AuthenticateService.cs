@@ -12,7 +12,7 @@ using System.Text;
 
 namespace DumDum.Services
 {
-    public class AuthenticateService
+    public class AuthenticateService : IAuthenticateService
     {
         private readonly AppSettings _appSettings;
         private IUnitOfWork UnitOfWork { get; set; }

@@ -13,9 +13,9 @@ namespace DumDum.Services
 {
     public class DumDumService
     {
-        private AuthenticateService AuthenticateService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
-        public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork)
+        public DumDumService(IAuthenticateService authService, IUnitOfWork unitOfWork)
         {
             AuthenticateService = authService;
             UnitOfWork = unitOfWork;
