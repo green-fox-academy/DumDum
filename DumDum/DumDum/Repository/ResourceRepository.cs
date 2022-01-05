@@ -25,13 +25,7 @@ namespace DumDum.Repository
         }
         public List<ResourceList> GetResources(int id)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
-            {
-                ResourceType = r.ResourceType,
-                Amount = r.Amount,
-                Generation = r.Generation,
-                UpdatedAt = r.UpdatedAt
-            }).ToList();
+            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
         }
     }
 }

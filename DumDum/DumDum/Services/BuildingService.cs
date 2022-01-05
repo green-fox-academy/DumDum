@@ -116,17 +116,8 @@ namespace DumDum.Services
             building.StartedAt = timeNow;
             building.FinishedAt = timeNow + nextLevelInfo.ConstTime;
             UnitOfWork.Complete();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = building.BuildingId,
-                BuildingType = building.BuildingType,
-                Level = nextLevelInfo.LevelNumber,
-                Hp = 1,
-                StartedAt = building.StartedAt,
-                FinishedAt = building.FinishedAt,
-                Production = nextLevelInfo.Production,
-                Consumption = nextLevelInfo.Consumption
-            };
+            BuildingList response = new BuildingList(building, nextLevelInfo);
+
             statusCode = 200;
             errorMessage = "ok";
             return response;
@@ -182,17 +173,7 @@ namespace DumDum.Services
             }
             var build = UnitOfWork.Buildings.AddBuilding(building, kingdom, buildingType);
             UnitOfWork.Complete();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = build.BuildingId,
-                BuildingType = building,
-                Level = buildingType.BuildingLevel.LevelNumber,
-                Hp = 1,
-                StartedAt = build.StartedAt,
-                FinishedAt = build.FinishedAt,
-                Production = buildingType.BuildingLevel.Production,
-                Consumption = buildingType.BuildingLevel.Consumption
-            };
+            BuildingList response = new BuildingList(build, buildingType);
             statusCode = 200;
             return response;
         }

@@ -17,14 +17,7 @@ namespace DumDum.Repository
 
         public List<BuildingList> GetBuildings(int Id)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList()
-            {
-                BuildingId = b.BuildingId,
-                BuildingType = b.BuildingType,
-                Level = b.Level,
-                StartedAt = b.StartedAt,
-                FinishedAt = b.FinishedAt
-            }).ToList();
+            return DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList(b)).ToList();
         }
 
         public Building AddBuilding(string building, Kingdom kingdom, BuildingType buildingType)

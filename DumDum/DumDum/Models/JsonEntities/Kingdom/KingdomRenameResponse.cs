@@ -11,5 +11,11 @@ namespace DumDum.Models.JsonEntities.Kingdom
             KingdomName = player.Kingdom.KingdomName;
             player.Kingdom.KingdomName = kingdomRenameRequest.KingdomName;
         }
+
+        public KingdomRenameResponse(Entities.Player player)
+        {
+            KingdomId = player.KingdomId;
+            KingdomName = player.Kingdom.KingdomName;    
+        }
     }
 }

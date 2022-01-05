@@ -28,7 +28,7 @@ namespace DumDum.Models.JsonEntities.Buildings
             Consumption = nextLevelInfo.Consumption;
         }
 
-        public BuildingList(EntityEntry<Building> build, BuildingType buildingType )
+        public BuildingList(EntityEntry<Building> build, BuildingType buildingType)
         {
             BuildingId = build.Entity.BuildingId;
             BuildingType = buildingType.BuildingTypeName;
@@ -47,6 +47,18 @@ namespace DumDum.Models.JsonEntities.Buildings
             Level = building.Level;
             StartedAt = building.StartedAt;
             FinishedAt = building.FinishedAt;
+        }
+
+        public BuildingList(Building building, BuildingType buildingType)
+        {
+            BuildingId = building.BuildingId;
+            BuildingType = buildingType.BuildingTypeName;
+            Level = buildingType.BuildingLevel.LevelNumber;
+            Hp = 1;
+            StartedAt = building.StartedAt;
+            FinishedAt = building.FinishedAt;
+            Production = buildingType.BuildingLevel.Production;
+            Consumption = buildingType.BuildingLevel.Consumption;
         }
     }
 }

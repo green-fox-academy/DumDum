@@ -70,13 +70,11 @@ namespace DumDum.Services
 
         public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            KingdomRenameResponse response = new KingdomRenameResponse();
             var player = FindPlayerByTokenName(authResponse.Ruler);
             player.Kingdom.KingdomName = requestKingdomName.KingdomName;
             UnitOfWork.Complete();
-            response.KingdomId = player.KingdomId;
-            response.KingdomName = player.Kingdom.KingdomName;
-
+            KingdomRenameResponse response = new KingdomRenameResponse(player);
+            
             return response;
         }
     

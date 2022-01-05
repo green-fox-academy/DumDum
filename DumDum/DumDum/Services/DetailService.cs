@@ -26,16 +26,15 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(response);
             if (player != null)
             {
-                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(BuildingService.GetKingdom(kingdomId), ResourceService.GetResources(kingdomId), BuildingService.GetBuildings(kingdomId), TroopService.GetTroops(kingdomId));
-                kingdomDetailsResponse.Kingdom = BuildingService.GetKingdom(kingdomId);
-                kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
-                kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
-                kingdomDetailsResponse.Troops = TroopService.GetTroops(kingdomId);
+                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(BuildingService
+                    .GetKingdom(kingdomId), ResourceService
+                    .GetResources(kingdomId), BuildingService.GetBuildings(kingdomId), TroopService
+                    .GetTroops(kingdomId));
                 statusCode = 200;
                 return kingdomDetailsResponse;
             }
             statusCode = 401;
-            return kingdomDetailsResponse;
+            return null;
         }
     }
 }

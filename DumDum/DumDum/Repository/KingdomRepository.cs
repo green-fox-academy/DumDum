@@ -30,19 +30,7 @@ namespace DumDum.Repository
         {
             KingdomsListResponse response = new KingdomsListResponse();
 
-            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
-            {
-                KingdomId = k.KingdomId,
-                KingdomName = k.KingdomName,
-                Ruler = k.Player.Username,
-                Population = 0,
-                Location = new Location()
-                {
-                    CoordinateX = k.CoordinateX,
-                    CoordinateY = k.CoordinateY,
-                }
-            }).ToList();
-
+            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k)).ToList();
             return response;
         }
 
