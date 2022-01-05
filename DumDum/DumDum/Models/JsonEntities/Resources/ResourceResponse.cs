@@ -8,5 +8,6 @@ namespace DumDum.Models.JsonEntities.Resources
     {
         public KingdomResponse Kingdom { get; set; }
         public List<ResourceList> Resources { get; set; }
+        
     }
 }

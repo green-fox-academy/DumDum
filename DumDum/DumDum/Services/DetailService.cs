@@ -28,19 +28,19 @@ namespace DumDum.Services
         
         public async Task<(KingdomDetailsResponse, int)> KingdomInformation(int kingdomId, string authorization)
         {
-            KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse();
             AuthRequest response = new AuthRequest();
             response.Token = authorization;
             var player = AuthenticateService.GetUserInfo(response);
             if (player != null)
             {
+                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(BuildingService.GetKingdom(kingdomId), ResourceService.GetResources(kingdomId), BuildingService.GetBuildings(kingdomId), TroopService.GetTroops(kingdomId));
                 kingdomDetailsResponse.Kingdom = BuildingService.GetKingdom(kingdomId);
                 kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
                 kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
                 kingdomDetailsResponse.Troops = TroopService.GetTroops(kingdomId);
                 return (kingdomDetailsResponse, 200);
             }
-            return (kingdomDetailsResponse, 401);
+            return (null, 401);
         }
     }
 }

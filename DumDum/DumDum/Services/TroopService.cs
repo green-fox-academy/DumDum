@@ -31,8 +31,8 @@ namespace DumDum.Services
 
             if (player != null && player.KingdomId == kingdomId)
             {
-                var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
-                response.Kingdom = new KingdomResponse
+                var kingdom = DumDumService.GetKingdomById(player.KingdomId);
+                response.Kingdom = new KingdomResponse(kingdom)
                 {
                     KingdomId = player.KingdomId,
                     KingdomName = player.KingdomName,
@@ -51,21 +51,11 @@ namespace DumDum.Services
 
         internal List<TroopsResponse> GetTroops(int kingdomId)
         {
-            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).ToList().
-                Select(t => new TroopsResponse()
-                {
-                    TroopId = t.TroopId,
-                    TroopType = t.TroopType.TroopType,
-                    Level = t.Level,
-                    HP = t.TroopType.TroopLevel.Level,
-                    Attack = t.TroopType.TroopLevel.Attack,
-                    Defence = t.TroopType.TroopLevel.Defence,
-                    StartedAt = t.StartedAt,
-                    FinishedAt = t.FinishedAt
-                }).ToList();
+            var troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId)
+                .Include(t => t.TroopType.TroopLevel).Select(t => new TroopsResponse(t));
             if (troops != null)
             {
-                return troops;
+                return troops.ToList();
             }
             return new List<TroopsResponse>();
         }

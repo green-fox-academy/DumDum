@@ -194,24 +194,10 @@ namespace DumDum.Services
 
         public KingdomsListResponse GetAllKingdoms()
         {
-
+            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k));
             KingdomsListResponse response = new KingdomsListResponse();
-
-            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
-            {
-                KingdomId = k.KingdomId,
-                KingdomName = k.KingdomName,
-                Ruler = k.Player.Username,
-                Population = 0,
-                Location = new Location()
-                {
-                    CoordinateX = k.CoordinateX,
-                    CoordinateY = k.CoordinateY,
-                }
-            }).ToList();
-
+            response.Kingdoms = kingdoms.ToList();
             return response;
-
         }
 
         public Location AddLocations(Kingdom kingdom)

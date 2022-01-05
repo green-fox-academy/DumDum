@@ -27,8 +27,7 @@ namespace DumDum.Services
 
         public List<BuildingList> GetBuildings(int id)
         {
-            var building =  DbContext.Buildings.Where(b => b.KingdomId == id).ToList();
-            return new List<BuildingList()>
+            return DbContext.Buildings.Where(b => b.KingdomId == id).Select(b => new BuildingList(b)).ToList();
         }
 
         public KingdomResponse GetKingdom(int id)

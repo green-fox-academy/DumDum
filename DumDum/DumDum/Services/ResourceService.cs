@@ -25,13 +25,7 @@ namespace DumDum.Services
 
         public List<ResourceList> GetResources(int id)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
-            {
-                ResourceType = r.ResourceType,
-                Amount = r.Amount,
-                Generation = r.Generation,
-                UpdatedAt = r.UpdatedAt
-            }).ToList();
+            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
         }
 
         public Location AddLocations(Kingdom kingdom)
@@ -60,13 +54,7 @@ namespace DumDum.Services
                     statusCode = 200;
                     return new ResourceResponse()
                     {
-                        Kingdom = new KingdomResponse()
-                        {
-                            KingdomId = kingdom.KingdomId,
-                            KingdomName = kingdom.KingdomName,
-                            Ruler = player.Ruler,
-                            Location = locations,
-                        },
+                        Kingdom = new KingdomResponse(kingdom),
                         Resources = resources
                     };
                 }

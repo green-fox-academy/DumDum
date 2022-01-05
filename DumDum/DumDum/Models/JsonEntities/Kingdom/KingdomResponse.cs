@@ -23,5 +23,17 @@ namespace DumDum.Models.JsonEntities.Kingdom
             Population = 0;
             Location = locations;
         }
+
+        public KingdomResponse(Entities.Kingdom kingdom)
+        {
+            KingdomId = kingdom.KingdomId;
+            KingdomName = kingdom.KingdomName;
+            Ruler = kingdom.Player.Username;
+            Location = new Location()
+            {
+                CoordinateX = kingdom.CoordinateX,
+                CoordinateY = kingdom.CoordinateY,
+            };
+        }
     }
 }
