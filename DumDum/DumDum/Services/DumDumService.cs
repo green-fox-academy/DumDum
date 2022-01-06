@@ -249,6 +249,22 @@ namespace DumDum.Services
 
             return 0;
         }
+        
+        public int GetFoodAmountOfKingdom(int kingdomId)
+        {
+            if (kingdomId != 0)
+            {
+                var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+                if (food != null)
+                {
+                    return food.Amount;
+                }
+
+                return 0;
+            }
+
+            return 0;
+        }
 
         public void TakeGold(int kingdomId, int amount)
         {

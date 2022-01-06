@@ -18,6 +18,11 @@ namespace DumDum.Repository
         {
            return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
         }
+        
+        public Resource GetFoodAmountOfKingdom(int kingdomId)
+        {
+            return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+        }
 
         public void UpdateGoldAmountOfKingdom(Resource gold)
         {
