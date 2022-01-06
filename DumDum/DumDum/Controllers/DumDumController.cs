@@ -7,6 +7,7 @@ using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using DumDum.Services;
 using Newtonsoft.Json;
+using DumDum.Interfaces;
 
 namespace DumDum.Controllers
 {
@@ -15,12 +16,14 @@ namespace DumDum.Controllers
         private DumDumService DumDumService { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DetailService DetailService { get; set; }
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
             DetailService = detailService;
+            UnitOfWork = unitOfWork;
         }
 
         [AllowAnonymous]
