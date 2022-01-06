@@ -19,7 +19,7 @@ namespace DumDum.Controllers
         private IUnitOfWork UnitOfWork { get; set; }
         private TimeService TimeService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork, TimeService timeService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
