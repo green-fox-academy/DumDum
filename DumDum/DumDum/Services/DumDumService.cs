@@ -1,11 +1,10 @@
 using Castle.Core.Internal;
-using DumDum.Database;
+using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Web.Helpers;
 
@@ -14,33 +13,33 @@ namespace DumDum.Services
 {
     public class DumDumService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
-        public DumDumService(ApplicationDbContext dbContext, AuthenticateService authService)
+        private IUnitOfWork UnitOfWork { get; set; }
+        public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AuthenticateService = authService;
+            UnitOfWork = unitOfWork;
         }
 
         public Player GetPlayerByUsername(string username)
         {
-            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.Username == username);
+            return UnitOfWork.Players.GetPlayerByUsername(username);
         }
 
         public Kingdom GetKingdomByName(string kingdomName)
         {
-            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
+            return UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
 
         public Player Register(string username, string password, string kingdomName)
         {
             var kingdom = CreateKingdom(kingdomName, username);
             var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
-            DbContext.Players.Add(player);
-            DbContext.SaveChanges();
+            UnitOfWork.Players.Add(player);
+            UnitOfWork.Complete();
             var playerToReturn = GetPlayerByUsername(username);
             kingdom.PlayerId = playerToReturn.PlayerId;
-            DbContext.SaveChanges();
+            UnitOfWork.Complete();
             return playerToReturn;
         }
 
@@ -50,19 +49,18 @@ namespace DumDum.Services
             if (kingdomname.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s kingdom";
-                DbContext.Kingdoms.Add(kingdom);
+                UnitOfWork.Kingdoms.Add(kingdom);
             }
 
             kingdom.KingdomName = kingdomname;
-            DbContext.Kingdoms.Add(kingdom);
-            DbContext.SaveChanges();
+            UnitOfWork.Kingdoms.Add(kingdom);
+            UnitOfWork.Complete();
             return kingdom;
         }
 
         public bool AreCredentialsValid(string username, string password)
         {
-            return DbContext.Players.Any(p => p.Username != username) &&
-                !string.IsNullOrWhiteSpace(username) && password.Length >= 8 ;
+            return UnitOfWork.Players.AreCredentialsValid(username, password);
         }
 
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
@@ -72,18 +70,17 @@ namespace DumDum.Services
 
         internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
         {
-            return DbContext.Kingdoms.Any(k => k.CoordinateX == coordinateX) ||
-                   DbContext.Kingdoms.Any(k => k.CoordinateY == coordinateY);
+            return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX) && UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX);
         }
 
         internal bool IsKingdomIdValid(int kingdomId)
         {
-            return DbContext.Players.Any(p => p.KingdomId == kingdomId) && DbContext.Kingdoms.Any(k=>k.KingdomId==kingdomId && k.CoordinateX==0 && k.CoordinateY==0) ;
+            return UnitOfWork.Players.Any(p => p.KingdomId == kingdomId) && UnitOfWork.Kingdoms.Any(k=>k.KingdomId==kingdomId && k.CoordinateX==0 && k.CoordinateY==0) ;
         }
 
         public Kingdom GetKingdomById(int kingdomId)
         {
-            var kingdom = DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
+            var kingdom = UnitOfWork.Kingdoms.GetKingdomById(kingdomId);
             if (kingdom != null)
             {
                 return kingdom;
@@ -97,13 +94,13 @@ namespace DumDum.Services
             var kingdom = GetKingdomById(kingdomId);
             kingdom.CoordinateX = coordinateX;
             kingdom.CoordinateY = coordinateY;
-            DbContext.SaveChanges();
+            UnitOfWork.Complete();
             return kingdom;
         }
 
         public Player GetPlayerById(int id)
         {
-            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
+            return UnitOfWork.Players.GetPlayerById(id);
         }
 
         public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
@@ -190,24 +187,7 @@ namespace DumDum.Services
 
         public KingdomsListResponse GetAllKingdoms()
         {
-
-            KingdomsListResponse response = new KingdomsListResponse();
-
-            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
-            {
-                KingdomId = k.KingdomId,
-                KingdomName = k.KingdomName,
-                Ruler = k.Player.Username,
-                Population = 0,
-                Location = new Location()
-                {
-                    CoordinateX = k.CoordinateX,
-                    CoordinateY = k.CoordinateY,
-                }
-            }).ToList();
-
-            return response;
-
+            return UnitOfWork.Kingdoms.GetAllKingdoms();
         }
 
         public Location AddLocations(Kingdom kingdom)
@@ -219,13 +199,11 @@ namespace DumDum.Services
         {
             if (kingdomId != 0)
             {
-                var gold = DbContext.Resources.FirstOrDefault(r =>
-                    r.KingdomId == kingdomId && r.ResourceType == "Gold");
+                var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
                 if (gold != null)
                 {
                     return gold.Amount;
                 }
-
                 return 0;
             }
 
@@ -234,13 +212,14 @@ namespace DumDum.Services
 
         public void TakeGold(int kingdomId, int amount)
         {
-            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+            var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
             if (gold != null)
             {
                 gold.Amount -= amount;
-                DbContext.Resources.Update(gold);
-                DbContext.SaveChanges();
+                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
+                UnitOfWork.Complete();
             }
-        }      
+        }
+
     }
 }
