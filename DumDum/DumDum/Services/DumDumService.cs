@@ -7,6 +7,7 @@ using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using System.Linq;
 using System.Web.Helpers;
+using DumDum.Database;
 
 
 namespace DumDum.Services
@@ -16,7 +17,7 @@ namespace DumDum.Services
         private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
-        public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork)
+        public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork, ApplicationDbContext dbContext)
         {
             DbContext = dbContext;
             AuthenticateService = authService;
@@ -65,14 +66,8 @@ namespace DumDum.Services
                 DbContext.Resources.Add(food);
                 DbContext.SaveChanges();
                 return kingdomToSave;
-                kingdom.KingdomName = $"{username}'s kingdom";
-                UnitOfWork.Kingdoms.Add(kingdom);
             }
-
-            kingdom.KingdomName = kingdomname;
-            UnitOfWork.Kingdoms.Add(kingdom);
-            UnitOfWork.Complete();
-            return kingdom;
+            
             var kingdomTo = DbContext.Kingdoms.Add(kingdom).Entity;
             var golds = new Resource()
             {
