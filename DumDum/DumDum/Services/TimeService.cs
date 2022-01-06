@@ -81,7 +81,7 @@ namespace DumDum.Services
         {
             int cycles = 1;
             var ActualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var ActualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId);
+            var ActualKingdomsFood = DumDumService.Get(kingdomId);
             //kód na produkci
             //kód na jídlo
             var ProductionOfFood = GetFoodFromFarms(kingdomId, cycles);
