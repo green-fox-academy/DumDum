@@ -1,24 +1,24 @@
 use DumDum;
+DROP TABLE IF EXISTS `battles`;
+DROP TABLE IF EXISTS `troopslost`;
 Create table Battles(
     BattleId int not null auto_increment,
-    AttackerName varchar (255),
-    Target varchar (255),
+    AttackerId int,
+    DefenderId int,
     BattleType varchar (255),
+    FoodStolen int,
+    GoldStolen int,
     ResolutionTime bigint,
     TimeToStartTheBattle bigint,
-    Winner varchar (255),
+    WinnerPlayerId int,
     primary key (BattleId) 
 );
-Create table Attackers(
-    AttackerId int not null auto_increment,
-    AttackerName varchar (255),
-    BattleId int not null,
-    primary key (AttackerId) 
-);
-Create table Defenders(
-    DefenderId int not null auto_increment,
-    DefenderName varchar (255),
-    BattleId int not null,
-    primary key (DefenderId) 
-);
 
+Create table TroopsLost(
+    TroopLostId int not null auto_increment,
+    Type int,
+    Quantity int,
+    PlayerId int,
+    BattleId int,
+    primary key (TroopLostId) 
+);

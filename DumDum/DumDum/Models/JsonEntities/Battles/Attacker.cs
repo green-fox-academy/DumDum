@@ -7,12 +7,7 @@ namespace DumDum.Models.JsonEntities.Battles
 {
     public class Attacker
     {
-        [JsonIgnore] public int AttackerId { get; set; }
-        [JsonIgnore] public string AttackerName { get; set; }
-        [JsonIgnore] public Battle Battle { get; set; }
-        [JsonIgnore] public int BattleId { get; set; }
-
-        [NotMapped] public ResourcesStolen ResourcesStolen { get; set; }
-        [NotMapped] public List<TroopsList> TroopsLost { get; set; }
+        public ResourcesStolen ResourcesStolen { get; set; }
+        public List<TroopsList> TroopsLost { get; set; }
     }
 }

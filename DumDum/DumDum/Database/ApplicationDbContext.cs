@@ -16,8 +16,7 @@ namespace DumDum.Database
         public DbSet<TroopLevel> TroopLevel { get; set; }
         public DbSet<TroopTypes> TroopTypes { get; set; }
         public DbSet<Battle> Battles { get; set; }
-        public DbSet<Attacker> Attackers { get; set; }
-        public DbSet<Defender> Defenders { get; set; }
+        public DbSet<TroopsLost> TroopsLost { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -60,18 +59,6 @@ namespace DumDum.Database
                .WithOne(t => t.TroopLevel)
                .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
                .IsRequired(true);
-            
-            modelBuilder.Entity<Attacker>()
-                .HasOne<Battle>(a => a.Battle)
-                .WithOne(b => b.Attacker)
-                .HasForeignKey<Attacker>(a => a.BattleId)
-                .IsRequired(true);
-            
-            modelBuilder.Entity<Defender>()
-                .HasOne<Battle>(d => d.Battle)
-                .WithOne(b => b.Defender)
-                .HasForeignKey<Defender>(d => d.BattleId)
-                .IsRequired(true);
         }
     }
 }
