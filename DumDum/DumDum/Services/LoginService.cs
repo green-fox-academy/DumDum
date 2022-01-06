@@ -1,47 +1,46 @@
-﻿using DumDum.Database;
+﻿using DumDum.Interfaces;
 using DumDum.Models;
+using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Login;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Web.Helpers;
-using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Login;
 
 namespace DumDum.Services
 {
     public class LoginService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private DumDumService DumDumService { get; set; }
         private readonly AppSettings AppSettings;
+        private IUnitOfWork UnitOfWork { get; set; }
 
-        public LoginService(ApplicationDbContext dbContext, IOptions<AppSettings> appSettings,
-            DumDumService dumDumService)
+        public LoginService(IOptions<AppSettings> appSettings,
+            DumDumService dumDumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AppSettings = appSettings.Value;
             DumDumService = dumDumService;
+            UnitOfWork = unitOfWork;
         }
 
         public bool LoginCheck(string username)
         {
-            return DbContext.Players.Any(x => x.Username == username);
+            return UnitOfWork.Players.Any(x => x.Username == username);
         }
 
         public bool PasswordCheck(string password)
         {
-            return DbContext.Players.Any(x => x.Password == password);
+            return UnitOfWork.Players.Any(x => x.Password == password);
         }
 
         public bool LoginPasswordCheck(string username, string password)
         {
             var playerFromDb = DumDumService.GetPlayerByUsername(username);
             var verified = Crypto.VerifyHashedPassword(playerFromDb.Password, password);
-            return DbContext.Players.Any(x => x.Username == username) && verified;
+            return UnitOfWork.Players.Any(x => x.Username == username) && verified;
         }
 
         public string Authenticate(string username, string password)

@@ -1,4 +1,4 @@
-﻿using DumDum.Database;
+﻿using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
@@ -13,14 +13,14 @@ namespace DumDum.Services
 {
     public class TroopService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private AuthenticateService AuthenticateService { get; set; }
         private DumDumService DumDumService { get; set; }
-        public TroopService(ApplicationDbContext dbContext, AuthenticateService authService, DumDumService dumService)
+        private IUnitOfWork UnitOfWork { get; set; }
+        public TroopService(AuthenticateService authService, DumDumService dumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             AuthenticateService = authService;
             DumDumService = dumService;
+            UnitOfWork = unitOfWork;
         }
 
         internal GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
@@ -50,31 +50,14 @@ namespace DumDum.Services
 
         internal List<TroopsResponse> GetTroops(int kingdomId)
         {
-            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).ToList().
-                Select(t => new TroopsResponse()
-                {
-                    TroopId = t.TroopId,
-                    TroopType = t.TroopType.TroopType,
-                    Level = t.Level,
-                    HP = t.TroopType.TroopLevel.Level,
-                    Attack = t.TroopType.TroopLevel.Attack,
-                    Defence = t.TroopType.TroopLevel.Defence,
-                    StartedAt = t.StartedAt,
-                    FinishedAt = t.FinishedAt
-                }).ToList();
-            if (troops != null)
-            {
-                return troops;
-            }
-            return new List<TroopsResponse>();
+            return UnitOfWork.Troops.GetTroops(kingdomId);
         }
 
         internal string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode)
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var possibleTroopTypes = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator")
-                .Select(t => t.TroopType.ToLower()).ToList();
+            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
 
             if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {
@@ -88,10 +71,10 @@ namespace DumDum.Services
                 var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
                 var currentLevelOfTownhall = CurrentLevelOfTownhall(kingdomId);
                 var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopUpdateReq.Type.ToLower());
-                var maximumLevelPossible = DbContext.TroopLevel.Select(t => t.Level).Max();
-                var timeRequiredToUpgradeTroop = DbContext.TroopLevel.Where(t => t.Level == currentLevelOfTroops + 1 && t.TroopTypeId == troopTypeIdToBeUpgraded)
-                    .Select(t => t.ConstTime).FirstOrDefault();
-           
+                var maximumLevelPossible = UnitOfWork.TroopLevels.MaximumLevelPossible();
+                var timeRequiredToUpgradeTroop = UnitOfWork.TroopLevels.Find(t => t.Level == currentLevelOfTroops + 1 && t.TroopTypeId == troopTypeIdToBeUpgraded)
+                   .Select(t => t.ConstTime).FirstOrDefault();
+
                 if (IsUpgradeInProgress(kingdomId, troopUpdateReq.Type))
                 {
                     statusCode = 407;
@@ -124,11 +107,8 @@ namespace DumDum.Services
                     statusCode = 403;
                     return "Upgrade townhall first";
                 }
-                DbContext.Troops.Where(t => t.TroopTypeId == troopTypeIdToBeUpgraded && t.KingdomId == kingdomId).ToList()
-                    .ForEach(t => { t.Level = t.Level + 1;
-                    t.StartedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-                    t.FinishedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds() + timeRequiredToUpgradeTroop;});
-                DbContext.SaveChanges();
+                UnitOfWork.Troops.UpgradeTroops(troopTypeIdToBeUpgraded, kingdomId, timeRequiredToUpgradeTroop);
+                UnitOfWork.Complete();
                 DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
                 statusCode = 200;
                 return "Ok";
@@ -143,8 +123,7 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var createdTroops = new List<TroopsResponse>();
-            var possibleTroopTypes = DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
-           
+            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypes();
 
             if (troopCreationReq == null || String.IsNullOrEmpty(troopCreationReq.Type) || troopCreationReq.Quantity == 0 || 
                 !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
@@ -165,8 +144,8 @@ namespace DumDum.Services
                 for (int i = 0; i < troopCreationReq.Quantity; i++)
                 {
                     var newTroop = CreateNewTroop(troopCreationReq.Type.ToLower(), kingdomId);
-                    DbContext.Troops.Add(newTroop);
-                    DbContext.SaveChanges();
+                    UnitOfWork.Troops.Add(newTroop);
+                    UnitOfWork.Complete();
                     DumDumService.TakeGold(kingdomId, newTroopCost);
                     createdTroops.Add(new TroopsResponse()
                     {
@@ -189,10 +168,10 @@ namespace DumDum.Services
 
         internal Troop CreateNewTroop(string troopType, int kingdomId)
         {
-            var requiredTroopTypeId = DbContext.TroopTypes.Where(t => t.TroopType.ToLower() == troopType.ToLower()).FirstOrDefault().TroopTypeId;
-            var requiredTroop = DbContext.TroopLevel.Where(t => t.TroopTypeId == requiredTroopTypeId && t.Level == 1).FirstOrDefault();
-            var requiredTroopTypeAlreadyInKingdom = DbContext.Troops.Where(t => t.TroopTypeId == requiredTroopTypeId && t.KingdomId == kingdomId).FirstOrDefault();
-            var timeRequiredToCreateTroop = DbContext.TroopLevel.Where(t => t.TroopTypeId == requiredTroopTypeId && t.Level == 1).Select(t=>t.ConstTime).FirstOrDefault();
+            var requiredTroopTypeId = UnitOfWork.TroopTypes.Find(t => t.TroopType.ToLower() == troopType.ToLower()).FirstOrDefault().TroopTypeId;
+            var requiredTroop = UnitOfWork.TroopLevels.Find(t => t.TroopTypeId == requiredTroopTypeId && t.Level == 1).FirstOrDefault();
+            var requiredTroopTypeAlreadyInKingdom = UnitOfWork.Troops.Find(t => t.TroopTypeId == requiredTroopTypeId && t.KingdomId == kingdomId).FirstOrDefault();
+            var timeRequiredToCreateTroop = UnitOfWork.TroopLevels.Find(t => t.TroopTypeId == requiredTroopTypeId && t.Level == 1).Select(t => t.ConstTime).FirstOrDefault();
 
             if (requiredTroopTypeAlreadyInKingdom != null)
             {
@@ -217,31 +196,27 @@ namespace DumDum.Services
 
         internal bool DoesAcademyExist(int kingdomId)
         {
-            return DbContext.Buildings.Where(b => b.BuildingType.ToLower() == "academy" && b.KingdomId == kingdomId).Any();
+            return UnitOfWork.Buildings.Find(b => b.BuildingType.ToLower() == "academy" && b.KingdomId == kingdomId).Any();
         }
 
         internal bool IsUpgradeInProgress(int kingdomId, string troopType)
         {
-            return (int)DateTimeOffset.Now.ToUnixTimeSeconds() < DbContext.Troops.Include(t => t.TroopType)
-                .Where(t => t.TroopType.TroopType.ToLower() == troopType.ToLower() && t.KingdomId == kingdomId)
-                .Select(t => t.FinishedAt).FirstOrDefault();
+            return (int)DateTimeOffset.Now.ToUnixTimeSeconds() < UnitOfWork.Troops.FinishedAtTimeTroop(troopType, kingdomId);
         }
 
         internal int GetTroopCreationCost(string troopType, int troopCreationLevel)
         {
             if (troopCreationLevel > 0)
             {
-                var troopToCreateHigherLevel = DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel).FirstOrDefault();
-                return troopToCreateHigherLevel.Cost;
+                return UnitOfWork.TroopLevels.TroopCreationHigherLevel(troopType, troopCreationLevel).Cost;
             }
-            var troopToCreateLevelOne = DbContext.TroopLevel.Where(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel).FirstOrDefault();
             return 0;
         }
 
         internal int GetTroopUpdateCost(string troopType)
         {
             var currentLevelOfTroops = GetTroupTypeIdByTroupTypeName(troopType.ToLower());
-            var troopToUpdate = DbContext.TroopLevel.Where(t => t.TroopTypeId == GetTroupTypeIdByTroupTypeName(troopType.ToLower()) && t.Level == currentLevelOfTroops + 1)
+            var troopToUpdate = UnitOfWork.TroopLevels.Find(t => t.TroopTypeId == GetTroupTypeIdByTroupTypeName(troopType.ToLower()) && t.Level == currentLevelOfTroops + 1)
                     .FirstOrDefault();
             if (troopToUpdate != null)
             {
@@ -252,7 +227,7 @@ namespace DumDum.Services
 
         internal int CountTroopsByType(string troopType, int kingdomId)
         {
-            var troopsCountByType = DbContext.Troops.Where(t => t.TroopType.TroopType == troopType.ToLower() && t.KingdomId == kingdomId);
+            var troopsCountByType = UnitOfWork.Troops.Find(t => t.TroopType.TroopType == troopType.ToLower() && t.KingdomId == kingdomId);
             if (troopsCountByType != null && troopType != null)
             {
                 return troopsCountByType.Count();
@@ -262,7 +237,7 @@ namespace DumDum.Services
 
         internal int GetTroupTypeIdByTroupTypeName(string troopType)
         {
-            var TroupTypeIdByTroupTypeName = DbContext.TroopTypes.Where(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
+            var TroupTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
             if (TroupTypeIdByTroupTypeName != null)
             {
                 return TroupTypeIdByTroupTypeName.TroopTypeId;
@@ -272,7 +247,7 @@ namespace DumDum.Services
 
         internal int CurrentLevelOfTownhall(int kingdomId)
         {
-            var townhallLevel = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType.ToLower() == "townhall").FirstOrDefault();
+            var townhallLevel = UnitOfWork.Buildings.Find(b => b.KingdomId == kingdomId && b.BuildingType.ToLower() == "townhall").FirstOrDefault();
             if (townhallLevel != null)
             {
                 return townhallLevel.Level;
@@ -283,7 +258,7 @@ namespace DumDum.Services
         internal int CurrentLevelOTroops(int kingdomId, string troopType)
         {
             var currentTrooptype = GetTroupTypeIdByTroupTypeName(troopType);
-            var currentLevelOTroops = DbContext.Troops.Where(t => t.KingdomId == kingdomId && t.TroopTypeId == currentTrooptype).FirstOrDefault();
+            var currentLevelOTroops = UnitOfWork.Troops.Find(t => t.KingdomId == kingdomId && t.TroopTypeId == currentTrooptype).FirstOrDefault();
             if (currentLevelOTroops != null)
             {
                 return currentLevelOTroops.Level;
@@ -295,15 +270,14 @@ namespace DumDum.Services
         {
             TroopsLeaderboardResponse response = new();
             List<TroopsPoint> pointsList = new();
-            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
-
+            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in kingdoms)
             {
                 var troopPoint = new TroopsPoint()
                 {
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,
-                    Troops = DbContext.Troops.Where(t => t.KingdomId == kingdom.KingdomId).Count(),
+                    Troops = UnitOfWork.Troops.Find(t => t.KingdomId == kingdom.KingdomId).Count(),
                     Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
                 };
                 pointsList.Add(troopPoint);
@@ -318,10 +292,10 @@ namespace DumDum.Services
         {
             var consumptionOfAllTroopsInKingdom = 0.0;
 
-                var troopsInKingdom = DbContext.Troops.Where(t => t.KingdomId == kingdomId).ToList();
+                var troopsInKingdom = UnitOfWork.Troops.Find(t => t.KingdomId == kingdomId).ToList();
                 foreach (var troop in troopsInKingdom)
                 {
-                    consumptionOfAllTroopsInKingdom += DbContext.TroopLevel.Where(t => t.TroopTypeId == troop.TroopTypeId && t.Level == troop.Level)
+                    consumptionOfAllTroopsInKingdom += UnitOfWork.TroopLevels.Find(t => t.TroopTypeId == troop.TroopTypeId && t.Level == troop.Level)
                         .Select(t => t.Consumption)
                         .FirstOrDefault();
                 }
@@ -334,7 +308,7 @@ namespace DumDum.Services
             KingdomsLeaderboardResponse response = new();
 
             List<KingdomPoints> pointsList = new();
-            var kingdoms = DbContext.Kingdoms.Include(k => k.Player).ToList();
+            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
 
             foreach (var kingdom in kingdoms)
             {
@@ -343,7 +317,7 @@ namespace DumDum.Services
                     Ruler = kingdom.Player.Username,
                     Kingdom = kingdom.KingdomName,
                     Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
-                            + DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level)
+                            + UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom)
                 };
                 pointsList.Add(kingdomPoint);
             }
@@ -355,7 +329,7 @@ namespace DumDum.Services
 
         public List<Troop> GetActiveTroops()
         {
-            return DbContext.Troops.Where(t => t.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds()).ToList();
+            return UnitOfWork.Troops.Find(t => t.FinishedAt < (int)DateTimeOffset.Now.ToUnixTimeSeconds()).ToList();
         }
         public bool IsTroopActive(Troop troop)
         {
