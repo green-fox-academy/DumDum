@@ -14,7 +14,6 @@ namespace DumDum.Database
         public DbSet<BuildingType> BuildingTypes { get; set; }
         public DbSet<TroopLevel> TroopLevel { get; set; }
         public DbSet<TroopTypes> TroopTypes { get; set; }
-
         public DbSet<LastChange> LastChanges { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

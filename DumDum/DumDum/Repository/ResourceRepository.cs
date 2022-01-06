@@ -29,6 +29,11 @@ namespace DumDum.Repository
             DbContext.Resources.Update(gold);
         }
 
+        public void UpdateFoodAmountOfKingdom(Resource food)
+        {
+            DbContext.Resources.Update(food);
+        }
+
         public List<ResourceList> GetResources(int id)
         {
             return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()

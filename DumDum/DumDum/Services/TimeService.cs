@@ -1,4 +1,5 @@
 ﻿using DumDum.Database;
+using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -16,33 +17,30 @@ namespace DumDum.Services
         private DumDumService DumDumService { get; set; }
         private System.Timers.Timer IamTimeLord { get; set; }
 
-        public TimeService(ApplicationDbContext dbContext, DumDumService dumdumService)
+        private IUnitOfWork UnitOfWork { get; set; } 
+
+        public TimeService(ApplicationDbContext dbContext, DumDumService dumdumService, IUnitOfWork unitOfWork)
         {
             DbContext = dbContext;
             DumDumService = dumdumService;
+            UnitOfWork = unitOfWork;
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             GetThingsDoneForAllKingdoms();
         }
 
-        public LastChange GetPlayersTime(int PlayerId)
-        {
-            return DbContext.LastChanges.Where(x => x.PlayerId == PlayerId).FirstOrDefault();
-        }
-
-        public void GetRegistrationTime(string username)             //do kingdomregistration
+        public void GetRegistrationTime(string username)
         {
             int TimeOfPlayerRegistration = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             var time = new LastChange()
             {
                 RegistrationTime = TimeOfPlayerRegistration,
-                LastChangeTime = TimeOfPlayerRegistration,
                 Player = DumDumService.GetPlayerByUsername(username),
                 PlayerId = DumDumService.GetPlayerByUsername(username).PlayerId
             };
-            DbContext.LastChanges.Add(time);
-            DbContext.SaveChanges();
+            UnitOfWork.LastChanges.Add(time);
+            UnitOfWork.Complete();
         }
 
         public long GetPlayersLastChangeTime(int PlayerId)
@@ -50,27 +48,9 @@ namespace DumDum.Services
             return DbContext.LastChanges.Where(x => x.PlayerId == PlayerId).FirstOrDefault().LastChangeTime;
         }
 
-        //public long GetCycle(int id)   //zatim nepotrebujeme
-        //{
-        //    int TimeNow = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
-        //    var time = GetPlayersTime(id);
-        //    var TimeOfLastChange = time.LastChangeTime;
-
-        //    var DifferenceBettweenTimes = TimeNow - TimeOfLastChange;
-        //    var Cycles = DifferenceBettweenTimes / 600; //aktualni cas minus cas posledni zmeny
-
-        //    var ModuloResult = DifferenceBettweenTimes % 600;
-        //    var TimeOfLastChangeWithRestOfCycle = TimeOfLastChange - ModuloResult;
-        //    time.LastChangeTime = TimeOfLastChangeWithRestOfCycle;
-        //    DbContext.SaveChanges();
-
-        //    return Cycles;
-        //}
-
         public void GetThingsDoneForAllKingdoms()
         {
-            var Kingdoms = DbContext.Kingdoms.ToList();
+            var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in Kingdoms)
             {
                 GetThingsDone(kingdom.KingdomId);
@@ -81,7 +61,7 @@ namespace DumDum.Services
         {
             int cycles = 1;
             var ActualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var ActualKingdomsFood = DumDumService.Get(kingdomId);
+            var ActualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId);
             //kód na produkci
             //kód na jídlo
             var ProductionOfFood = GetFoodFromFarms(kingdomId, cycles);
@@ -98,17 +78,19 @@ namespace DumDum.Services
 
 
             //zapsání do db
-            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
-            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+            var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
             gold.Amount = NewAmountOfGold;
-            food.Amount = NewAmountOfGold;
-            DbContext.SaveChanges();
+            food.Amount = NewAmountOfFood;
+            UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
+            UnitOfWork.Resources.UpdateFoodAmountOfKingdom(food);
+            UnitOfWork.Complete();
         }
 
         public int GetFoodFromFarms(int kingdomId, int cycles)
         {
             var FoodPerFarms = 0;
-            var NumberOfFarms = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Farm").ToList();
+            var NumberOfFarms = UnitOfWork.Buildings.GetNumberOfFarm(kingdomId);
             foreach (var farm in NumberOfFarms)
             {
                 FoodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
@@ -122,7 +104,7 @@ namespace DumDum.Services
         public int GetGoldFromMines(int kingdomId, int cycles)
         {
             var GoldPerMine = 0;
-            var NumberOfMines = DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Mine").ToList();
+            var NumberOfMines = UnitOfWork.Buildings.GetNumberOfMines(kingdomId);
             foreach (var farm in NumberOfMines)
             {
                 GoldPerMine += HomMuchFoodOneFarmProduce(farm.Level);
