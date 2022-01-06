@@ -13,15 +13,12 @@ namespace DumDum.Services
 {
     public class TimeService : IHostedService
     {
-        private ApplicationDbContext DbContext { get; set; }
         private DumDumService DumDumService { get; set; }
         private System.Timers.Timer IamTimeLord { get; set; }
-
         private IUnitOfWork UnitOfWork { get; set; } 
 
-        public TimeService(ApplicationDbContext dbContext, DumDumService dumdumService, IUnitOfWork unitOfWork)
+        public TimeService( DumDumService dumdumService, IUnitOfWork unitOfWork)
         {
-            DbContext = dbContext;
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
         }
@@ -41,11 +38,6 @@ namespace DumDum.Services
             };
             UnitOfWork.LastChanges.Add(time);
             UnitOfWork.Complete();
-        }
-
-        public long GetPlayersLastChangeTime(int PlayerId)
-        {
-            return DbContext.LastChanges.Where(x => x.PlayerId == PlayerId).FirstOrDefault().LastChangeTime;
         }
 
         public void GetThingsDoneForAllKingdoms()
