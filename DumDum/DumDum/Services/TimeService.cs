@@ -24,7 +24,7 @@ namespace DumDum.Services
         }
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            GetThingsDoneForAllKingdoms();
+            UpdateAllKingdomsEvents();
         }
 
         public void GetRegistrationTime(string username)
@@ -40,16 +40,16 @@ namespace DumDum.Services
             UnitOfWork.Complete();
         }
 
-        public void GetThingsDoneForAllKingdoms()
+        public void UpdateAllKingdomsEvents()
         {
             var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in Kingdoms)
             {
-                GetThingsDone(kingdom.KingdomId);
+                GetKingdomResourcesPerCycle(kingdom.KingdomId);
             }
         }
 
-        public void GetThingsDone(int kingdomId)
+        public void GetKingdomResourcesPerCycle(int kingdomId)
         {
             int cycles = 1;
             var ActualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId);
