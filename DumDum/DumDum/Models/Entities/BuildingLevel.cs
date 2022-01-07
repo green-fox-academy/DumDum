@@ -14,6 +14,6 @@ namespace DumDum.Models.Entities
         public int Production { get; set; }
         public int Consumption { get; set; }
         public decimal DefBoost { get; set; }
-        [NotMapped]public BuildingType BuildingType { get; set; }
+        public BuildingType BuildingType { get; set; }
     }
 }

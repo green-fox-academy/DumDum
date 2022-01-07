@@ -13,11 +13,11 @@ namespace DumDum.Controllers
             BattleService = battleService;
         }
         
-        [HttpPost("kingdoms/{defenderKingdomId=int}/battles")]
-        public IActionResult Battle([FromHeader] string authorization, [FromRoute] int defenderKingdomId, [FromBody] BattleRequest battleRequest)
+        [HttpPost("kingdoms/{attackerKingdomId=int}/battles")]
+        public IActionResult Battle([FromHeader] string authorization, [FromRoute] int attackerKingdomId, [FromBody] BattleRequest battleRequest)
         {
             int statusCode = 0;
-            var response = BattleService.MakeBattle(authorization, defenderKingdomId, battleRequest, out statusCode);
+            var response = BattleService.MakeBattle(authorization, attackerKingdomId, battleRequest, out statusCode);
 
             if (statusCode == 200)
             {
@@ -32,11 +32,11 @@ namespace DumDum.Controllers
             return BadRequest(new ErrorResponse() {Error = "Invalid credentials"});
         }
         
-        [HttpGet("kingdoms/{defenderKingdomId=int}/battles/{battleId=int}")]
-        public IActionResult BattleResult([FromHeader] string authorization, [FromRoute] int defenderKingdomId, int battleId)
+        [HttpGet("kingdoms/{attackerKingdomId=int}/battles/{battleId=int}")]
+        public IActionResult BattleResult([FromHeader] string authorization, [FromRoute] int attackerKingdomId, int battleId)
         {
             int statusCode = 0;
-            var response = BattleService.GetBattleResult(authorization, defenderKingdomId, battleId, out statusCode);
+            var response = BattleService.GetBattleResult(authorization, attackerKingdomId, battleId, out statusCode);
 
             if (statusCode == 200)
             {
