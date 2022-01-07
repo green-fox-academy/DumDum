@@ -37,7 +37,6 @@ namespace DumDum.Controllers
 
             if (statusCode == 200)
             {
-                TimeService.GetRegistrationTime(player.Username);
                 return Ok(player);
             }
 

@@ -27,19 +27,6 @@ namespace DumDum.Services
             UpdateAllKingdomsEvents();
         }
 
-        public void GetRegistrationTime(string username)
-        {
-            int TimeOfPlayerRegistration = (int)(long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            var time = new LastChange()
-            {
-                RegistrationTime = TimeOfPlayerRegistration,
-                Player = DumDumService.GetPlayerByUsername(username),
-                PlayerId = DumDumService.GetPlayerByUsername(username).PlayerId
-            };
-            UnitOfWork.LastChanges.Add(time);
-            UnitOfWork.Complete();
-        }
-
         public void UpdateAllKingdomsEvents()
         {
             var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();

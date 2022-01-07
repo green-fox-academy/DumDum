@@ -16,7 +16,6 @@ namespace DumDum.Repository
         public ITroopTypesRepository TroopTypes { get; private set; }
         public IBuildingLevelRepository BuildingLevels { get; private set; }
         public IBuildingTypeRepository BuildingTypes { get; private set; }
-        public ITimeRepository LastChanges { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -30,7 +29,6 @@ namespace DumDum.Repository
             TroopLevels = new TroopLevelRepository(DbContext);
             Troops = new TroopRepository(DbContext);
             TroopTypes = new TroopTypesRepository(DbContext);
-            LastChanges = new TimeRepository(DbContext);
         }
 
         public int Complete()
