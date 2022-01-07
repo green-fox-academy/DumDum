@@ -7,5 +7,6 @@ namespace DumDum.Models.Entities
         public string Password { get; set; }
         public Kingdom Kingdom { get; set; }
         public int KingdomId { get; set; }
+        public LastChange LastChange { get; set; }
     }
 }

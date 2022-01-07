@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities.Battles;
 
 namespace DumDum.Database
 {
@@ -47,18 +46,6 @@ namespace DumDum.Database
                 .WithOne(a => a.Kingdom)
                 .HasForeignKey(a => a.KingdomId)
                 .IsRequired(true);
-
-            modelBuilder.Entity<Troop>()
-                 .HasOne<TroopTypes>(t => t.TroopType)
-                 .WithMany(t => t.Troops)
-                 .HasForeignKey(t => t.TroopTypeId)
-                 .IsRequired(true);
-
-            modelBuilder.Entity<TroopLevel>()
-               .HasOne<TroopTypes>(t=>t.TroopType)
-               .WithOne(t => t.TroopLevel)
-               .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
-               .IsRequired(true);
             
             modelBuilder.Entity<BuildingType>()
                 .HasMany<BuildingLevel>(b =>b.BuildingLevels)
@@ -71,6 +58,18 @@ namespace DumDum.Database
                 .WithOne(a => a.Building)
                 .HasForeignKey(a => a.BuildingTypeId)
                 .IsRequired(true);
+
+            modelBuilder.Entity<Troop>()
+                 .HasOne<TroopTypes>(t => t.TroopType)
+                 .WithMany(t => t.Troops)
+                 .HasForeignKey(t => t.TroopTypeId)
+                 .IsRequired(true);
+
+            modelBuilder.Entity<TroopLevel>()
+               .HasOne<TroopTypes>(t=>t.TroopType)
+               .WithOne(t => t.TroopLevel)
+               .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
+               .IsRequired(true);
         }
     }
 }
