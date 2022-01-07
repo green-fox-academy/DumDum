@@ -17,13 +17,15 @@ namespace DumDum.Controllers
         private AuthenticateService AuthenticateService { get; set; }
         private DetailService DetailService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
+        private TimeService TimeService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork)
+        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork, TimeService timeService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
             DetailService = detailService;
             UnitOfWork = unitOfWork;
+            TimeService = timeService;
         }
 
         [AllowAnonymous]
@@ -35,6 +37,7 @@ namespace DumDum.Controllers
 
             if (statusCode == 200)
             {
+                TimeService.GetRegistrationTime(player.Username);
                 return Ok(player);
             }
 
