@@ -13,6 +13,8 @@ namespace DumDum.Interfaces
         ITroopLevelRepository TroopLevels { get; }
         IBuildingLevelRepository BuildingLevels { get; }
         IBuildingTypeRepository BuildingTypes { get; }
+        IBattleRepository Battles { get; }
+        ITroopsLostRepository TroopsLost { get; }
 
         int Complete();
     }

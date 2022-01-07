@@ -11,6 +11,7 @@ namespace DumDum.Controllers
         public BattleController(BattleService battleService)
         {
             BattleService = battleService;
+            
         }
         
         [HttpPost("kingdoms/{attackerKingdomId=int}/battles")]

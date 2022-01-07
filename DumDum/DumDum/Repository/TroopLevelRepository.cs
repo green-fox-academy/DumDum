@@ -20,8 +20,8 @@ namespace DumDum.Repository
         public TroopLevel TroopCreationHigherLevel(string troopType, int troopCreationLevel)
         {
             return DbContext.TroopLevel.Include(t => t.TroopType)
-                    .Where(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel)
-                    .FirstOrDefault();
+                .Where(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel)
+                .FirstOrDefault();
         }
     }
 }
