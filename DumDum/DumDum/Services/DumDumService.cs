@@ -50,7 +50,7 @@ namespace DumDum.Services
             if (kingdomname.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s Kingdom";
-                var kingdomToSave = DbContext.Kingdoms.Add(kingdom).Entity;
+                var kingdomToSave = UnitOfWork.Kingdoms.AddKingdom(kingdom);
                 var gold = new Resource()
                 {
                     Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
@@ -61,13 +61,13 @@ namespace DumDum.Services
                     Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
                     KingdomId = kingdomToSave.KingdomId
                 };
-                DbContext.Resources.Add(gold);
-                DbContext.Resources.Add(food);
-                DbContext.SaveChanges();
+                UnitOfWork.Resources.Add(gold);
+                UnitOfWork.Resources.Add(food);
+                UnitOfWork.Complete();
                 return kingdomToSave;
             }
 
-            var kingdomTo = DbContext.Kingdoms.Add(kingdom).Entity;
+            var kingdomTo = UnitOfWork.Kingdoms.AddKingdom(kingdom);
             var golds = new Resource()
             {
                 Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
@@ -78,9 +78,9 @@ namespace DumDum.Services
                 Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
                 KingdomId = kingdomTo.KingdomId
             };
-            DbContext.Resources.Add(golds);
-            DbContext.Resources.Add(foods);
-            DbContext.SaveChanges();
+            UnitOfWork.Resources.Add(golds);
+            UnitOfWork.Resources.Add(foods);
+            UnitOfWork.Complete();
             return kingdomTo;
         }
 
@@ -281,30 +281,30 @@ namespace DumDum.Services
             if (food != null)
             {
                 food.Amount -= amount;
-                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(food);
+                UnitOfWork.Resources.UpdateFoodAmountOfKingdom(food);
                 UnitOfWork.Complete();
             }
         }
 
         public void GiveFood(int kingdomId, int amount)
         {
-            var food = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
             if (food != null)
             {
                 food.Amount += amount;
-                DbContext.Resources.Update(food);
-                DbContext.SaveChanges();
+                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(food);
+                UnitOfWork.Complete();
             }
         }
 
         public void GiveGold(int kingdomId, int amount)
         {
-            var gold = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+            var gold = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
             if (gold != null)
             {
                 gold.Amount += amount;
-                DbContext.Resources.Update(gold);
-                DbContext.SaveChanges();
+                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
+                UnitOfWork.Complete();
             }
         }
     }
