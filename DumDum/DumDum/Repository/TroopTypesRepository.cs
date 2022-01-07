@@ -14,14 +14,17 @@ namespace DumDum.Repository
         {
         }
 
-        public List<string> PossibleTroopTypesToUpgrade()
+        public async Task<List<string>> PossibleTroopTypesToUpgrade()
         {
-            return DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator").Select(t => t.TroopType.ToLower()).ToList();
+            var type =  DbContext.TroopTypes.Where(t => t.TroopType.ToLower() != "senator")
+                .Select(t => t.TroopType.ToLower()).ToList();
+            return await Task.FromResult(type);
         }
 
-        public List<string> PossibleTroopTypes()
+        public async Task<List<string>> PossibleTroopTypes()
         {
-            return DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
+            var type =  DbContext.TroopTypes.Select(t => t.TroopType.ToLower()).ToList();
+            return await Task.FromResult(type);
         }
     }
 }

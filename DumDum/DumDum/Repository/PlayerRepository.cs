@@ -15,20 +15,23 @@ namespace DumDum.Repository
         {
         }
 
-        public Player GetPlayerByUsername(string username)
+        public async Task<Player> GetPlayerByUsername(string username)
         {
-            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.Username == username);
+            var player =  DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.Username == username);
+            return await Task.FromResult(player);
         }
 
-        public bool AreCredentialsValid(string username, string password)
+        public async Task<bool> AreCredentialsValid(string username, string password)
         {
-            return DbContext.Players.Any(p => p.Username != username) &&
+            var result =  DbContext.Players.Any(p => p.Username != username) &&
                 !string.IsNullOrWhiteSpace(username) && password.Length >= 8;
+            return await Task.FromResult(result);
         }
 
-        public Player GetPlayerById(int id)
+        public async Task<Player> GetPlayerById(int id)
         {
-            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
+            var player = DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
+            return await Task.FromResult(player);
         }
 
     }

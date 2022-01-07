@@ -6,6 +6,7 @@ using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Helpers;
 
 
@@ -23,10 +24,10 @@ namespace DumDum.Services
 
         public Player GetPlayerByUsername(string username)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(username);
+            return UnitOfWork.Players.GetPlayerByUsername(username).Result;
         }
 
-        public Kingdom GetKingdomByName(string kingdomName)
+        public Task<Kingdom> GetKingdomByName(string kingdomName)
         {
             return UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
@@ -60,7 +61,7 @@ namespace DumDum.Services
 
         public bool AreCredentialsValid(string username, string password)
         {
-            return UnitOfWork.Players.AreCredentialsValid(username, password);
+            return UnitOfWork.Players.AreCredentialsValid(username, password).Result;
         }
 
         internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
@@ -83,7 +84,7 @@ namespace DumDum.Services
             var kingdom = UnitOfWork.Kingdoms.GetKingdomById(kingdomId);
             if (kingdom != null)
             {
-                return kingdom;
+                return kingdom.Result;
             }
 
             return new Kingdom() { };
@@ -100,7 +101,7 @@ namespace DumDum.Services
 
         public Player GetPlayerById(int id)
         {
-            return UnitOfWork.Players.GetPlayerById(id);
+            return UnitOfWork.Players.GetPlayerById(id).Result;
         }
 
         public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode)
@@ -187,7 +188,7 @@ namespace DumDum.Services
 
         public KingdomsListResponse GetAllKingdoms()
         {
-            return UnitOfWork.Kingdoms.GetAllKingdoms();
+            return UnitOfWork.Kingdoms.GetAllKingdoms().Result;
         }
 
         public Location AddLocations(Kingdom kingdom)
@@ -202,7 +203,8 @@ namespace DumDum.Services
                 var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
                 if (gold != null)
                 {
-                    return gold.Amount;
+                    int amount = gold.Result.Amount;
+                    return amount;
                 }
                 return 0;
             }
@@ -215,8 +217,8 @@ namespace DumDum.Services
             var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
             if (gold != null)
             {
-                gold.Amount -= amount;
-                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
+                gold.Result.Amount -= amount;
+                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold.Result);
                 UnitOfWork.Complete();
             }
         }

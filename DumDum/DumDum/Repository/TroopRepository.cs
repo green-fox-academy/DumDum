@@ -16,14 +16,14 @@ namespace DumDum.Repository
         {
         }
 
-        public List<TroopsResponse> GetTroops(int kingdomId)
+        public async Task<List<TroopsResponse>> GetTroops(int kingdomId)
         {
             var troops =  DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).Select(t => new TroopsResponse(t)).ToList();
             if (troops != null)
             {
                 return troops;
             }
-            return troops;
+            return await Task.FromResult(troops);
         }
 
         public void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop)
@@ -37,11 +37,12 @@ namespace DumDum.Repository
                      });
         }
 
-        public int FinishedAtTimeTroop(string troopType, int kingdomId)
+        public async Task<int> FinishedAtTimeTroop(string troopType, int kingdomId)
         {
-            return DbContext.Troops.Include(t => t.TroopType)
+            var number =  DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.TroopType.TroopType.ToLower() == troopType.ToLower() && t.KingdomId == kingdomId)
                 .Select(t => t.FinishedAt).FirstOrDefault();
+            return await Task.FromResult(number);
         }
     }
 }

@@ -2,13 +2,14 @@
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Resources;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DumDum.Interfaces
 {
     public interface IResourceRepository : IRepository<Resource>
     {
-        Resource GetGoldAmountOfKingdom(int kingdomId);
+        Task<Resource> GetGoldAmountOfKingdom(int kingdomId);
         void UpdateGoldAmountOfKingdom(Resource resource);
-        List<ResourceList> GetResources(int id);
+        Task<List<ResourceList>> GetResources(int id);
     }
 }

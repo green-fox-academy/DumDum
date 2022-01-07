@@ -23,11 +23,9 @@ namespace DumDum.Services
             DumDumService = dumDumService;
             UnitOfWork = unitOfWork;
         }
-
         public List<ResourceList> GetResources(int kingdomId)
         {
-            return UnitOfWork.Resources.GetResources(kingdomId);
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
+            return UnitOfWork.Resources.GetResources(kingdomId).Result;
         }
 
         public Location AddLocations(Kingdom kingdom)

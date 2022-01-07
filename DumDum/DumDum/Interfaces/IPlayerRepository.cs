@@ -1,11 +1,12 @@
-﻿using DumDum.Models.Entities;
+﻿using System.Threading.Tasks;
+using DumDum.Models.Entities;
 
 namespace DumDum.Interfaces
 {
     public interface IPlayerRepository : IRepository<Player>
     {
-        Player GetPlayerByUsername(string username);
-        bool AreCredentialsValid(string username, string password);
-        Player GetPlayerById(int id);
+        Task<Player> GetPlayerByUsername(string username);
+        Task<bool> AreCredentialsValid(string username, string password);
+        Task<Player> GetPlayerById(int id);
     }
 }

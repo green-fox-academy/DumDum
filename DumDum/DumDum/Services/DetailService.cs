@@ -26,10 +26,11 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(response);
             if (player != null)
             {
-                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(BuildingService
-                    .GetKingdom(kingdomId), ResourceService
-                    .GetResources(kingdomId), BuildingService.GetBuildings(kingdomId), TroopService
-                    .GetTroops(kingdomId));
+                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(
+                    BuildingService.GetKingdom(kingdomId),
+                    ResourceService.GetResources(kingdomId),
+                    BuildingService.GetBuildings(kingdomId),
+                    TroopService.GetTroops(kingdomId));
                 statusCode = 200;
                 return kingdomDetailsResponse;
             }

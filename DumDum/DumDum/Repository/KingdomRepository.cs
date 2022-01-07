@@ -7,6 +7,7 @@ using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DumDum.Repository
 {
@@ -16,46 +17,47 @@ namespace DumDum.Repository
         {
         }
 
-        public Kingdom GetKingdomByName(string kingdomName)
+        public async Task<Kingdom> GetKingdomByName(string kingdomName)
         {
-            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
+            var kingdom =  DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
+            return await Task.FromResult(kingdom);
         }
 
-        public Kingdom GetKingdomById(int kingdomId)
+        public async Task<Kingdom> GetKingdomById(int kingdomId)
         {
-            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
+            var kingdom = DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
+            return await Task.FromResult(kingdom);
         }
 
-        public KingdomsListResponse GetAllKingdoms()
+        public async Task<KingdomsListResponse> GetAllKingdoms()
         {
             KingdomsListResponse response = new KingdomsListResponse();
 
             response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k)).ToList();
-            return response;
+            return await Task.FromResult(response);
         }
 
-        public Kingdom FindPlayerByKingdomId(int id)
+        public async Task<Kingdom> FindPlayerByKingdomId(int id)
         {
             var kingdom = DbContext.Kingdoms.Include(p => p.Player)
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == id);
-            return kingdom;
+            return await Task.FromResult(kingdom);
         }
 
-        public List<Kingdom> GetAllKingdomsIncludePlayer()
+        public async Task<List<Kingdom>> GetAllKingdomsIncludePlayer()
         {
-            return DbContext.Kingdoms.Include(k => k.Player).ToList();
+            var kingdomList =  DbContext.Kingdoms.Include(k => k.Player).ToList();
+            return await Task.FromResult(kingdomList);
         }
 
-        public List<BuildingPoints> GetListBuildingPoints()
+        public async Task<List<BuildingPoints>> GetListBuildingPoints()
         {
-            return DbContext.Kingdoms.Select(k => new BuildingPoints()
-            {
-                Ruler = k.Player.Username,
-                Kingdom = k.KingdomName,
-                Buildings = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Count(),
-                Points = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)
-            }).OrderByDescending(t => t.Points).ToList();
+            var point = DbContext.Kingdoms.Include(k => k.Player).Select(k => new BuildingPoints(
+                k,
+                DbContext.Buildings.Count(b => b.KingdomId == k.KingdomId),
+                DbContext.Buildings.Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)));
+            return await Task.FromResult(point.ToList());
         }
     }
 }

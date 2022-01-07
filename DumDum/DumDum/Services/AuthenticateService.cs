@@ -25,7 +25,7 @@ namespace DumDum.Services
 
         public Player FindPlayerByTokenName(string userName)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(userName);
+            return UnitOfWork.Players.GetPlayerByUsername(userName).Result;
         }
         
         public AuthResponse GetUserInfo(AuthRequest request)

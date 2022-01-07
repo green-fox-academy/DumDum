@@ -5,6 +5,7 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Resources;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DumDum.Repository
 {
@@ -14,18 +15,20 @@ namespace DumDum.Repository
         {
         }
 
-        public Resource GetGoldAmountOfKingdom(int kingdomId)
+        public async Task<Resource> GetGoldAmountOfKingdom(int kingdomId)
         {
-           return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+           var resource = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+           return await Task.FromResult(resource);
         }
 
         public void UpdateGoldAmountOfKingdom(Resource gold)
         {
             DbContext.Resources.Update(gold);
         }
-        public List<ResourceList> GetResources(int id)
+        public async Task<List<ResourceList>> GetResources(int id)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
+            var resList =  DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
+            return await Task.FromResult(resList);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DumDum.Models.Entities;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -49,14 +50,14 @@ namespace DumDum.Models.JsonEntities.Buildings
             FinishedAt = building.FinishedAt;
         }
 
-        public BuildingList(Building building, BuildingType buildingType)
+        public BuildingList(Task<Building> building, BuildingType buildingType)
         {
-            BuildingId = building.BuildingId;
+            BuildingId = building.Result.BuildingId;
             BuildingType = buildingType.BuildingTypeName;
             Level = buildingType.BuildingLevel.LevelNumber;
             Hp = 1;
-            StartedAt = building.StartedAt;
-            FinishedAt = building.FinishedAt;
+            StartedAt = building.Result.StartedAt;
+            FinishedAt = building.Result.FinishedAt;
             Production = buildingType.BuildingLevel.Production;
             Consumption = buildingType.BuildingLevel.Consumption;
         }

@@ -1,10 +1,11 @@
-﻿using DumDum.Models.Entities;
+﻿using System.Threading.Tasks;
+using DumDum.Models.Entities;
 
 namespace DumDum.Interfaces
 {
     public interface ITroopLevelRepository : IRepository<TroopLevel>
     {
-        int MaximumLevelPossible();
-        TroopLevel TroopCreationHigherLevel(string troopType, int troopCreationLevel);
+        Task<int> MaximumLevelPossible();
+        Task<TroopLevel> TroopCreationHigherLevel(string troopType, int troopCreationLevel);
     }
 }

@@ -5,6 +5,7 @@ using DumDum.Models.JsonEntities.Buildings;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.IdentityModel.Tokens;
@@ -26,7 +27,7 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public List<BuildingList> GetBuildings(int id)
+        public Task<List<BuildingList>> GetBuildings(int id)
         {
             return UnitOfWork.Buildings.GetBuildings(id);
         }
@@ -125,21 +126,21 @@ namespace DumDum.Services
 
         public BuildingLevel InformationForNextLevel(int levelTypeId, int buildingLevel)
         {
-            return UnitOfWork.BuildingLevels.Find(p => p.BuildingLevelId == levelTypeId)
-                                            .FirstOrDefault(p => p.LevelNumber == buildingLevel + 1);
+            return UnitOfWork.BuildingLevels
+                .Find(p => p.BuildingLevelId == levelTypeId && p.LevelNumber == buildingLevel + 1).FirstOrDefault();
         }
 
         public Kingdom FindPlayerByKingdomId(int id)
         {
-            return UnitOfWork.Kingdoms.FindPlayerByKingdomId(id);
+            return UnitOfWork.Kingdoms.FindPlayerByKingdomId(id).Result;
         }
 
-        public BuildingType FindLevelingByBuildingType(string buildingType)
+        public Task<BuildingType> FindLevelingByBuildingType(string buildingType)
         {
             return UnitOfWork.BuildingTypes.FindLevelingByBuildingType(buildingType);
         }
 
-        public List<string> ExistingTypeOfBuildings()
+        public Task<List<string>> ExistingTypeOfBuildings()
         {
             return UnitOfWork.BuildingTypes.ExistingTypeOfBuildings();
         }
@@ -160,20 +161,20 @@ namespace DumDum.Services
                 return null;
             }
 
-            if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Contains(building))
+            if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Result.Contains(building))
             {
                 statusCode = 406;
                 return null;
             }
             
-            if (gold?.Amount < buildingType.BuildingLevel.Cost)
+            if (gold?.Amount < buildingType.Result.BuildingLevel.Cost)
             {
                 statusCode = 400;
                 return null;
             }
-            var build = UnitOfWork.Buildings.AddBuilding(building, kingdom, buildingType);
+            var build = UnitOfWork.Buildings.AddBuilding(building, kingdom, buildingType.Result);
             UnitOfWork.Complete();
-            BuildingList response = new BuildingList(build, buildingType);
+            BuildingList response = new BuildingList(build, buildingType.Result);
             statusCode = 200;
             return response;
         }
@@ -186,7 +187,7 @@ namespace DumDum.Services
         public BuildingsLeaderboardResponse GetBuildingsLeaderboard()
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
-            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints();
+            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints().Result;
             return response;
         }        
     }
