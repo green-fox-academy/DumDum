@@ -14,12 +14,12 @@ namespace DumDum.Services
 {
     public class BuildingService
     {
-        private AuthenticateService AuthenticateService { get; set; }
-        private DumDumService DumDumService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
 
-        public BuildingService(AuthenticateService authService,
-            DumDumService dumService, IUnitOfWork unitOfWork)
+        public BuildingService(IAuthenticateService authService,
+            IDumDumService dumService, IUnitOfWork unitOfWork)
         {
             AuthenticateService = authService;
             DumDumService = dumService;

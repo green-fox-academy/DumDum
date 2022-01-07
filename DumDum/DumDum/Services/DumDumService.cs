@@ -11,7 +11,7 @@ using System.Web.Helpers;
 
 namespace DumDum.Services
 {
-    public class DumDumService
+    public class DumDumService : IDumDumService
     {
         private IAuthenticateService AuthenticateService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }

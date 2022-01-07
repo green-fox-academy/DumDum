@@ -13,17 +13,15 @@ namespace DumDum.Controllers
 {
     public class DumDumController : Controller
     {
-        private DumDumService DumDumService { get; set; }
-        private AuthenticateService AuthenticateService { get; set; }
-        private DetailService DetailService { get; set; }
-        private IUnitOfWork UnitOfWork { get; set; }
+        private IDumDumService DumDumService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IDetailService DetailService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork)
+        public DumDumController(IDumDumService dumDumService, IAuthenticateService authenticateService, IDetailService detailService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
             DetailService = detailService;
-            UnitOfWork = unitOfWork;
         }
 
         [AllowAnonymous]

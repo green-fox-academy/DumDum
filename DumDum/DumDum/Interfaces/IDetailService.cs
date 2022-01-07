@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace DumDum.Interfaces
 {
-    public interface IAuthenticateService
+    public interface IDetailService
     {
-        AuthResponse GetUserInfo(AuthRequest request);
-        KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse);
+        KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization, out int statusCode);
     }
 }
