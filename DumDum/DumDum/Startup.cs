@@ -38,6 +38,8 @@ namespace DumDum
             services.AddTransient<IAuthenticateService, AuthenticateService>();
             services.AddTransient<TroopService>();
             services.AddTransient<BuildingService>();
+            services.AddTransient<DetailService>();
+            services.AddTransient<TimeService>();
             services.AddTransient<IDetailService, DetailService>();
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));

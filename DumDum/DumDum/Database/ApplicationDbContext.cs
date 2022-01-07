@@ -14,7 +14,6 @@ namespace DumDum.Database
         public DbSet<BuildingType> BuildingTypes { get; set; }
         public DbSet<TroopLevel> TroopLevel { get; set; }
         public DbSet<TroopTypes> TroopTypes { get; set; }
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
@@ -68,7 +67,6 @@ namespace DumDum.Database
                .WithOne(t => t.TroopLevel)
                .HasForeignKey<TroopLevel>(t=>t.TroopTypeId)
                .IsRequired(true);
-
         }
     }
 }

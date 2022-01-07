@@ -1,8 +1,11 @@
-﻿using System;
-using DumDum.Database;
+﻿using DumDum.Database;
 using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Buildings;
+using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DumDum.Models.JsonEntities.Authorization;
@@ -49,7 +52,7 @@ namespace DumDum.Services
         public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
         {
             var response = new BuildingResponse();
-            if (authorization != null && kingdomId != null)
+            if (authorization != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization;
