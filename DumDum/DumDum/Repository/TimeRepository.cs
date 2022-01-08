@@ -13,10 +13,5 @@ namespace DumDum.Repository
         public TimeRepository(ApplicationDbContext context) : base(context)
         {
         }
-
-        public void AddTime(LastChange time)
-        {
-            DbContext.LastChanges.Add(time);
-        }
     }
 }

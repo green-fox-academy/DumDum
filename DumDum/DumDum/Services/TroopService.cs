@@ -56,8 +56,8 @@ namespace DumDum.Services
         internal string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode)
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
-            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
+            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
 
             if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {

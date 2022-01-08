@@ -8,6 +8,5 @@ namespace DumDum.Interfaces
 {
     public interface ITimeRepository : IRepository<LastChange>
     {
-        void AddTime(LastChange time);
     }
 }
