@@ -21,5 +21,6 @@ namespace DumDum.Interfaces
         void TakeGold(int kingdomId, int amount);
         Player GetPlayerById(int id);
         Location AddLocations(Kingdom kingdom);
+        int GetFoodAmountOfKingdom(int kingdomId);
     }
 }

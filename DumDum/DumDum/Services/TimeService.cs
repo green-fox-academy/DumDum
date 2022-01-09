@@ -11,13 +11,13 @@ using System.Timers;
 
 namespace DumDum.Services
 {
-    public class TimeService : IHostedService
+    public class TimeService : IHostedService, ITimeService
     {
-        private DumDumService DumDumService { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private System.Timers.Timer IamTimeLord { get; set; }
         private IUnitOfWork UnitOfWork { get; set; } 
 
-        public TimeService( DumDumService dumdumService, IUnitOfWork unitOfWork)
+        public TimeService( IDumDumService dumdumService, IUnitOfWork unitOfWork)
         {
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;

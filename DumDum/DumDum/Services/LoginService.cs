@@ -12,7 +12,7 @@ using System.Web.Helpers;
 
 namespace DumDum.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
         private IDumDumService DumDumService { get; set; }
         private readonly AppSettings AppSettings;

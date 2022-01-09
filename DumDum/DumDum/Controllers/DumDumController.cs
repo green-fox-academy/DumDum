@@ -19,8 +19,8 @@ namespace DumDum.Controllers
         private IAuthenticateService AuthenticateService { get; set; }
         private IDetailService DetailService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, 
-            DetailService detailService, IUnitOfWork unitOfWork, ITimeService timeService)
+        public DumDumController(IDumDumService dumDumService,IAuthenticateService authenticateService, 
+            IDetailService detailService, IUnitOfWork unitOfWork, ITimeService timeService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
