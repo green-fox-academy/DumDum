@@ -46,6 +46,11 @@ namespace DumDum.Repository
             return response;
         }
 
+        public Kingdom AddKingdom(Kingdom kingdom)
+        {
+            return DbContext.Kingdoms.Add(kingdom).Entity;
+        }
+
         public Kingdom FindPlayerByKingdomId(int id)
         {
             var kingdom = DbContext.Kingdoms.Include(p => p.Player)

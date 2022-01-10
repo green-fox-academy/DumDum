@@ -57,5 +57,10 @@ namespace DumDum.Repository
         {
             return DbContext.Set<T>().Any(expression);
         }
+
+        public void Update(T entity)
+        {
+            DbContext.Update(entity);
+        }
     }
 }

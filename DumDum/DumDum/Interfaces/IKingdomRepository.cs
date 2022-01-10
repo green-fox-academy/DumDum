@@ -13,6 +13,7 @@ namespace DumDum.Interfaces
         Kingdom FindPlayerByKingdomId(int kingdomId);
         List<Kingdom> GetAllKingdomsIncludePlayer();
         List<BuildingPoints> GetListBuildingPoints();
+        Kingdom AddKingdom(Kingdom kingdom);
 
     }
 }
