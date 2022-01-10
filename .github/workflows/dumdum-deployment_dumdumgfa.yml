@@ -26,13 +26,13 @@ jobs:
         run: dotnet build --configuration Release ./DumDum
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}\DumDum.sln
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/DumDum
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}\DumDum\DumDum.sln
+          path: ${{env.DOTNET_ROOT}}/DumDum
 
   deploy:
     runs-on: windows-latest
