@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'DumDumGFA'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A4AE934CBB124E8587575C8BE39A20DE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2AACC8C294C749DDBD90C4FC7DCC9D03 }}
           package: .
