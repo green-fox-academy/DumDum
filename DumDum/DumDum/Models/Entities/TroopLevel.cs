@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace DumDum.Models.Entities
         public int SpecialSkills { get; set; }
         public int ConstTime { get; set; }
         public int TroopTypeId { get; set; }
-        public TroopTypes TroopType { get; set; }
+        [NotMapped]public TroopTypes TroopType { get; set; }
 
     }
 }

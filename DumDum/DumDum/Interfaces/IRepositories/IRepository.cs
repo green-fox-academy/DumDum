@@ -16,6 +16,7 @@ namespace DumDum.Interfaces
         void RemoveRange(IEnumerable<T> entities);
 
         bool Any(Expression<Func<T, bool>> expression);
+        void Update(T entity);
     }
 
 }
