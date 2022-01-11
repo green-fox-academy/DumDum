@@ -44,7 +44,6 @@ namespace TestProjectMock
                 RegisterPlayerLogic(new PlayerRequest { KingdomName = "testk", Password = "123456789", Username = "user" }, out int StatusCode);
             UnitOfWork.Kingdoms.Add(DumDumService.GetKingdomById(testPlayer.KingdomId));
             UnitOfWork.Players.Add(DumDumService.GetPlayerByUsername(testPlayer.Username));
-            UnitOfWork.Complete();
 
             //act
             var actualPlayer = DumDumService.GetPlayerById(1);

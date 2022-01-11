@@ -19,7 +19,7 @@ using Xunit;
 
 namespace TestProjectMock
 {
-    public class DumDumControllerMoqTests : TestService
+    public class DumDumServiceMoqTests : TestService
     {
         private IAuthenticateService IAuthenticateService { get; set; }
         private DumDumController dumDumController;
@@ -29,10 +29,10 @@ namespace TestProjectMock
         private readonly Mock<ITimeService> timeServiceMoq = new Mock<ITimeService>();
         private readonly Mock<IUnitOfWork> unitOfWorkMoq = new Mock<IUnitOfWork>();
 
-        public DumDumControllerMoqTests()
+        public DumDumServiceMoqTests()
         {
-            dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
-                detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
+           // dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
+             //   detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
         }
 
         [Fact]
@@ -41,7 +41,8 @@ namespace TestProjectMock
             // Arrange
             KingdomsListResponse kingdomsEmptyList = new();
             dumDumServiceMoq.Setup(x => x.GetAllKingdoms()).Returns(kingdomsEmptyList);
-
+            dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
+               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
             // Act
             var actual = dumDumController.KingdomsList();
 
@@ -60,6 +61,8 @@ namespace TestProjectMock
             moqRequest.CoordinateX = 88;
             moqRequest.KingdomId = 1;
             var expectedStatusResponse = new StatusResponse { Status = "Ok" };
+            dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
+              detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
 
             dumDumServiceMoq.Setup(x => x.RegisterKingdom("moqToken", moqRequest, out statusCode))
                             .Returns(()=>"Ok");
