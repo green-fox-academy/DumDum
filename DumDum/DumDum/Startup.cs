@@ -31,6 +31,8 @@ namespace DumDum
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen();
+
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
             services.AddTransient<IBattleService, BattleService>();
@@ -83,6 +85,7 @@ namespace DumDum
                     ValidateAudience = false
                 };
             });
+
             services.AddControllers().AddNewtonsoftJson(options =>
                  options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
@@ -103,6 +106,14 @@ namespace DumDum
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
+                //c.RoutePrefix = string.Empty;
             });
         }
 
