@@ -16,6 +16,7 @@ namespace DumDum.Services
     {
         private AuthenticateService AuthenticateService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
+
         public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork)
         {
             AuthenticateService = authService;
@@ -32,16 +33,17 @@ namespace DumDum.Services
             return UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
 
-        public Player Register(string username, string password, string kingdomName)
+        public Player Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = CreateKingdom(kingdomName, username);
-            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
-            UnitOfWork.Players.Add(player);
-            UnitOfWork.Complete();
-            var playerToReturn = GetPlayerByUsername(username);
-            kingdom.PlayerId = playerToReturn.PlayerId;
-            UnitOfWork.Complete();
-            return playerToReturn;
+                var player = new Player()
+                    {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
+                UnitOfWork.Players.Add(player);
+                UnitOfWork.Complete();
+                var playerToReturn = GetPlayerByUsername(username);
+                kingdom.PlayerId = playerToReturn.PlayerId;
+                UnitOfWork.Complete();
+                return playerToReturn;
         }
 
         public Kingdom CreateKingdom(string kingdomname, string username)
@@ -187,12 +189,15 @@ namespace DumDum.Services
 
         public PlayerResponse RegisterPlayerLogic(PlayerRequest playerRequest, out int statusCode)
         {
-            if (playerRequest.KingdomName is not null)
+            if (playerRequest.KingdomName is not null && playerRequest.Email is not null)
             {
-                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
+                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password) &&
+                    AuthenticateService.IsEmailValid(playerRequest.Email))
                 {
                     var hashedPassword = Crypto.HashPassword(playerRequest.Password);
-                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName);
+                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName,
+                        playerRequest.Email);
+                    AuthenticateService.SendAccountVerificationEmail(player);
                     if (player is null)
                     {
                         statusCode = 400;
@@ -209,7 +214,8 @@ namespace DumDum.Services
 
             if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
             {
-                var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
+                var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName,
+                    playerRequest.Email);
                 if (player is null)
                 {
                     statusCode = 400;
@@ -270,8 +276,10 @@ namespace DumDum.Services
                 {
                     return food.Amount;
                 }
+
                 return 0;
             }
+
             return 0;
         }
 
@@ -306,6 +314,76 @@ namespace DumDum.Services
                 UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
                 UnitOfWork.Complete();
             }
+        }
+
+        public string SetAuthToTrue(int playerId, string hash, out int statusCode)
+        {
+            var player = GetPlayerVerified(playerId, hash);
+            if (player is not null)
+            {
+                if (player.IsVerified)
+                {
+                    statusCode = 200;
+                    return "Email already verified!";
+                }
+                statusCode = 200;
+                player.IsVerified = true;
+                UnitOfWork.Players.Update(player);
+                UnitOfWork.Complete();
+                return $"{player.Email} is now a verified email!";
+            }
+
+            statusCode = 400;
+            return string.Empty;
+        }
+
+        public string ResetPassword(PasswordResetRequest passwordResetRequest, out int statusCode)
+        {
+            if (UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
+            {
+                var player = GetPlayerByUsername(passwordResetRequest.Username);
+                AuthenticateService.SendPasswordResetEmail(player);
+                statusCode = 200;
+                return "Email has been sent.";
+            }
+
+            statusCode = 400;
+            return "Credentials not valid.";
+        }
+
+        public Player GetPlayerVerified(int playerId, string hash)
+        {
+            hash = hash.Replace(" ", "+");
+            var player = GetPlayerById(playerId);
+            if (player is not null && player.Password.Contains(hash))
+            {
+                return player;
+            }
+
+            return null;
+        }
+
+        public string ChangePassword(int playerId, string newPassword, out int statusCode)
+        {
+            if (newPassword is not null && playerId != 0)
+            {
+                var player = GetPlayerById(playerId);
+                var hashed = Crypto.HashPassword(newPassword);
+                if (newPassword.Length >= 8 && hashed != player.Password)
+                {
+                    player.Password = Crypto.HashPassword(newPassword);
+                    UnitOfWork.Players.Update(player);
+                    UnitOfWork.Complete();
+                    statusCode = 200;
+                    return "Password has been changed successfully.";
+                }
+
+                statusCode = 400;
+                return "password doesn't match required conditions";
+            }
+
+            statusCode = 400;
+            return "Error. Something went wrong with the request.";
         }
     }
 }
