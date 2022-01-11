@@ -1,11 +1,6 @@
 ﻿using DumDum.Database;
 using DumDum.Interfaces;
-using DumDum.Models.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace DumDum.Repository
 {
@@ -21,6 +16,8 @@ namespace DumDum.Repository
         public ITroopTypesRepository TroopTypes { get; private set; }
         public IBuildingLevelRepository BuildingLevels { get; private set; }
         public IBuildingTypeRepository BuildingTypes { get; private set; }
+        public IBattleRepository Battles { get; private set; }
+        public ITroopsLostRepository TroopsLost { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -34,6 +31,8 @@ namespace DumDum.Repository
             TroopLevels = new TroopLevelRepository(DbContext);
             Troops = new TroopRepository(DbContext);
             TroopTypes = new TroopTypesRepository(DbContext);
+            Battles = new BattleRepository(DbContext);
+            TroopsLost = new TroopsLostRepository(DbContext);
         }
 
         public int Complete()
@@ -45,5 +44,6 @@ namespace DumDum.Repository
         {
             DbContext.Dispose();
         }
+        
     }
 }

@@ -22,7 +22,6 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
             AuthenticateService = authenticateService;
             DumDumService = dumDumService;
-            UnitOfWork = unitOfWork;
         }
         public List<ResourceList> GetResources(int kingdomId)
         {

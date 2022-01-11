@@ -1,4 +1,6 @@
-﻿namespace DumDum.Models.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DumDum.Models.Entities
 {
     public class BuildingLevel
     {

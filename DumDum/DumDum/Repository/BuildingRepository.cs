@@ -45,5 +45,14 @@ namespace DumDum.Repository
             var number = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
             return number;
         }
+
+        public List<Building> GetNumberOfFarm(int kingdomId)
+        {
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Farm").ToList();
+        }
+        public List<Building> GetNumberOfMines(int kingdomId)
+        {
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Mine").ToList();
+        }
     }
 }
