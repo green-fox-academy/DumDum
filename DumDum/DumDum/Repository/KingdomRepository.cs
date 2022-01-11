@@ -20,13 +20,13 @@ namespace DumDum.Repository
         public async Task<Kingdom> GetKingdomByName(string kingdomName)
         {
             var kingdom =  DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
-            return await Task.FromResult(kingdom);
+            return kingdom;
         }
 
         public async Task<Kingdom> GetKingdomById(int kingdomId)
         {
             var kingdom = DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
-            return await Task.FromResult(kingdom);
+            return kingdom;
         }
 
         public async Task<KingdomsListResponse> GetAllKingdoms()
@@ -34,7 +34,7 @@ namespace DumDum.Repository
             KingdomsListResponse response = new KingdomsListResponse();
 
             response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k)).ToList();
-            return await Task.FromResult(response);
+            return response;
         }
 
         public async Task<Kingdom> FindPlayerByKingdomId(int id)
@@ -42,13 +42,13 @@ namespace DumDum.Repository
             var kingdom = DbContext.Kingdoms.Include(p => p.Player)
                 .Include(r => r.Resources)
                 .FirstOrDefault(k => k.KingdomId == id);
-            return await Task.FromResult(kingdom);
+            return kingdom;
         }
 
         public async Task<List<Kingdom>> GetAllKingdomsIncludePlayer()
         {
             var kingdomList =  DbContext.Kingdoms.Include(k => k.Player).ToList();
-            return await Task.FromResult(kingdomList);
+            return kingdomList;
         }
 
         public async Task<List<BuildingPoints>> GetListBuildingPoints()
@@ -57,7 +57,7 @@ namespace DumDum.Repository
                 k,
                 DbContext.Buildings.Count(b => b.KingdomId == k.KingdomId),
                 DbContext.Buildings.Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)));
-            return await Task.FromResult(point.ToList());
+            return point.ToList();
         }
     }
 }

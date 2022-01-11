@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DumDum.Services
 {
@@ -28,7 +29,7 @@ namespace DumDum.Services
             return UnitOfWork.Players.GetPlayerByUsername(userName).Result;
         }
         
-        public AuthResponse GetUserInfo(AuthRequest request)
+        public async Task<AuthResponse> GetUserInfo(AuthRequest request)
         {
             // funkce smaže slovo bearer z tokenu, v případe, že by jej tam uživatel v postmanu zadal.
             var firstFive = request.Token.Substring(0, 6);
@@ -68,7 +69,7 @@ namespace DumDum.Services
             }
         }
 
-        public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
+        public async Task<KingdomRenameResponse> RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
             var player = FindPlayerByTokenName(authResponse.Ruler);
             player.Kingdom.KingdomName = requestKingdomName.KingdomName;

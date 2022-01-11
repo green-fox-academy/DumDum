@@ -22,13 +22,13 @@ namespace DumDum.Controllers
         public IActionResult Resources([FromRoute] int id, [FromHeader] string authorization)
         {
             int statusCode;
-            var response = ResourceService.ResourceLogic(id, authorization, out statusCode);
+            var response = ResourceService.ResourceLogic(id, authorization).Result;
             
-            if (statusCode == 200)
+            if (response.Item2 == 200)
             {
                 return Ok(response);
             } 
-            if (statusCode == 404)
+            if (response.Item2 == 404)
             {
                 return NotFound(new ErrorResponse() {Error = "Kingdom not found"});
             }

@@ -16,7 +16,7 @@ namespace DumDum.Repository
         public async Task<int> MaximumLevelPossible()
         {
             var number = DbContext.TroopLevel.Select(t => t.Level).Max();
-            return await Task.FromResult(number);
+            return number;
         }
 
         public async Task<TroopLevel> TroopCreationHigherLevel(string troopType, int troopCreationLevel)
@@ -24,7 +24,7 @@ namespace DumDum.Repository
             var level = DbContext.TroopLevel
                 .Include(t => t.TroopType)
                 .FirstOrDefault(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel);
-            return await Task.FromResult(level);
+            return level;
         }
     }
 }

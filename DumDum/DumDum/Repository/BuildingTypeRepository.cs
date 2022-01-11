@@ -18,13 +18,13 @@ namespace DumDum.Repository
         {
             var type =  DbContext.BuildingTypes.Include(b => b.BuildingLevels)
                 .FirstOrDefault(p => p.BuildingTypeName == buildingType);
-            return await Task.FromResult(type);
+            return type;
         }
 
         public async Task<List<string>> ExistingTypeOfBuildings()
         {
             var list =  DbContext.BuildingTypes.Select(b => b.BuildingTypeName.ToLower()).ToList();
-            return await Task.FromResult(list);
+            return list;
         }
     }
 }

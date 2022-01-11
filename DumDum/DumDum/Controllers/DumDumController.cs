@@ -30,12 +30,11 @@ namespace DumDum.Controllers
         [HttpPost("registration")]
         public IActionResult Register([FromBody] PlayerRequest playerRequest)
         {
-            int statusCode;
-            var player = DumDumService.RegisterPlayerLogic(playerRequest, out statusCode);
+            var player = DumDumService.RegisterPlayerLogic(playerRequest).Result;
 
-            if (statusCode == 200)
+            if (player.Item2 == 200)
             {
-                return Ok(player);
+                return Ok(player.Item1);
             }
 
             return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
@@ -45,13 +44,13 @@ namespace DumDum.Controllers
         [HttpPut("registration")]
         public IActionResult RegisterKingdom([FromHeader] string authorization, [FromBody] KingdomRegistrationRequest kingdomRequest)
         {
-            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest, out int statusCode);
+            var message = DumDumService.RegisterKingdom(authorization, kingdomRequest).Result;
 
-            if (statusCode == 200)
+            if (message.Item2 == 200)
             {
                 return Ok(new StatusResponse { Status = "Ok" });
             }
-            return StatusCode(statusCode, new ErrorResponse { Error = message });
+            return StatusCode(message.Item2, new ErrorResponse { Error = message.Item1 });
         }
 
         [Authorize]
@@ -59,7 +58,7 @@ namespace DumDum.Controllers
         public IActionResult RenameKingdom([FromBody] KingdomRenameRequest requestName, [FromHeader] string authorization)
         {
             AuthRequest request = new AuthRequest() { Token = authorization };
-            var player = AuthenticateService.GetUserInfo(request);
+            var player = AuthenticateService.GetUserInfo(request).Result;
             if (player == null)
             {
                 return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
@@ -68,14 +67,14 @@ namespace DumDum.Controllers
             {
                 return BadRequest(new ErrorResponse { Error = "Field kingdomName was empty!" });
             }
-            var response = AuthenticateService.RenameKingdom(requestName, player);
+            var response = AuthenticateService.RenameKingdom(requestName, player).Result;
             return Ok(response);
         }
 
         [HttpGet("kingdoms")]
         public IActionResult KingdomsList()
         {
-            var kingdoms = DumDumService.GetAllKingdoms();
+            var kingdoms = DumDumService.GetAllKingdoms().Result;
 
             if (kingdoms == null)
             {
@@ -88,10 +87,10 @@ namespace DumDum.Controllers
         [HttpGet("kingdoms/{id=int}")]
         public IActionResult KingdomDetails([FromRoute] int id, [FromHeader] string authorization)
         {
-            var details = DetailService.KingdomInformation(id, authorization, out int statusCode);
-            if (statusCode == 200)
+            var details = DetailService.KingdomInformation(id, authorization).Result;
+            if (details.Item2 == 200)
             {
-                return Ok(details);
+                return Ok(details.Item1);
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }

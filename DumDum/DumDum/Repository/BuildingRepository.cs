@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Moq;
 
 namespace DumDum.Repository
 {
@@ -19,7 +20,7 @@ namespace DumDum.Repository
         public async Task<List<BuildingList>> GetBuildings(int Id)
         {
             var buildingList = DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList(b)).ToList();
-            return await Task.FromResult(buildingList);
+            return buildingList;
         }
 
         public async Task<Building> AddBuilding(string building, Kingdom kingdom, BuildingType buildingType)
@@ -36,13 +37,13 @@ namespace DumDum.Repository
                 FinishedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds()
                            + buildingType.BuildingLevel.ConstTime
             }).Entity;
-            return await Task.FromResult(addBuilding);
+            return addBuilding;
         }
 
         public async Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom) // dodelat async zlobi
         {
             var number = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
-            return await Task.FromResult(number);
+            return number;
         }
     }
 }
