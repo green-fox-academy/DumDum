@@ -1,16 +1,20 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Kingdom;
-using DumDum.Models.JsonEntities.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace DumDum.Interfaces
 {
     public interface ITimeService
     {
+        void OnTimedEvent(Object source, ElapsedEventArgs e);
+        void UpdateAllKingdomsEvents();
+        void GetKingdomResourcesPerCycle(int kingdomId);
+        int GetFoodFromFarms(int kingdomId, int cycles);
+        int GetGoldFromMines(int kingdomId, int cycles);
+        int HomMuchFoodOneFarmProduce(int lvl);
+        int HomMuchGoldOneMineProduce(int lvl);
+        Task StartAsync(CancellationToken cancellationToken);
+        Task StopAsync(CancellationToken cancellationToken);
     }
 }

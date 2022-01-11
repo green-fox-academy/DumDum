@@ -1,16 +1,13 @@
-using System.Collections.Generic;
-using System.Linq;
-using DumDum.Database;
 using DumDum.Interfaces;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Resources;
+using System.Collections.Generic;
 
 namespace DumDum.Services
 {
-    public class ResourceService
+    public class ResourceService : IResourceService
     {
         public IAuthenticateService AuthenticateService { get; set; }
         public IDumDumService DumDumService { get; set; }

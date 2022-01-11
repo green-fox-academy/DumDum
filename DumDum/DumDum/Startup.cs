@@ -32,17 +32,22 @@ namespace DumDum
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<IAuthenticateService, AuthenticateService>();
+            services.AddTransient<IBattleService, BattleService>();
+            services.AddTransient<IBuildingService, BuildingService>();
+            services.AddTransient<IDetailService, DetailService>();
             services.AddTransient<IDumDumService, DumDumService>();
+            services.AddTransient<ILoginService, LoginService>();
+            services.AddTransient<IResourceService, ResourceService>();
+            services.AddTransient<ITimeService, TimeService>();
+            services.AddTransient<ITroopService, TroopService>();
+
             services.AddTransient<LoginService>();
             services.AddTransient<ResourceService>();
-            services.AddTransient<IAuthenticateService, AuthenticateService>();
             services.AddTransient<TroopService>();
             services.AddTransient<BuildingService>();
             services.AddTransient<DetailService>();
             services.AddTransient<TimeService>();
-            services.AddTransient<IDetailService, DetailService>();
-            services.AddTransient<ITimeService, TimeService>();
-            services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<BattleService>();
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));

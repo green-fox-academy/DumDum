@@ -9,25 +9,14 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace TestProjectMock
+namespace TestProject1
 {
     public class DumDumServiceInMemoryDBTests : TestService
     {
         private IAuthenticateService IAuthenticateService { get; set; }
-        private DumDumController dumDumController;
-        private readonly Mock<IAuthenticateService> authenticateServiceMoq = new Mock<IAuthenticateService>();
-        private Mock<IDumDumService> dumDumServiceMoq = new Mock<IDumDumService>();
-        private readonly Mock<IDetailService> detailServiceMoq = new Mock<IDetailService>();
-        private readonly Mock<ITimeService> timeServiceMoq = new Mock<ITimeService>();
-        private readonly Mock<IUnitOfWork> unitOfWorkMoq = new Mock<IUnitOfWork>();
-
-        public DumDumServiceInMemoryDBTests()
-        {
-        
-        }
-
+      
         [Fact]
-        public void GetPlayerById_ReturnsPlayer()
+        public void GetPlayerById_ReturnsPlayer_WhenPlayerExists()
         {
             //arrange
             var UnitOfWork = GetContextWithoutData();
@@ -45,7 +34,7 @@ namespace TestProjectMock
         }
 
         [Fact]
-        public void RegisterKingdom_ReturnsStatusOkAndCorrectResponse()
+        public void RegisterKingdom_ReturnsStatusOkAndCorrectResponse_WhenCoordinatesAndKingdomIdProvided()
         {
             //arrange
             IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() { Key = "This is my sample key" });

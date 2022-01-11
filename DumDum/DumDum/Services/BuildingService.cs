@@ -1,21 +1,16 @@
-﻿using DumDum.Database;
+﻿using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.IdentityModel.Tokens;
-using DumDum.Interfaces;
 
 namespace DumDum.Services
 {
-    public class BuildingService
+    public class BuildingService : IBuildingService
     {
         private IAuthenticateService AuthenticateService { get; set; }
         private IDumDumService DumDumService { get; set; }
@@ -70,7 +65,7 @@ namespace DumDum.Services
             return response;
         }
 
-        private Building GetBuildingById(int buildingId)
+        public Building GetBuildingById(int buildingId)
         {
             return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
         }

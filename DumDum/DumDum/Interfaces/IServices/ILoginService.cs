@@ -1,18 +1,13 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Kingdom;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DumDum.Models.JsonEntities.Login;
 
 namespace DumDum.Interfaces
 {
     public interface ILoginService
     {
         string Login(LoginRequest player, out int statusCode);
+        bool LoginCheck(string username);
+        bool PasswordCheck(string password);
+        bool LoginPasswordCheck(string username, string password);
+        string Authenticate(string username, string password);
     }
 }

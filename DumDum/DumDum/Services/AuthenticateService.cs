@@ -1,7 +1,6 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.Extensions.Options;

@@ -1,9 +1,6 @@
-﻿using DumDum.Models.JsonEntities.Authorization;
+﻿using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DumDum.Interfaces
 {
@@ -11,5 +8,6 @@ namespace DumDum.Interfaces
     {
         AuthResponse GetUserInfo(AuthRequest request);
         KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse);
+        Player FindPlayerByTokenName(string userName);
     }
 }
