@@ -113,7 +113,9 @@ namespace DumDum
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
-                //c.RoutePrefix = string.Empty;
+                c.IndexStream = () => GetType().Assembly
+                  .GetManifestResourceStream("DumDum.Views.DumDum.index.html"); // requires file to be added as an embedded resource
+                c.RoutePrefix = string.Empty;
             });
         }
 

@@ -40,6 +40,20 @@
     <Compile Remove="Models\JsonEntities\Buildings\UpgradeBuildingsRequest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="CustomUIIndex\Swagger\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Views\DumDum\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CustomUIIndex\Swagger\" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
