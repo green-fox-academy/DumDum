@@ -24,9 +24,8 @@ namespace TestProjectMock
 {
     public class TestService
     {
-        private HttpClient HttpClient { get; set; }
+        internal HttpClient HttpClient { get; set; }
         private IAuthenticateService IAuthenticateService { get; set; }
-        private IOptions<AppSettings> AppSettings { get; set; }
 
         public TestService()
         {
@@ -53,6 +52,7 @@ namespace TestProjectMock
             var dumDumService = new DumDumService(IAuthenticateService, unitOfWork);
             var testPlayerRequest = new PlayerRequest { KingdomName = "TestKingdom", Password = "TestPassword", Username = "TestUser" };
             dumDumService.RegisterPlayerLogic(testPlayerRequest, out _);
+            unitOfWork.Complete();
             IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() {Key= "This is my sample key" });
             var LoginService = new LoginService(AppSettings,  dumDumService, unitOfWork);
             var token = LoginService.
