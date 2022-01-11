@@ -6,12 +6,12 @@ namespace DumDum.Services
 {
     public class DetailService : IDetailService
     {
-        public BuildingService BuildingService { get; set; }
-        public ResourceService ResourceService { get; set; }
-        public TroopService TroopService { get; set; }
+        public IBuildingService BuildingService { get; set; }
+        public IResourceService ResourceService { get; set; }
+        public ITroopService TroopService { get; set; }
         public IAuthenticateService AuthenticateService { get; set; }
-        public DetailService( BuildingService buildingService,
-            ResourceService resourceService, TroopService troopService, IAuthenticateService authenticateService)
+        public DetailService( IBuildingService buildingService,
+            IResourceService resourceService, ITroopService troopService, IAuthenticateService authenticateService)
         {
             ResourceService = resourceService;
             BuildingService = buildingService;

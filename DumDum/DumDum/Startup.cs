@@ -42,14 +42,6 @@ namespace DumDum
             services.AddTransient<ITimeService, TimeService>();
             services.AddTransient<ITroopService, TroopService>();
 
-            services.AddTransient<LoginService>();
-            services.AddTransient<ResourceService>();
-            services.AddTransient<TroopService>();
-            services.AddTransient<BuildingService>();
-            services.AddTransient<DetailService>();
-            services.AddTransient<TimeService>();
-            services.AddTransient<BattleService>();
-
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBuildingRepository, BuildingRepository>();
             services.AddTransient<IKingdomRepository, KingdomRepository>();
