@@ -23,15 +23,29 @@ namespace DumDum.Repository
 
         public async Task<bool> AreCredentialsValid(string username, string password)
         {
-            var result =  DbContext.Players.Any(p => p.Username != username) &&
+            return !DbContext.Players.Any(p => p.Username == username) &&
                 !string.IsNullOrWhiteSpace(username) && password.Length >= 8;
-            return result;
         }
 
         public async Task<Player> GetPlayerById(int id)
         {
             var player = DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
             return player;
+        }
+
+        public bool EmailNotUsed(string email)
+        {
+            return DbContext.Players.Any(p => p.Email == email);
+        }
+
+        public bool UserWithEmailExists(string username, string email)
+        {
+            return DbContext.Players.Any(p => p.Email == email && p.Username == username);
+        }
+
+        public Player GetPlayerWithPasswordHashed(int playerId, string hash)
+        {
+            return DbContext.Players.FirstOrDefault(p => p.PlayerId == playerId && p.Password == hash);
         }
 
     }

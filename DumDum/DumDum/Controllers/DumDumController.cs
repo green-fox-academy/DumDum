@@ -8,18 +8,20 @@ using DumDum.Models.JsonEntities.Player;
 using DumDum.Services;
 using Newtonsoft.Json;
 using DumDum.Interfaces;
+using DumDum.Models.Entities;
 
 namespace DumDum.Controllers
 {
     public class DumDumController : Controller
     {
-        private DumDumService DumDumService { get; set; }
-        private AuthenticateService AuthenticateService { get; set; }
-        private DetailService DetailService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
-        private TimeService TimeService { get; set; }
+        private ITimeService TimeService { get; set; }
+        private IDumDumService DumDumService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IDetailService DetailService { get; set; }
 
-        public DumDumController(DumDumService dumDumService, AuthenticateService authenticateService, DetailService detailService, IUnitOfWork unitOfWork, TimeService timeService)
+        public DumDumController(IDumDumService dumDumService,IAuthenticateService authenticateService, 
+            IDetailService detailService, IUnitOfWork unitOfWork, ITimeService timeService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
@@ -96,7 +98,59 @@ namespace DumDum.Controllers
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
+        
+        [AllowAnonymous]
+        [HttpGet("emailAuthenticated/{playerId=int}")]
+        public IActionResult PasswordReset([FromRoute] int playerId, [FromQuery] string hash)
+        {
+            int statusCode;
+            var message = DumDumService.SetAuthToTrue(playerId, hash, out statusCode);
 
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "Something went wrong" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("passwordReset")]
+        public IActionResult PasswordReset([FromBody] PasswordResetRequest passwordRequest)
+        {
+            int statusCode;
+            var message = DumDumService.ResetPassword(passwordRequest, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("passwordChange")]
+        public IActionResult PasswordChangeForm([FromForm] string newPassword, int playerId)
+        {
+            int statusCode;
+            var message = DumDumService.ChangePassword(playerId,newPassword, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
+        }
+
+       [AllowAnonymous]
+        [HttpGet("passwordChange/{playerId=int}")]
+        public IActionResult PasswordChange([FromRoute] int playerId,[FromQuery] string hash)
+        {
+            var player = DumDumService.GetPlayerVerified(playerId, hash);
+            return View(player);
+        }
 
     }
 }

@@ -1,19 +1,22 @@
+using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Battles;
 using DumDum.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DumDum.Controllers
 {
     public class BattleController : Controller
     {
-        public BattleService BattleService { get; set; }
-        public BattleController(BattleService battleService)
+        public IBattleService BattleService { get; set; }
+        public BattleController(IBattleService battleService)
         {
             BattleService = battleService;
             
         }
         
+        [Authorize]
         [HttpPost("kingdoms/{attackerKingdomId=int}/battles")]
         public IActionResult Battle([FromHeader] string authorization, [FromRoute] int attackerKingdomId, [FromBody] BattleRequest battleRequest)
         {
@@ -32,6 +35,7 @@ namespace DumDum.Controllers
             return BadRequest(new ErrorResponse() {Error = "Invalid credentials"});
         }
         
+        [Authorize]
         [HttpGet("kingdoms/{attackerKingdomId=int}/battles/{battleId=int}")]
         public IActionResult BattleResult([FromHeader] string authorization, [FromRoute] int attackerKingdomId, int battleId)
         {

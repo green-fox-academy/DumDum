@@ -11,13 +11,13 @@ using DumDum.Models.JsonEntities.Resources;
 
 namespace DumDum.Services
 {
-    public class ResourceService
+    public class ResourceService : IResourceService
     {
-        public AuthenticateService AuthenticateService { get; set; }
-        public DumDumService DumDumService { get; set; }
+        public IAuthenticateService AuthenticateService { get; set; }
+        public IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
 
-        public ResourceService(AuthenticateService authenticateService, DumDumService dumDumService, IUnitOfWork unitOfWork)
+        public ResourceService(IAuthenticateService authenticateService, IDumDumService dumDumService, IUnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
             AuthenticateService = authenticateService;

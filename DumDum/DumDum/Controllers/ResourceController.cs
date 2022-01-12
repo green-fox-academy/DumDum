@@ -1,3 +1,4 @@
+using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -7,10 +8,10 @@ namespace DumDum.Controllers
 {
     public class ResourceController : Controller
     {
-        private ResourceService ResourceService { get; set; }
-        private DumDumService DumDumService { get; set; }
+        private IResourceService ResourceService { get; set; }
+        private IDumDumService DumDumService { get; set; }
 
-        public ResourceController(DumDumService dumDumService, ResourceService resourceService)
+        public ResourceController(IDumDumService dumDumService, IResourceService resourceService)
         {
             DumDumService = dumDumService;
             ResourceService = resourceService;

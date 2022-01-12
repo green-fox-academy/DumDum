@@ -1,6 +1,5 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Login;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,14 +12,14 @@ using System.Web.Helpers;
 
 namespace DumDum.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
-        private DumDumService DumDumService { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private readonly AppSettings AppSettings;
         private IUnitOfWork UnitOfWork { get; set; }
 
         public LoginService(IOptions<AppSettings> appSettings,
-            DumDumService dumDumService, IUnitOfWork unitOfWork)
+            IDumDumService dumDumService, IUnitOfWork unitOfWork)
         {
             AppSettings = appSettings.Value;
             DumDumService = dumDumService;
@@ -74,7 +73,11 @@ namespace DumDum.Services
         public async Task<(string, int)>Login(LoginRequest player)
         {
             LoginResponse response = new LoginResponse();
-            response.Token = await Authenticate(player.Username, player.Password);
+            var playerTologin = DumDumService.GetPlayerByUsername(player.Username);
+            if (LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
+            {
+                response.Token = Authenticate(player.Username, player.Password);
+            }
 
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {

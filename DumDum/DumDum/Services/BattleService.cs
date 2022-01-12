@@ -10,13 +10,13 @@ using DumDum.Repository;
 
 namespace DumDum.Services
 {
-    public class BattleService
+    public class BattleService : IBattleService
     {
         private IUnitOfWork UnitOfWork { get; set; }
-        private AuthenticateService AuthenticateService { get; set; }
-        private DumDumService DumDumService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IDumDumService DumDumService { get; set; }
 
-        public BattleService(IUnitOfWork unitOfWork, AuthenticateService authService, DumDumService dumService)
+        public BattleService(IUnitOfWork unitOfWork, IAuthenticateService authService, IDumDumService dumService)
         {
             UnitOfWork = unitOfWork;
             AuthenticateService = authService;
@@ -165,7 +165,7 @@ namespace DumDum.Services
             return minSpeed;
         }
 
-        private int GetSumOfAttackPower(Player player)
+        public int GetSumOfAttackPower(Player player)
         {
             if (UnitOfWork.Battles.GetTroopsByKingdomId(player.KingdomId) is null)
             {
@@ -178,7 +178,7 @@ namespace DumDum.Services
         }
 
 
-        private int GetSumOfDefensePower(Kingdom kingdom)
+        public int GetSumOfDefensePower(Kingdom kingdom)
         {
             if (UnitOfWork.Battles.GetTroopsByKingdomId(kingdom.KingdomId) is null)
             {
