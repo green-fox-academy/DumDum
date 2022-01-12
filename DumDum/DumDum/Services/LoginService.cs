@@ -72,7 +72,11 @@ namespace DumDum.Services
         public string Login(LoginRequest player, out int statusCode)
         {
             LoginResponse response = new LoginResponse();
-            response.Token = Authenticate(player.Username, player.Password);
+            var playerTologin = DumDumService.GetPlayerByUsername(player.Username);
+            if (LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
+            {
+                response.Token = Authenticate(player.Username, player.Password);
+            }
 
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
