@@ -9,10 +9,10 @@ namespace DumDum.Interfaces
 {
     public interface ITroopService
     {
-        GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode);
+        Task<(GetTroopsResponse, int)> ListTroops(string authorization, int kingdomId);
         Task<List<TroopsResponse>> GetTroops(int kingdomId);
-        string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode);
-        List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode);
+        Task<(string, int)> UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId);
+        Task<(List<TroopsResponse>, int)> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId);
         Troop CreateNewTroop(string troopType, int kingdomId);
         bool DoesAcademyExist(int kingdomId);
         bool IsUpgradeInProgress(int kingdomId, string troopType);

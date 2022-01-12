@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using DumDum.Services;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 using DumDum.Repository;
 
 namespace DumDum

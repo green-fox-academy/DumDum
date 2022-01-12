@@ -1,10 +1,10 @@
-﻿using DumDum.Models.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace DumDum.Services
+namespace DumDum.Interfaces.IServices
 {
     public interface IBuildingService
     {
@@ -17,7 +17,7 @@ namespace DumDum.Services
         Task<Kingdom> FindPlayerByKingdomId(int id);
         Task<BuildingType> FindLevelingByBuildingType(string buildingType);
         Task<List<string>> ExistingTypeOfBuildings();
-        BuildingList AddBuilding(string building, int id, string authorization, out int statusCode);
+        Task<(BuildingList, int)> AddBuilding(string building, int id, string authorization);
         Task<int> GetTownHallLevel(int kingdomId);
         BuildingsLeaderboardResponse GetBuildingsLeaderboard();
     }

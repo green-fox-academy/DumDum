@@ -22,7 +22,7 @@ namespace TestProject1
             var UnitOfWork = GetContextWithoutData();
             var DumDumService = new DumDumService(IAuthenticateService, UnitOfWork);
             var testPlayer = DumDumService.
-                RegisterPlayerLogic(new PlayerRequest { KingdomName = "testk", Password = "123456789", Username = "user" }, out int StatusCode);
+                RegisterPlayerLogic(new PlayerRequest { KingdomName = "testk", Password = "123456789", Username = "user" });
             UnitOfWork.Kingdoms.Add(DumDumService.GetKingdomById(testPlayer.KingdomId));
             UnitOfWork.Players.Add(DumDumService.GetPlayerByUsername(testPlayer.Username));
 
@@ -50,7 +50,7 @@ namespace TestProject1
             requestBody.KingdomId = 1;
 
             //act
-            var response = dumDumService.RegisterKingdom(token, requestBody, out int StatusCode);
+            var response = dumDumService.RegisterKingdom(token, requestBody);
             
             //assert
             Assert.Equal(expectedStatusResult.Status, response);

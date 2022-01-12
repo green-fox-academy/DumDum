@@ -9,6 +9,6 @@ namespace DumDum.Interfaces
     {
         Task<List<ResourceList>> GetResources(int kingdomId);
         Location AddLocations(Kingdom kingdom);
-        ResourceResponse ResourceLogic(int id, string authorization, out int statusCode);
+        Task<(ResourceResponse, int)> ResourceLogic(int id, string authorization);
     }
 }

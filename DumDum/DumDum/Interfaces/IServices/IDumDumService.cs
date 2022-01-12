@@ -8,8 +8,8 @@ namespace DumDum.Interfaces
 {
     public interface IDumDumService
     {
-        PlayerResponse RegisterPlayerLogic(PlayerRequest playerRequest, out int statusCode);
-        string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest, out int statusCode);
+        Task<(PlayerResponse, int)> RegisterPlayerLogic(PlayerRequest playerRequest);
+        Task<(string, int)> RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest);
         Task<KingdomsListResponse> GetAllKingdoms();
         Task<Player> GetPlayerByUsername(string username);
         Kingdom GetKingdomById(int kingdomId);
@@ -30,7 +30,7 @@ namespace DumDum.Interfaces
         Task<Player> Register(string username, string password, string kingdomName, string email);
         Task<Kingdom> GetKingdomByName(string kingdomName);
         string SetAuthToTrue(int playerId, string hash, out int statusCode);
-        Task<string> ResetPassword(PasswordResetRequest passwordResetRequest, out int statusCode);
+        Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest);
         string ChangePassword(int playerId, string newPassword, out int statusCode);
         Player GetPlayerVerified(int playerId, string hash);
     }

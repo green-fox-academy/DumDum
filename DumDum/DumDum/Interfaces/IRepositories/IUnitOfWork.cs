@@ -1,4 +1,5 @@
 ﻿using System;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Interfaces
 {

@@ -1,10 +1,9 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities.Battles;
-using DumDum.Models.JsonEntities.Kingdom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Battles;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IBattleService
     {

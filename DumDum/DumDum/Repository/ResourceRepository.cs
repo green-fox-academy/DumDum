@@ -6,6 +6,7 @@ using DumDum.Models.JsonEntities.Resources;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
@@ -29,6 +30,11 @@ namespace DumDum.Repository
         public void UpdateGoldAmountOfKingdom(Resource gold)
         {
             DbContext.Resources.Update(gold);
+        }
+        
+        public void UpdateFoodAmountOfKingdom(Resource food)
+        {
+            DbContext.Resources.Update(food);
         }
 
         public async Task<List<ResourceList>> GetResources(int id)

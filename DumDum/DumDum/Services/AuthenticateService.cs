@@ -64,7 +64,7 @@ namespace DumDum.Services
                 var principal = tokenHandler.ValidateToken(request.Token, validationParameters, out _);
                 
                 var identity = principal.Identity.Name;    //vraci username tokenu
-                var responseEnt = new AuthResponse(FindPlayerByTokenName(identity));
+                var responseEnt = new AuthResponse(await FindPlayerByTokenName(identity));
                 return responseEnt;
             }
 

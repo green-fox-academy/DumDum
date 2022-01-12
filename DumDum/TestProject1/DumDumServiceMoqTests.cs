@@ -48,7 +48,7 @@ namespace TestProject1
             dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
 
-            dumDumServiceMoq.Setup(x => x.RegisterKingdom("moqToken", moqRequest, out statusCode))
+            dumDumServiceMoq.Setup(x => x.RegisterKingdom("moqToken", moqRequest))
                             .Returns(()=>"Ok");
 
             // Act
