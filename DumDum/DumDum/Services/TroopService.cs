@@ -4,6 +4,7 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,8 +56,8 @@ namespace DumDum.Services
         public string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode)
         {
             var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
-            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
             var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
 
             if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
             {
