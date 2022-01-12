@@ -8,8 +8,7 @@ namespace DumDum.Interfaces
     {
         List<BuildingList> GetBuildings(int Id);
         Building AddBuilding(string building, Kingdom kingdom, BuildingType buildingType);
-        List<Building> GetNumberOfFarm(int kingdomId);
-        List<Building> GetNumberOfMines(int kingdomId);
+        List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId);
         double GetAllBuildingsConsumptionInKingdom(Kingdom kingdom);
     }
 }
