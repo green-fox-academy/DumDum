@@ -1,10 +1,11 @@
 ![alt text](https://i.ibb.co/3rm0GB6/logo-mali.png[/img)
 
 ## ✨Kingom By Kingdom Build An Empire✨
-#### ASP.NET Core API App
+#### .NET 5 API App
 
 ## About the project
 The vision of the DumDum project is to create an online browser-based multiplayer game, where every player has their own kingdom and they battle with each other in order to gain control over the other kingdoms. 
+
 ## Team:
 #### Project Leader:
 Fronéma Lark 
@@ -14,6 +15,7 @@ Marek Holba [GitHub](https://github.com/marapivas)
 Matěj  Urbánek [GitHub](https://github.com/MatUrb2)
 Mladen Stupar [GitHub](https://github.com/stmlad)
 Silvia Walla [GitHub](https://github.com/wuwime)
+
 ## Features:
 - New player registers into the game 
 - Provides username and password 
@@ -23,7 +25,7 @@ Silvia Walla [GitHub](https://github.com/wuwime)
 ## Tech:
 DumDum uses a number of open source projects to work properly:
 
-- [ASP.NET Core API App] - ASP.NET Core is a cross-platform, high-performance, open-source framework
+- [.NET 5] - .NET 5 is a cross-platform, high-performance, open-source framework
 - [MySQL] - Database Service is a fully managed database service to deploy cloud-native applications
 - [EntityFramework] - Oobject–relational mapping framework for .NET
 - [MOQ] - The most popular and friendly mocking library for .NET
