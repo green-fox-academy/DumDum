@@ -10,5 +10,6 @@ namespace DumDum.Interfaces
         Building AddBuilding(string building, Kingdom kingdom, BuildingType buildingType);
         List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId);
         double GetAllBuildingsConsumptionInKingdom(Kingdom kingdom);
+        List<Building> GetAllBuildingsOfKingdom(int kingdomId);
     }
 }

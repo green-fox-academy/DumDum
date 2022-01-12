@@ -9,5 +9,6 @@ namespace DumDum.Interfaces
         List<TroopsResponse> GetTroops(int kingdomId);
         void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop);
         int FinishedAtTimeTroop(string troopType, int kingdomId);
+        List<Troop> GetAllTroopsOfKingdom(int kingdomId);
     }
 }
