@@ -1,4 +1,5 @@
-﻿using DumDum.Models.JsonEntities;
+﻿using DumDum.Interfaces;
+using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Troops;
 using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -8,8 +9,8 @@ namespace DumDum.Controllers
 {
     public class TroopController : Controller
     {
-        private TroopService TroopService { get; set; }
-        public TroopController(TroopService troopService)
+        private ITroopService TroopService { get; set; }
+        public TroopController(ITroopService troopService)
         {
             TroopService = troopService;
         }

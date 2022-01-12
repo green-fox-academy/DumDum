@@ -15,14 +15,14 @@ using DumDum.Interfaces;
 
 namespace DumDum.Services
 {
-    public class BuildingService
+    public class BuildingService : IBuildingService
     {
-        private AuthenticateService AuthenticateService { get; set; }
-        private DumDumService DumDumService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
 
-        public BuildingService(AuthenticateService authService,
-            DumDumService dumService, IUnitOfWork unitOfWork)
+        public BuildingService(IAuthenticateService authService,
+            IDumDumService dumService, IUnitOfWork unitOfWork)
         {
             AuthenticateService = authService;
             DumDumService = dumService;
@@ -70,7 +70,7 @@ namespace DumDum.Services
             return response;
         }
 
-        private Building GetBuildingById(int buildingId)
+        public Building GetBuildingById(int buildingId)
         {
             return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
         }
