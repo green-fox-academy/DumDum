@@ -1,4 +1,5 @@
 ﻿using DumDum.Interfaces;
+using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 
@@ -10,7 +11,7 @@ namespace DumDum.Services
         public IResourceService ResourceService { get; set; }
         public ITroopService TroopService { get; set; }
         public IAuthenticateService AuthenticateService { get; set; }
-        public DetailService( IBuildingService buildingService,
+        public DetailService(IBuildingService buildingService,
             IResourceService resourceService, ITroopService troopService, IAuthenticateService authenticateService)
         {
             ResourceService = resourceService;

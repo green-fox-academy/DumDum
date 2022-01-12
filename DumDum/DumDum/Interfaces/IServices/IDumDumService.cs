@@ -26,7 +26,11 @@ namespace DumDum.Interfaces
         bool AreCoordinatesValid(int coordinateX, int coordinateY);
         bool DoCoordinatesExist(int coordinateX, int coordinateY);
         Kingdom CreateKingdom(string kingdomname, string username);
-        Player Register(string username, string password, string kingdomName);
+        Player Register(string username, string password, string kingdomName, string email);
         Kingdom GetKingdomByName(string kingdomName);
+        string SetAuthToTrue(int playerId, string hash, out int statusCode);
+        string ResetPassword(PasswordResetRequest passwordResetRequest, out int statusCode);
+        string ChangePassword(int playerId, string newPassword, out int statusCode);
+        Player GetPlayerVerified(int playerId, string hash);
     }
 }

@@ -1,10 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Battles;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using DumDum.Repository;
 
 namespace DumDum.Services
 {

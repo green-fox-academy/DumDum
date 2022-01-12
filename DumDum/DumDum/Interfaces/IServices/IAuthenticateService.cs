@@ -9,5 +9,8 @@ namespace DumDum.Interfaces
         AuthResponse GetUserInfo(AuthRequest request);
         KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse);
         Player FindPlayerByTokenName(string userName);
+        bool IsEmailValid(string email);
+        void SendAccountVerificationEmail(Player player);
+        void SendPasswordResetEmail(Player player);
     }
 }

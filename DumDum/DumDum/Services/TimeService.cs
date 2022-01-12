@@ -1,6 +1,10 @@
-﻿using DumDum.Interfaces;
+﻿using DumDum.Database;
+using DumDum.Interfaces;
+using DumDum.Models.Entities;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -18,7 +22,6 @@ namespace DumDum.Services
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
         }
-
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             UpdateAllKingdomsEvents();
