@@ -23,5 +23,17 @@ namespace DumDum.Repository
                 .Where(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel)
                 .FirstOrDefault();
         }
+        
+        public int GetConsumptionByTroopTypeAndLevel(int troopTypeId, int troopLevel)
+        {
+            var result = DbContext.TroopLevel
+                .FirstOrDefault(t => t.TroopTypeId == troopTypeId && t.Level == troopLevel);
+            if (result is not null)
+            {
+                return (int)result.Consumption;
+            }
+
+            return 0;
+        }
     }
 }

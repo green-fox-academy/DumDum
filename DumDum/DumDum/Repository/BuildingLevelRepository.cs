@@ -22,7 +22,7 @@ namespace DumDum.Repository
 
             return 0;
         }
-        
+
         public int GetConsumptionByBuildingTypeAndLevel(int buildingTypeId, int buildingLevel)
         {
             var result = DbContext.BuildingLevels

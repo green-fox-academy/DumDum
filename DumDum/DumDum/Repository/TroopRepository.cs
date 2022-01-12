@@ -54,5 +54,10 @@ namespace DumDum.Repository
                 .Where(t => t.TroopType.TroopType.ToLower() == troopType.ToLower() && t.KingdomId == kingdomId)
                 .Select(t => t.FinishedAt).FirstOrDefault();
         }
+
+        public List<Troop> GetAllTroopsOfKingdom(int kingdomId)
+        {
+            return DbContext.Troops.Where(t => t.KingdomId == kingdomId).ToList();
+        }
     }
 }

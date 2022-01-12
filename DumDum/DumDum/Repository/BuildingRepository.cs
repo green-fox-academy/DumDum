@@ -52,6 +52,10 @@ namespace DumDum.Repository
         {
             return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingTypeId == buildingTypeId).ToList();
         }
-        
+
+        public List<Building> GetAllBuildingsOfKingdom(int kingdomId)
+        {
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId).ToList();
+        }
     }
 }
