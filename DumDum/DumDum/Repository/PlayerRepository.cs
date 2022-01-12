@@ -31,5 +31,20 @@ namespace DumDum.Repository
             return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
+        public bool EmailNotUsed(string email)
+        {
+            return DbContext.Players.Any(p => p.Email == email);
+        }
+
+        public bool UserWithEmailExists(string username, string email)
+        {
+            return DbContext.Players.Any(p => p.Email == email && p.Username == username);
+        }
+
+        public Player GetPlayerWithPasswordHashed(int playerId, string hash)
+        {
+            return DbContext.Players.FirstOrDefault(p => p.PlayerId == playerId && p.Password == hash);
+        }
+
     }
 }

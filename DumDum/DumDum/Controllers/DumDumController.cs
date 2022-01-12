@@ -8,6 +8,7 @@ using DumDum.Models.JsonEntities.Player;
 using DumDum.Services;
 using Newtonsoft.Json;
 using DumDum.Interfaces;
+using DumDum.Models.Entities;
 
 namespace DumDum.Controllers
 {
@@ -98,7 +99,59 @@ namespace DumDum.Controllers
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
+        
+        [AllowAnonymous]
+        [HttpGet("emailAuthenticated/{playerId=int}")]
+        public IActionResult PasswordReset([FromRoute] int playerId, [FromQuery] string hash)
+        {
+            int statusCode;
+            var message = DumDumService.SetAuthToTrue(playerId, hash, out statusCode);
 
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "Something went wrong" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("passwordReset")]
+        public IActionResult PasswordReset([FromBody] PasswordResetRequest passwordRequest)
+        {
+            int statusCode;
+            var message = DumDumService.ResetPassword(passwordRequest, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("passwordChange")]
+        public IActionResult PasswordChangeForm([FromForm] string newPassword, int playerId)
+        {
+            int statusCode;
+            var message = DumDumService.ChangePassword(playerId,newPassword, out statusCode);
+
+            if (statusCode == 200)
+            {
+                return Ok(message);
+            }
+
+            return BadRequest(new ErrorResponse() { Error = "The credentials don't match required" });
+        }
+
+       [AllowAnonymous]
+        [HttpGet("passwordChange/{playerId=int}")]
+        public IActionResult PasswordChange([FromRoute] int playerId,[FromQuery] string hash)
+        {
+            var player = DumDumService.GetPlayerVerified(playerId, hash);
+            return View(player);
+        }
 
     }
 }

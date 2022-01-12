@@ -9,6 +9,14 @@
     <Content Remove="ViewModels\**" />
     <EmbeddedResource Remove="ViewModels\**" />
     <None Remove="ViewModels\**" />
+    <Compile Remove="Services\BattleService 2.cs" />
+    <Compile Remove="Repository\TroopsLostRepository 2.cs" />
+    <Compile Remove="Repository\BattleRepository 2.cs" />
+    <Compile Remove="Models\Entities\TroopsLost 2.cs" />
+    <Compile Remove="Models\Entities\Battle 2.cs" />
+    <Compile Remove="Interfaces\ITroopsLostRepository 2.cs" />
+    <Compile Remove="Interfaces\IBattleRepository 2.cs" />
+    <Compile Remove="Controllers\BattleController 2.cs" />
   </ItemGroup>
 
   <ItemGroup>
