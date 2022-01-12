@@ -54,7 +54,7 @@ namespace DumDum.Services
             }
             if (player != null && player.KingdomId == kingdomId && troopUpdateReq != null)
             {
-                var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+                var goldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
                 var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
                 var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower(), kingdomId);
                 var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
@@ -103,7 +103,7 @@ namespace DumDum.Services
             var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             if (player != null && player.KingdomId == kingdomId)
             {
-                var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+                var goldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
                 var createdTroops = new List<TroopsResponse>();
                 var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypes();
 
@@ -273,7 +273,7 @@ namespace DumDum.Services
 
             foreach (var kingdom in kingdoms)
             {
-                var kingdomPoint = new KingdomPoints(kingdom, (GetAllTroopsConsumptionInKingdom(kingdom.KingdomId).Result) + ( UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom).Result));
+                var kingdomPoint = new KingdomPoints(kingdom, (await GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)) + (await UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom)));
                 pointsList.Add(kingdomPoint);
             }
 

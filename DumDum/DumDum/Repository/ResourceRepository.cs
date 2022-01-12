@@ -21,7 +21,7 @@ namespace DumDum.Repository
            return resource;
         }
         
-        public Resource GetFoodAmountOfKingdom(int kingdomId)
+        public async Task<Resource> GetFoodAmountOfKingdom(int kingdomId)
         {
             return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
         }
@@ -30,6 +30,7 @@ namespace DumDum.Repository
         {
             DbContext.Resources.Update(gold);
         }
+
         public async Task<List<ResourceList>> GetResources(int id)
         {
             var resList =  DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();

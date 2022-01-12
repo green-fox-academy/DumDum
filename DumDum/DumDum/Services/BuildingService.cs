@@ -74,7 +74,7 @@ namespace DumDum.Services
             {
                 return (null, 400, "Kingdom not found");
             }
-            var kingdomGoldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var kingdomGoldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var nextLevelInfo = await InformationForNextLevel(building.BuildingTypeId, building.Level);
             
             if (player == null || player.KingdomId != kingdomId)

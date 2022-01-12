@@ -23,9 +23,9 @@ namespace DumDum.Services
             AuthenticateService = authenticateService;
             DumDumService = dumDumService;
         }
-        public List<ResourceList> GetResources(int kingdomId)
+        public async Task<List<ResourceList>> GetResources(int kingdomId)
         {
-            return UnitOfWork.Resources.GetResources(kingdomId).Result;
+            return await UnitOfWork.Resources.GetResources(kingdomId);
         }
 
         public Location AddLocations(Kingdom kingdom)
@@ -49,7 +49,7 @@ namespace DumDum.Services
                         return (null, 404);
                     }
                     var locations = AddLocations(kingdom);
-                    var resources = GetResources(id);
+                    var resources = await GetResources(id);
                     var resResp = new ResourceResponse(new KingdomResponse(kingdom), resources);
                     return (resResp, 200);
 

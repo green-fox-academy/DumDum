@@ -25,7 +25,7 @@ namespace DumDum.Controllers
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
             int statusCode;
-            var response = BuildingService.ListBuildings(authorization, Id).Result;
+            var response = BuildingService.ListBuildings(authorization, kingdomId).Result;
 
             if (response.Item2 == 401)
             {

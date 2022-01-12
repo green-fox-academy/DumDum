@@ -8,12 +8,12 @@ namespace DumDum.Interfaces
 {
     public interface IKingdomRepository : IRepository<Kingdom>
     {
-        Kingdom GetKingdomByName(string kingdomName);
-        Kingdom GetKingdomById(int kingdomId);
-        KingdomsListResponse GetAllKingdoms();
-        Kingdom FindPlayerByKingdomId(int kingdomId);
-        List<Kingdom> GetAllKingdomsIncludePlayer();
-        List<BuildingPoints> GetListBuildingPoints();
+        Task<Kingdom> GetKingdomByName(string kingdomName);
+        Task<Kingdom> GetKingdomById(int kingdomId);
+        Task<KingdomsListResponse> GetAllKingdoms();
+        Task<Kingdom> FindPlayerByKingdomId(int kingdomId);
+        Task<List<Kingdom>> GetAllKingdomsIncludePlayer();
+        Task<List<BuildingPoints>> GetListBuildingPoints();
         Kingdom AddKingdom(Kingdom kingdom);
 
     }

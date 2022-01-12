@@ -29,7 +29,7 @@ namespace DumDum.Services
             {
                 KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(
                     BuildingService.GetKingdom(kingdomId),
-                    ResourceService.GetResources(kingdomId),
+                    await ResourceService.GetResources(kingdomId),
                     BuildingService.GetBuildings(kingdomId),
                     await TroopService.GetTroops(kingdomId));
                 return (kingdomDetailsResponse, 200);

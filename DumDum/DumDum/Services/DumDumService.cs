@@ -213,14 +213,14 @@ namespace DumDum.Services
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
         }
         
-        public int GetGoldAmountOfKingdom(int kingdomId)
+        public async Task<int> GetGoldAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)
             {
-                var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
+                var gold = await UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
                 if (gold != null)
                 {
-                    int amount = gold.Result.Amount;
+                    int amount = gold.Amount;
                     return amount;
                 }
                 return 0;
@@ -240,11 +240,11 @@ namespace DumDum.Services
             }
         }
 
-        public int GetFoodAmountOfKingdom(int kingdomId)
+        public async Task<int> GetFoodAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)
             {
-                var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+                var food = await UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
                 if (food != null)
                 {
                     return food.Amount;
@@ -256,7 +256,7 @@ namespace DumDum.Services
 
         public void TakeFood(int kingdomId, int amount)
         {
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (food != null)
             {
                 food.Amount -= amount;
@@ -267,7 +267,7 @@ namespace DumDum.Services
 
         public void GiveFood(int kingdomId, int amount)
         {
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (food != null)
             {
                 food.Amount += amount;
@@ -278,7 +278,7 @@ namespace DumDum.Services
 
         public void GiveGold(int kingdomId, int amount)
         {
-            var gold = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var gold = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (gold != null)
             {
                 gold.Amount += amount;

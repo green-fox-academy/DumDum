@@ -40,7 +40,7 @@ namespace DumDum.Repository
             return addBuilding;
         }
 
-        public async Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom) // dodelat async zlobi
+        public async Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom)
         {
             var number = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
             return number;
