@@ -58,7 +58,7 @@ namespace DumDum.Services
             return (null, 401);
         }
 
-        private async Task<Building> GetBuildingById(int buildingId)
+        public async Task<Building> GetBuildingById(int buildingId)
         {
             return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
         }

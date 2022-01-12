@@ -24,15 +24,15 @@ namespace DumDum.Services
 
         public async Task<Player> GetPlayerByUsername(string username)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(username).Result;
+            return await UnitOfWork.Players.GetPlayerByUsername(username);
         }
 
-        public Task<Kingdom> GetKingdomByName(string kingdomName)
+        public async Task<Kingdom> GetKingdomByName(string kingdomName)
         {
-            return UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
+            return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
 
-        public async Task<Player> Register(string username, string password, string kingdomName)
+        public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
             var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
@@ -89,7 +89,7 @@ namespace DumDum.Services
             return UnitOfWork.Players.AreCredentialsValid(username, password).Result;
         }
 
-        internal async Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY)
+        public async Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY)
         {
             return coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100;
         }
@@ -175,11 +175,11 @@ namespace DumDum.Services
         {
             if (playerRequest.KingdomName is not null && playerRequest.Email is not null)
             {
-                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password) &&
+                if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password) &&
                     AuthenticateService.IsEmailValid(playerRequest.Email))
                 {
                     var hashedPassword = Crypto.HashPassword(playerRequest.Password);
-                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName,
+                    var player = await Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName,
                         playerRequest.Email);
                     AuthenticateService.SendAccountVerificationEmail(player);
                     if (player is null)
@@ -194,7 +194,7 @@ namespace DumDum.Services
 
             if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password))
             {
-                var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName,
+                var player = await Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName,
                     playerRequest.Email);
                 if (player is null)
                 {
@@ -312,18 +312,15 @@ namespace DumDum.Services
             return string.Empty;
         }
 
-        public string ResetPassword(PasswordResetRequest passwordResetRequest, out int statusCode)
+        public async Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest)
         {
             if (UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
             {
-                var player = GetPlayerByUsername(passwordResetRequest.Username);
+                var player = await GetPlayerByUsername(passwordResetRequest.Username);
                 AuthenticateService.SendPasswordResetEmail(player);
-                statusCode = 200;
-                return "Email has been sent.";
+                return ("Email has been sent.", 200);
             }
-
-            statusCode = 400;
-            return "Credentials not valid.";
+            return ("Credentials not valid.", 400);
         }
 
         public Player GetPlayerVerified(int playerId, string hash)

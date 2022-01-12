@@ -26,12 +26,12 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public bool LoginCheck(string username)
+        public async Task<bool> LoginCheck(string username)
         {
             return UnitOfWork.Players.Any(x => x.Username == username);
         }
 
-        public bool PasswordCheck(string password)
+        public async Task<bool> PasswordCheck(string password)
         {
             return UnitOfWork.Players.Any(x => x.Password == password);
         }
@@ -73,10 +73,10 @@ namespace DumDum.Services
         public async Task<(string, int)>Login(LoginRequest player)
         {
             LoginResponse response = new LoginResponse();
-            var playerTologin = DumDumService.GetPlayerByUsername(player.Username);
-            if (LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
+            var playerTologin = await DumDumService.GetPlayerByUsername(player.Username);
+            if (await LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
             {
-                response.Token = Authenticate(player.Username, player.Password);
+                response.Token = await Authenticate(player.Username, player.Password);
             }
 
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))

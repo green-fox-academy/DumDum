@@ -111,8 +111,8 @@ namespace DumDum.Services
 
                 foreach (var troop in loserLostTroops)
                 {
-                    var troopToUpdate = UnitOfWork.TroopsLost.TroopToUpdate(troop.TroopLostId,
-                        DumDumService.GetPlayerByUsername(loser).Result.PlayerId);
+                    var playerByUserName = await DumDumService.GetPlayerByUsername(loser);
+                    var troopToUpdate = UnitOfWork.TroopsLost.TroopToUpdate(troop.TroopLostId, playerByUserName.PlayerId);
 
                     if (troopToUpdate is not null)
                     {

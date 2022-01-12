@@ -24,7 +24,7 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        internal async Task<(GetTroopsResponse, int)> ListTroops(string authorization, int kingdomId)
+        public async Task<(GetTroopsResponse, int)> ListTroops(string authorization, int kingdomId)
         {
             
             var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
@@ -38,12 +38,12 @@ namespace DumDum.Services
             return (null, 401);
         }
 
-        internal async Task<List<TroopsResponse>> GetTroops(int kingdomId)
+        public async Task<List<TroopsResponse>> GetTroops(int kingdomId)
         {
             return await UnitOfWork.Troops.GetTroops(kingdomId);
         }
 
-        internal async Task<(string, int)> UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId)
+        public async Task<(string, int)> UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId)
         {
             var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
@@ -98,7 +98,7 @@ namespace DumDum.Services
             return ("This kingdom does not belong to authenticated player", 401);
         }
 
-        internal async Task<(List<TroopsResponse>, int)> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId)
+        public async Task<(List<TroopsResponse>, int)> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId)
         {
             var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             if (player != null && player.KingdomId == kingdomId)

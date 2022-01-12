@@ -28,9 +28,9 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public Player FindPlayerByTokenName(string userName)
+        public async Task<Player> FindPlayerByTokenName(string userName)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(userName).Result;
+            return await UnitOfWork.Players.GetPlayerByUsername(userName);
         }
         
         public async Task<AuthResponse> GetUserInfo(AuthRequest request)
@@ -42,8 +42,7 @@ namespace DumDum.Services
                 string token = request.Token;
                 request.Token = token.Remove(0, 7);
             }
-            var responseEnt = new AuthResponse();
-            
+
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -77,7 +76,7 @@ namespace DumDum.Services
 
         public async Task<KingdomRenameResponse> RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            var player = FindPlayerByTokenName(authResponse.Ruler);
+            var player =await  FindPlayerByTokenName(authResponse.Ruler);
             player.Kingdom.KingdomName = requestKingdomName.KingdomName;
             UnitOfWork.Complete();
             KingdomRenameResponse response = new KingdomRenameResponse(player);
