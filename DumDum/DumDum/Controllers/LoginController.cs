@@ -14,7 +14,7 @@ namespace DumDum.Controllers
         private ITimeService TimeService { get; set; }
         public IAuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service, IAuthenticateService auservice, ITimeService timeService)
+        public LoginController(ILoginService service, IAuthenticateService auservice, ITimeService timeService)
         {
             LoginService = service;
             AuthenticateService = auservice;

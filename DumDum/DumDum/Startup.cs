@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using DumDum.Services;
 using DumDum.Interfaces;
 using DumDum.Repository;
+using Serilog;
 
 namespace DumDum
 {
@@ -27,6 +28,10 @@ namespace DumDum
         public Startup(IConfiguration configuration)
         {
             AppConfig = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -117,6 +122,8 @@ namespace DumDum
                   .GetManifestResourceStream("DumDum.Views.DumDum.index.html"); // requires file to be added as an embedded resource
                 c.RoutePrefix = string.Empty;
             });
+
+            app.UseSerilogRequestLogging();
         }
 
         private void ConfigureDb(IServiceCollection services)
