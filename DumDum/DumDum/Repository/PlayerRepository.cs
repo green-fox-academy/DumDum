@@ -22,7 +22,7 @@ namespace DumDum.Repository
 
         public bool AreCredentialsValid(string username, string password)
         {
-            return DbContext.Players.Any(p => p.Username != username) &&
+            return !DbContext.Players.Any(p => p.Username == username) &&
                 !string.IsNullOrWhiteSpace(username) && password.Length >= 8;
         }
 

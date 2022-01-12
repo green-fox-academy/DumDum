@@ -7,17 +7,15 @@ using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using System.Linq;
 using System.Web.Helpers;
-using DumDum.Database;
 
 
 namespace DumDum.Services
 {
-    public class DumDumService
+    public class DumDumService : IDumDumService
     {
-        private AuthenticateService AuthenticateService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
-
-        public DumDumService(AuthenticateService authService, IUnitOfWork unitOfWork)
+        public DumDumService(IAuthenticateService authService, IUnitOfWork unitOfWork)
         {
             AuthenticateService = authService;
             UnitOfWork = unitOfWork;
@@ -91,18 +89,18 @@ namespace DumDum.Services
             return UnitOfWork.Players.AreCredentialsValid(username, password);
         }
 
-        internal bool AreCoordinatesValid(int coordinateX, int coordinateY)
+        public bool AreCoordinatesValid(int coordinateX, int coordinateY)
         {
             return coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100;
         }
 
-        internal bool DoCoordinatesExist(int coordinateX, int coordinateY)
+        public bool DoCoordinatesExist(int coordinateX, int coordinateY)
         {
             return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX) &&
                    UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX);
         }
 
-        internal bool IsKingdomIdValid(int kingdomId)
+        public bool IsKingdomIdValid(int kingdomId)
         {
             return UnitOfWork.Players.Any(p => p.KingdomId == kingdomId) && UnitOfWork.Kingdoms
                 .Any(k => k.KingdomId == kingdomId && k.CoordinateX == 0 && k.CoordinateY == 0);

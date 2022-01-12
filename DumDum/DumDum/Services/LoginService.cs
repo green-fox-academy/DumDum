@@ -1,6 +1,5 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Login;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,14 +11,14 @@ using System.Web.Helpers;
 
 namespace DumDum.Services
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
-        private DumDumService DumDumService { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private readonly AppSettings AppSettings;
         private IUnitOfWork UnitOfWork { get; set; }
 
         public LoginService(IOptions<AppSettings> appSettings,
-            DumDumService dumDumService, IUnitOfWork unitOfWork)
+            IDumDumService dumDumService, IUnitOfWork unitOfWork)
         {
             AppSettings = appSettings.Value;
             DumDumService = dumDumService;

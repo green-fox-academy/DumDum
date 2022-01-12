@@ -1,3 +1,4 @@
+using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Battles;
 using DumDum.Services;
@@ -8,8 +9,8 @@ namespace DumDum.Controllers
 {
     public class BattleController : Controller
     {
-        public BattleService BattleService { get; set; }
-        public BattleController(BattleService battleService)
+        public IBattleService BattleService { get; set; }
+        public BattleController(IBattleService battleService)
         {
             BattleService = battleService;
             

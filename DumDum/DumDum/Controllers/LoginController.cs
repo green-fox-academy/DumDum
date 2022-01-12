@@ -1,4 +1,5 @@
-﻿using DumDum.Models.JsonEntities;
+﻿using DumDum.Interfaces;
+using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Services;
@@ -9,11 +10,11 @@ namespace DumDum.Controllers
 {
     public class LoginController : Controller
     {
-        private LoginService LoginService { get; set; }
-        private TimeService TimeService { get; set; }
-        public AuthenticateService AuthenticateService { get; set; }
+        private ILoginService LoginService { get; set; }
+        private ITimeService TimeService { get; set; }
+        public IAuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(LoginService service, AuthenticateService auservice, TimeService timeService)
+        public LoginController(LoginService service, IAuthenticateService auservice, ITimeService timeService)
         {
             LoginService = service;
             AuthenticateService = auservice;
