@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://i.ibb.co/3rm0GB6/logo-mali.png">
+<img src="https://raw.githubusercontent.com/green-fox-academy/DumDum/0af30353b4da284c30267b593cd61d56fa0221a6/DumDum/DumDum/Views/DumDum/logo.png">
 </p>
 
 <p align="center">
