@@ -1,9 +1,10 @@
-﻿using DumDum.Models.JsonEntities.Kingdom;
+﻿using System.Threading.Tasks;
+using DumDum.Models.JsonEntities.Kingdom;
 
 namespace DumDum.Interfaces
 {
     public interface IDetailService
     {
-        KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization, out int statusCode);
+        Task<(KingdomDetailsResponse, int)> KingdomInformation(int kingdomId, string authorization);
     }
 }

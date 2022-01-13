@@ -4,6 +4,7 @@ using DumDum.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DumDum.Repository
 {
@@ -13,15 +14,17 @@ namespace DumDum.Repository
         {
         }
 
-        public BuildingType FindLevelingByBuildingType(string buildingType)
+        public async Task<BuildingType> FindLevelingByBuildingType(string buildingType)
         {
-            return DbContext.BuildingTypes.Include(b => b.BuildingLevels)
+            var type =  DbContext.BuildingTypes.Include(b => b.BuildingLevels)
                 .FirstOrDefault(p => p.BuildingTypeName == buildingType);
+            return type;
         }
 
-        public List<string> ExistingTypeOfBuildings()
+        public async Task<List<string>> ExistingTypeOfBuildings()
         {
-            return DbContext.BuildingTypes.Select(b => b.BuildingTypeName.ToLower()).ToList();
+            var list =  DbContext.BuildingTypes.Select(b => b.BuildingTypeName.ToLower()).ToList();
+            return list;
         }
     }
 }

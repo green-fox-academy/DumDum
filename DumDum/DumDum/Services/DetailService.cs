@@ -1,4 +1,6 @@
-﻿using DumDum.Interfaces;
+using System.Threading.Tasks;
+using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
@@ -20,23 +22,21 @@ namespace DumDum.Services
             AuthenticateService = authenticateService;
         }
         
-        public KingdomDetailsResponse KingdomInformation(int kingdomId, string authorization, out int statusCode)
+        public async Task<(KingdomDetailsResponse, int)> KingdomInformation(int kingdomId, string authorization)
         {
-            KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse();
             AuthRequest response = new AuthRequest();
             response.Token = authorization;
-            var player = AuthenticateService.GetUserInfo(response);
+            var player = await AuthenticateService.GetUserInfo(response);
             if (player != null)
             {
-                kingdomDetailsResponse.Kingdom = BuildingService.GetKingdom(kingdomId);
-                kingdomDetailsResponse.Resources = ResourceService.GetResources(kingdomId);
-                kingdomDetailsResponse.Buildings = BuildingService.GetBuildings(kingdomId);
-                kingdomDetailsResponse.Troops = TroopService.GetTroops(kingdomId);
-                statusCode = 200;
-                return kingdomDetailsResponse;
+                KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(
+                    BuildingService.GetKingdom(kingdomId),
+                    await ResourceService.GetResources(kingdomId),
+                    BuildingService.GetBuildings(kingdomId),
+                    await TroopService.GetTroops(kingdomId));
+                return (kingdomDetailsResponse, 200);
             }
-            statusCode = 401;
-            return kingdomDetailsResponse;
+            return (null, 401);
         }
     }
 }

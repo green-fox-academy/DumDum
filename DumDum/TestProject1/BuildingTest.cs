@@ -138,13 +138,7 @@ namespace TestProject1
 
             requestBody.Result = new List<BuildingPoints>()
             {
-                new BuildingPoints()
-                {
-                    Ruler = "Marek",
-                    Kingdom = "Pivko",
-                    Buildings = 4,
-                    Points = 152
-                }
+                new BuildingPoints("Marek", "Pivko", 4, 152)
             };
 
             //act

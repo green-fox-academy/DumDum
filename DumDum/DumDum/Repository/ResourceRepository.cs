@@ -5,6 +5,8 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Resources;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
@@ -14,36 +16,31 @@ namespace DumDum.Repository
         {
         }
 
-        public Resource GetGoldAmountOfKingdom(int kingdomId)
+        public async Task<Resource> GetGoldAmountOfKingdom(int kingdomId)
         {
-           return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+           var resource = DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Gold");
+           return resource;
         }
         
-        public Resource GetFoodAmountOfKingdom(int kingdomId)
+        public async Task<Resource> GetFoodAmountOfKingdom(int kingdomId)
         {
             return DbContext.Resources.FirstOrDefault(r => r.KingdomId == kingdomId && r.ResourceType == "Food");
         }
-
 
         public void UpdateGoldAmountOfKingdom(Resource gold)
         {
             DbContext.Resources.Update(gold);
         }
-
+        
         public void UpdateFoodAmountOfKingdom(Resource food)
         {
             DbContext.Resources.Update(food);
         }
 
-        public List<ResourceList> GetResources(int id)
+        public async Task<List<ResourceList>> GetResources(int id)
         {
-            return DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList()
-            {
-                ResourceType = r.ResourceType,
-                Amount = r.Amount,
-                Generation = r.Generation,
-                UpdatedAt = r.UpdatedAt
-            }).ToList();
+            var resList =  DbContext.Resources.Where(r => r.KingdomId == id).Select(r => new ResourceList(r)).ToList();
+            return resList;
         }
     }
 }
