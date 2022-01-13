@@ -17,7 +17,6 @@ namespace DumDum.Controllers
             ResourceService = resourceService;
         }
        
-        [Route("")]
         [Authorize]
         [HttpGet("kingdoms/{id=int}/resources")]
         public IActionResult Resources([FromRoute] int id, [FromHeader] string authorization)
