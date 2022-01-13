@@ -8,7 +8,7 @@ The vision of the DumDum project is to create an online browser-based multiplaye
 
 ## Team:
 #### Project Leader:
-Fronéma Lark 
+Fronéma Lark [GitHub](https://github.com/Fronema)
 #### Members:
 Jakub Choc [GitHub](https://github.com/jakubchoc)
 Marek Holba [GitHub](https://github.com/marapivas)
