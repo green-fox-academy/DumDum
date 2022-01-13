@@ -1,6 +1,10 @@
-![alt text](https://i.ibb.co/3rm0GB6/logo-mali.png[/img)
+<p align="center">
+<img src="https://i.ibb.co/3rm0GB6/logo-mali.png">
+</p>
 
+<p align="center">
 ## ✨Kingom By Kingdom Build An Empire✨
+</p>
 #### .NET 5 API App
 
 ## About the project
