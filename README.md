@@ -25,7 +25,7 @@ Silvia Walla [GitHub](https://github.com/wuwime)
 - New player registers into the game 
 - Provides username and password 
 - Starts building an empire
-- [Rules!!!](https://github.com/green-fox-academy/DumDum/blob/master/DumDum/DumDum_Rules.txt) 
+- Follow the [Rules](https://github.com/green-fox-academy/DumDum/blob/master/DumDum/DumDum_Rules.txt)!
 
 ## Tech:
 DumDum uses a number of open source projects to work properly:
