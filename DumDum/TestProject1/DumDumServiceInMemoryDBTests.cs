@@ -23,14 +23,14 @@ namespace TestProject1
             var DumDumService = new DumDumService(IAuthenticateService, UnitOfWork);
             var testPlayer = DumDumService.
                 RegisterPlayerLogic(new PlayerRequest { KingdomName = "testk", Password = "123456789", Username = "user" }).Result;
-            UnitOfWork.Kingdoms.Add(DumDumService.GetKingdomById(testPlayer.Item1.KingdomId));
+            UnitOfWork.Kingdoms.Add(DumDumService.GetKingdomById(testPlayer.Item1.KingdomId).Result);
             UnitOfWork.Players.Add(DumDumService.GetPlayerByUsername(testPlayer.Item1.Username).Result);
 
             //act
             var actualPlayer = DumDumService.GetPlayerById(1);
 
             //assert
-            Assert.Equal(testPlayer.Item1.Username, actualPlayer.Username);
+            Assert.Equal(testPlayer.Item1.Username, actualPlayer.Result.Username);
         }
 
         /*

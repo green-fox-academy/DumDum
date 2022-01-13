@@ -84,12 +84,12 @@ namespace DumDum.Services
             return response;
         }
 
-        public bool IsEmailValid(string email)
+        public async Task<bool> IsEmailValid(string email)
         {
             return email.Contains("@") && email.Contains(".") && !UnitOfWork.Players.EmailNotUsed(email);
         }
 
-        public void SendAccountVerificationEmail(Player player)
+        public async Task SendAccountVerificationEmail(Player player)
         {
             MailMessage mail = new MailMessage();
 
@@ -111,7 +111,7 @@ namespace DumDum.Services
         }
 
 
-        public void SendPasswordResetEmail(Player player)
+        public async Task SendPasswordResetEmail(Player player)
         {
             MailMessage mail = new MailMessage();
 

@@ -17,8 +17,7 @@ namespace DumDum.Repository
 
         public async Task<Player> GetPlayerByUsername(string username)
         {
-            var player =  DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.Username == username);
-            return player;
+            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.Username == username);
         }
 
         public async Task<bool> AreCredentialsValid(string username, string password)
@@ -29,8 +28,7 @@ namespace DumDum.Repository
 
         public async Task<Player> GetPlayerById(int id)
         {
-            var player = DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
-            return player;
+            return DbContext.Players.Include(p => p.Kingdom).FirstOrDefault(p => p.PlayerId == id);
         }
 
         public bool EmailNotUsed(string email)
