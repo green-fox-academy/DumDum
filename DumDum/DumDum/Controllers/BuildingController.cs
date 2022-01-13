@@ -1,4 +1,5 @@
 ﻿using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Services;
@@ -26,59 +27,58 @@ namespace DumDum.Controllers
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
             int statusCode;
-            var response = BuildingService.ListBuildings(authorization, kingdomId, out statusCode);
+            var response = BuildingService.ListBuildings(authorization, kingdomId).Result;
 
-
-            if (statusCode == 401)
+            if (response.Item2 == 401)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
+                return StatusCode(response.Item2, new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
             }
-            return Ok(response);
+            return Ok(response.Item1);
         }
         
         [Authorize]
         [HttpPut("kingdoms/{kingdomId=int}/buildings/{buildingId=int}")]
         public IActionResult UpgradeBuildings([FromHeader] string authorization, [FromRoute] int kingdomId, int buildingId)
         {
-            var response = BuildingService.LevelUp(kingdomId, buildingId,authorization, out int statusCode, out string errormessage);
+            var response = BuildingService.LevelUp(kingdomId, buildingId,authorization).Result;
 
-            if (statusCode == 401)
+            if (response.Item2 == 401)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = errormessage });
+                return StatusCode(response.Item2, new ErrorResponse { Error = response.Item3});
             } 
-            if(statusCode == 400)
+            if(response.Item2 == 400)
             {
-                return StatusCode(statusCode, new ErrorResponse { Error = errormessage });
+                return StatusCode(response.Item2, new ErrorResponse { Error = response.Item3});
             }
-            return Ok(response);
+            return Ok(response.Item1);
         }
         
         [Authorize]
         [HttpPost("kingdoms/{id=int}/buildings")]
         public IActionResult AddBuilding([FromHeader] string authorization, [FromRoute] int id, [FromBody] BuildingAddRequest type)
         {
-            var response = BuildingService.AddBuilding(type.Type, id, authorization, out int statusCode);
-            if (statusCode == 400)
+            var response = BuildingService.AddBuilding(type.Type, id, authorization).Result;
+            if (response.Item2 == 400)
             {
-                return StatusCode(statusCode, new ErrorResponse {Error = "You don't have enough gold to build that!"});
+                return StatusCode(response.Item2, new ErrorResponse {Error = "You don't have enough gold to build that!"});
             }
 
-            if (statusCode == 406)
+            if (response.Item2 == 406)
             {
-                return StatusCode(statusCode, new ErrorResponse {Error = "Type is required."});
+                return StatusCode(response.Item2, new ErrorResponse {Error = "Type is required."});
             }
 
-            if (statusCode == 401)
+            if (response.Item2 == 401)
             {
-                return StatusCode(statusCode, new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
+                return StatusCode(response.Item2, new ErrorResponse {Error = "This kingdom does not belong to authenticated player"});
             }
-            return Ok(response);
+            return Ok(response.Item1);
         }
 
         [HttpGet("leaderboards/buildings")]
         public IActionResult BuildingsLeaderboard()
         {
-            var buildingsLeaderboard = BuildingService.GetBuildingsLeaderboard();
+            var buildingsLeaderboard = BuildingService.GetBuildingsLeaderboard().Result;
 
             return Ok(buildingsLeaderboard);
         }

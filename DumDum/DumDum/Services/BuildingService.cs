@@ -1,4 +1,5 @@
-﻿using DumDum.Database;
+﻿using System;
+using DumDum.Database;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Buildings;
@@ -8,10 +9,12 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.IdentityModel.Tokens;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {
@@ -29,149 +32,113 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public List<BuildingList> GetBuildings(int id)
+        public async Task<List<BuildingList>> GetBuildings(int id)
         {
-            return UnitOfWork.Buildings.GetBuildings(id);
+            return await UnitOfWork.Buildings.GetBuildings(id);
         }
 
-        public KingdomResponse GetKingdom(int id)
+        public async Task<KingdomResponse> GetKingdom(int id)
         {
             var kingdom = DumDumService.GetKingdomById(id);
-            var player = DumDumService.GetPlayerById(kingdom.PlayerId);
-            var locations = DumDumService.AddLocations(kingdom);
-            return new KingdomResponse()
-            {
-                KingdomId = kingdom.KingdomId,
-                KingdomName = kingdom.KingdomName,
-                Ruler = player.Username,
-                Population = 0,
-                Location = locations,
-            };
+            return new KingdomResponse(DumDumService.GetKingdomById(id), DumDumService.GetPlayerById(kingdom.PlayerId), await DumDumService.AddLocations(kingdom));
         }
 
-        public BuildingResponse ListBuildings(string authorization, int kingdomId, out int statusCode)
+        public async Task<(BuildingResponse, int)> ListBuildings(string authorization, int kingdomId)
         {
-            var response = new BuildingResponse();
             if (authorization != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization;
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = await AuthenticateService.GetUserInfo(request);
                 if (player != null && player.KingdomId == kingdomId)
                 {
-                    response.Kingdom = GetKingdom(kingdomId);
-                    response.Buildings = GetBuildings(kingdomId);
-                    statusCode = 200;
-                    return response;
+                    var response = new BuildingResponse(GetKingdom(kingdomId), GetBuildings(kingdomId));
+                    return (response, 200);
                 }
             }
-
-            statusCode = 401;
-            return response;
+            return (null, 401);
         }
 
-        public Building GetBuildingById(int buildingId)
+        public async Task<Building> GetBuildingById(int buildingId)
         {
             return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
         }
         
-        public BuildingList LevelUp(int kingdomId, int buildingId, string authorization, out int statusCode, out string errorMessage)
+        public async Task<(BuildingList, int, string)> LevelUp(int kingdomId, int buildingId, string authorization)
         {
             AuthRequest request = new AuthRequest();
             request.Token = authorization;
-            var player = AuthenticateService.GetUserInfo(request);
-            var building = GetBuildingById(buildingId);
+            var player = await AuthenticateService.GetUserInfo(request);
+            var building = await GetBuildingById(buildingId);
             
             if (building == null)
             {
-                statusCode = 400;
-                errorMessage = "Kingdom not found";
-                return null;
+                return (null, 400, "Kingdom not found");
             }
-            var kingdomGoldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var nextLevelInfo = InformationForNextLevel(building.BuildingTypeId, building.Level);
+            var kingdomGoldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var nextLevelInfo = await InformationForNextLevel(building.BuildingTypeId, building.Level);
             
             if (player == null || player.KingdomId != kingdomId)
             {
-                statusCode = 401;
-                errorMessage = "This kingdom does not belong to authenticated player!";
-                return null;
+                return (null, 401, "This kingdom does not belong to authenticated player!");
             }
             
             if (nextLevelInfo == null)
             {
-                statusCode = 400;
-                errorMessage = "Your building is on maximal leve!.";
-                return null;
+                return (null, 400, "Your building is on maximal leve!." );
             }
             
             if (kingdomGoldAmount < nextLevelInfo.Cost) 
             {
-                statusCode = 400;
-                errorMessage = "You don't have enough gold to upgrade that!";
-                return null;
+                return (null, 400, "You don't have enough gold to upgrade that!");
             }
             
-            if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId))
+            if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId).Result)
             {
-                statusCode = 400;
-                errorMessage = "Your building can't have higher level than your townhall! Upgrade townhall first.";
-                return null;
+                return (null, 400, "Your building can't have higher level than your townhall! Upgrade townhall first." );
             }
 
             int timeNow = (int) DateTimeOffset.Now.ToUnixTimeSeconds();
             if (building.FinishedAt > timeNow)
             {
-                statusCode = 400;
-                errorMessage = "Your building is updating";
-                return null;
+                return (null, 400, "Your building is updating" );
             }
             building.Level = nextLevelInfo.LevelNumber;
             building.StartedAt = timeNow;
             building.FinishedAt = timeNow + nextLevelInfo.ConstTime;
             UnitOfWork.Complete();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = building.BuildingId,
-                BuildingType = building.BuildingType,
-                Level = nextLevelInfo.LevelNumber,
-                Hp = 1,
-                StartedAt = building.StartedAt,
-                FinishedAt = building.FinishedAt,
-                Production = nextLevelInfo.Production,
-                Consumption = nextLevelInfo.Consumption
-            };
-            statusCode = 200;
-            errorMessage = "ok";
-            return response;
+            BuildingList response = new BuildingList(building, nextLevelInfo);
+            
+            return (response, 200, "ok");
         }
 
-        public BuildingLevel InformationForNextLevel(int levelTypeId, int buildingLevel)
+        public async Task<BuildingLevel> InformationForNextLevel(int levelTypeId, int buildingLevel)
         {
-            return UnitOfWork.BuildingLevels.Find(p => p.BuildingLevelId == levelTypeId)
-                                            .FirstOrDefault(p => p.LevelNumber == buildingLevel + 1);
+            return UnitOfWork.BuildingLevels
+                .Find(p => p.BuildingLevelId == levelTypeId && p.LevelNumber == buildingLevel + 1)
+                .FirstOrDefault();
         }
 
-        public Kingdom FindPlayerByKingdomId(int id)
+        public async Task<Kingdom> FindPlayerByKingdomId(int id)
         {
-            return UnitOfWork.Kingdoms.FindPlayerByKingdomId(id);
+            return await UnitOfWork.Kingdoms.FindPlayerByKingdomId(id);
         }
 
-        public BuildingType FindLevelingByBuildingType(string buildingType)
+        public Task<BuildingType> FindLevelingByBuildingType(string buildingType)
         {
             return UnitOfWork.BuildingTypes.FindLevelingByBuildingType(buildingType);
         }
 
-        public List<string> ExistingTypeOfBuildings()
+        public Task<List<string>> ExistingTypeOfBuildings()
         {
             return UnitOfWork.BuildingTypes.ExistingTypeOfBuildings();
         }
 
-        public BuildingList AddBuilding(string building, int id, string authorization, out int statusCode)
+        public async Task<(BuildingList, int)> AddBuilding(string building, int id, string authorization)
         {
-            var buildingType = FindLevelingByBuildingType(building.ToLower());
+            var buildingType = await FindLevelingByBuildingType(building.ToLower());
             
-            var kingdom = FindPlayerByKingdomId(id);
+            var kingdom =  await FindPlayerByKingdomId(id);
 
             AuthRequest authRequest = new AuthRequest() {Token = authorization};
             var gold = kingdom.Resources.FirstOrDefault(r => r.ResourceType == "Gold");
@@ -179,39 +146,25 @@ namespace DumDum.Services
             var player = AuthenticateService.GetUserInfo(authRequest);
             if (player == null)
             {
-                statusCode = 401;
-                return null;
+                return (null, 401);
             }
 
-            if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Contains(building))
+            if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Result.Contains(building))
             {
-                statusCode = 406;
-                return null;
+                return (null, 406);
             }
             
             if (gold?.Amount < buildingType.BuildingLevel.Cost)
             {
-                statusCode = 400;
-                return null;
+                return (null, 400);
             }
             var build = UnitOfWork.Buildings.AddBuilding(building, kingdom, buildingType);
             UnitOfWork.Complete();
-            BuildingList response = new BuildingList
-            {
-                BuildingId = build.BuildingId,
-                BuildingType = building,
-                Level = buildingType.BuildingLevel.LevelNumber,
-                Hp = 1,
-                StartedAt = build.StartedAt,
-                FinishedAt = build.FinishedAt,
-                Production = buildingType.BuildingLevel.Production,
-                Consumption = buildingType.BuildingLevel.Consumption
-            };
-            statusCode = 200;
-            return response;
+            BuildingList response = new BuildingList(build, buildingType);
+            return (response, 200);
         }
 
-        public int GetTownHallLevel(int kingdomId)
+        public async Task<int> GetTownHallLevel(int kingdomId)
         {
             return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").FirstOrDefault().Level;
         }
@@ -219,7 +172,7 @@ namespace DumDum.Services
         public BuildingsLeaderboardResponse GetBuildingsLeaderboard()
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
-            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints();
+            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints().Result;
             return response;
         }        
     }

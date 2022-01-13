@@ -38,19 +38,20 @@ namespace TestProject1
             return unitOfWork;
         }
 
+        /*
         internal string TestLoginReturnTokenPlayerInMemoryDB(out IUnitOfWork unitOfWork)
         {
              unitOfWork = GetContextWithoutData();
             var dumDumService = new DumDumService(IAuthenticateService, unitOfWork);
             var testPlayerRequest = new PlayerRequest { KingdomName = "TestKingdom", Password = "TestPassword", Username = "TestUser" };
-            dumDumService.RegisterPlayerLogic(testPlayerRequest, out _);
+            dumDumService.RegisterPlayerLogic(testPlayerRequest);
             unitOfWork.Complete();
             IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() {Key= "This is my sample key" });
             var LoginService = new LoginService(AppSettings,  dumDumService, unitOfWork);
             var token = LoginService.
-                Login(new LoginRequest { Username= testPlayerRequest.Username, Password = testPlayerRequest.Password }, out _);
+                Login(new LoginRequest { Username= testPlayerRequest.Username, Password = testPlayerRequest.Password });
             return token;
-        }
+        }*/
     }
 }
 

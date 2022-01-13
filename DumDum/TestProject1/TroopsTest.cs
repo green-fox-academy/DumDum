@@ -91,13 +91,7 @@ namespace TestProject1
 
             requestBody.Result = new List<TroopsPoint>()
             {
-                new TroopsPoint()
-                {
-                    Ruler = "Nya",
-                    Kingdom = "Nya Nya Land",
-                    Troops = 5,
-                    Points = 11.8
-                }
+                new TroopsPoint("Nya", "Nya Nya Land", 5, 11.8 )
             };
 
             //act

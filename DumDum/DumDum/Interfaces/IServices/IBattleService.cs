@@ -1,14 +1,14 @@
-﻿using DumDum.Models.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Battles;
-using DumDum.Models.JsonEntities.Kingdom;
-using System.Collections.Generic;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IBattleService
     {
-        BattleResult GetBattleResult(string authorization, int attackerKingdomId, int battleId, out int statusCode);
-        BattleResponse MakeBattle(string authorization, int attackerKingdomId, BattleRequest battleRequest, out int statusCode);
+        Task<(BattleResult, int)> GetBattleResult(string authorization, int attackerKingdomId, int battleId);
+        Task<(BattleResponse, int)> MakeBattle(string authorization, int attackerKingdomId, BattleRequest battleRequest);
         Battle AddBattle(BattleRequest battleRequest, int attackerId, long resolutionTime, int winnerId,
             long timeToStartTheBattle, int foodStolen, int goldStolen);
         long ResolutionTimeCount(int coordinateX, int coordinateY, double minSpeed);
