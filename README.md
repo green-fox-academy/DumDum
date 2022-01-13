@@ -3,22 +3,23 @@
 </p>
 
 <p align="center">
-## ✨Kingom By Kingdom Build An Empire✨
+✨Kingom By Kingdom Build An Empire✨
 </p>
-#### .NET 5 API App
+
+#### .NET 5 API App # Deployed on [Azure](https://dumdumdumdum.azurewebsites.net)
 
 ## About the project
 The vision of the DumDum project is to create an online browser-based multiplayer game, where every player has their own kingdom and they battle with each other in order to gain control over the other kingdoms. 
 
 ## Team:
 #### Project Leader:
-Fronéma Lark [GitHub](https://github.com/Fronema)
+Fronéma Lark [GitHub](https://github.com/Fronema)  
 #### Members:
-Jakub Choc [GitHub](https://github.com/jakubchoc)
-Marek Holba [GitHub](https://github.com/marapivas)
-Matěj  Urbánek [GitHub](https://github.com/MatUrb2)
-Mladen Stupar [GitHub](https://github.com/stmlad)
-Silvia Walla [GitHub](https://github.com/wuwime)
+Jakub Choc [GitHub](https://github.com/jakubchoc)  
+Marek Holba [GitHub](https://github.com/marapivas)  
+Matěj  Urbánek [GitHub](https://github.com/MatUrb2)  
+Mladen Stupar [GitHub](https://github.com/stmlad)  
+Silvia Walla [GitHub](https://github.com/wuwime)  
 
 ## Features:
 - New player registers into the game 
