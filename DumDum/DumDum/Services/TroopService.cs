@@ -4,9 +4,11 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DumDum.Services
 {
@@ -22,49 +24,37 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public GetTroopsResponse ListTroops(string authorization, int kingdomId, out int statusCode)
+        public async Task<(GetTroopsResponse, int)> ListTroops(string authorization, int kingdomId)
         {
-            var response = new GetTroopsResponse();
-            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
+            
+            var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
             if (player != null && player.KingdomId == kingdomId)
             {
-                var plyersKingdom = DumDumService.GetKingdomById(player.KingdomId);
-                response.Kingdom = new KingdomResponse
-                {
-                    KingdomId = player.KingdomId,
-                    KingdomName = player.KingdomName,
-                    Ruler = player.Ruler,
-                    Location = new Location() { CoordinateX = plyersKingdom.CoordinateX, CoordinateY = plyersKingdom.CoordinateY }
-                };
-                response.Troops = GetTroops(player.KingdomId);
-
-                statusCode = 200;
-                return response;
+                var kingdom = DumDumService.GetKingdomById(player.KingdomId);
+                var response = new GetTroopsResponse(new KingdomResponse(kingdom), await GetTroops(player.KingdomId) );
+                return (response, 200);
             }
-
-            statusCode = 401;
-            return response;
+            return (null, 401);
         }
 
-        public List<TroopsResponse> GetTroops(int kingdomId)
+        public async Task<List<TroopsResponse>> GetTroops(int kingdomId)
         {
-            return UnitOfWork.Troops.GetTroops(kingdomId);
+            return await UnitOfWork.Troops.GetTroops(kingdomId);
         }
 
-        public string UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId, out int statusCode)
+        public async Task<(string, int)> UpgradeTroops(string authorization, TroopUpgradeRequest troopUpdateReq, int kingdomId)
         {
-            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
+            var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypesToUpgrade();
-            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
 
-            if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Contains(troopUpdateReq.Type.ToLower()))
+            if (troopUpdateReq == null || string.IsNullOrEmpty(troopUpdateReq.Type) || !possibleTroopTypes.Result.Contains(troopUpdateReq.Type.ToLower()))
             {
-                statusCode = 404;
-                return "Request was not done correctly!";
+                return ("Request was not done correctly!", 404);
             }
             if (player != null && player.KingdomId == kingdomId && troopUpdateReq != null)
             {
+                var goldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
                 var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
                 var amountOfTroopsToUpdate = CountTroopsByType(troopUpdateReq.Type.ToLower(), kingdomId);
                 var troopTypeIdToBeUpgraded = GetTroupTypeIdByTroupTypeName(troopUpdateReq.Type.ToLower());
@@ -76,69 +66,58 @@ namespace DumDum.Services
 
                 if (IsUpgradeInProgress(kingdomId, troopUpdateReq.Type))
                 {
-                    statusCode = 407;
-                    return "Creation or upgrade of this type of troop is already in progress";
+                    return ("Creation or upgrade of this type of troop is already in progress", 407);
                 }
                 if (!DoesAcademyExist(kingdomId))
                 {
-                    statusCode = 406;
-                    return "Build Academy first";
+                    return ("Build Academy first", 406);
                 }
-                if (maximumLevelPossible <= currentLevelOfTroops)
+                if (maximumLevelPossible.Result <= currentLevelOfTroops)
 
                 {
-                    statusCode = 405;
-                    return "Maximum level reached";
+                    return ("Maximum level reached", 405);
                 }
                 if (amountOfTroopsToUpdate == 0)
                 {
-                    statusCode = 402;
-                    return "You don't have this type of troops!";
+                    return ("You don't have this type of troops!", 402);
                 }
 
                 if (goldAmount < troopUpgradeCost * amountOfTroopsToUpdate)
                 {
-                    statusCode = 400;
-                    return "You don't have enough gold to upgrade this type of troops!";
+                    return ("You don't have enough gold to upgrade this type of troops!", 400);
                 }
                 if (currentLevelOfTownhall <= currentLevelOfTroops)
                 {
-                    statusCode = 403;
-                    return "Upgrade townhall first";
+                    return ("Upgrade townhall first", 403);
                 }
                 UnitOfWork.Troops.UpgradeTroops(troopTypeIdToBeUpgraded, kingdomId, timeRequiredToUpgradeTroop);
                 UnitOfWork.Complete();
                 DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
-                statusCode = 200;
-                return "Ok";
+                return ("Ok", 200);
             }
-
-            statusCode = 401;
-            return "This kingdom does not belong to authenticated player";
+            return ("This kingdom does not belong to authenticated player", 401);
         }
 
-        public List<TroopsResponse> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId, out int statusCode)
+        public async Task<(List<TroopsResponse>, int)> CreateTroops(string authorization, TroopCreationRequest troopCreationReq, int kingdomId)
         {
-            var player = AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
-            var goldAmount = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var createdTroops = new List<TroopsResponse>();
-            var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypes();
-
-            if (troopCreationReq == null || String.IsNullOrEmpty(troopCreationReq.Type) || troopCreationReq.Quantity == 0 || 
-                !possibleTroopTypes.Contains(troopCreationReq.Type.ToLower()))
-            {
-                statusCode = 404;
-                return new List<TroopsResponse>();
-            }
+            var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
             if (player != null && player.KingdomId == kingdomId)
             {
+                var goldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
+                var createdTroops = new List<TroopsResponse>();
+                var possibleTroopTypes = UnitOfWork.TroopTypes.PossibleTroopTypes();
+
+                if (troopCreationReq == null || String.IsNullOrEmpty(troopCreationReq.Type) || troopCreationReq.Quantity == 0 || 
+                    !possibleTroopTypes.Result.Contains(troopCreationReq.Type.ToLower()))
+                {
+                    return (new List<TroopsResponse>(), 404);
+                }
                 var currentLevelOfTroops = CurrentLevelOTroops(kingdomId, troopCreationReq.Type.ToLower());
                 int newTroopCost = GetTroopCreationCost(troopCreationReq.Type.ToLower(), currentLevelOfTroops);
 
                 if (goldAmount < newTroopCost * troopCreationReq.Quantity)
                 {
-                    statusCode = 400;
-                    return new List<TroopsResponse>();
+                    return (new List<TroopsResponse>(), 400);
                 }
                 for (int i = 0; i < troopCreationReq.Quantity; i++)
                 {
@@ -146,23 +125,11 @@ namespace DumDum.Services
                     UnitOfWork.Troops.Add(newTroop);
                     UnitOfWork.Complete();
                     DumDumService.TakeGold(kingdomId, newTroopCost);
-                    createdTroops.Add(new TroopsResponse()
-                    {
-                        TroopId = newTroop.TroopId,
-                        TroopType = newTroop.TroopType.TroopType,
-                        Level = newTroop.Level,
-                        HP = newTroop.TroopType.TroopLevel.HP,
-                        Attack = newTroop.TroopType.TroopLevel.Attack,
-                        Defence = newTroop.TroopType.TroopLevel.Defence,
-                        StartedAt = newTroop.StartedAt,
-                        FinishedAt = newTroop.FinishedAt
-                    });
+                    createdTroops.Add(new TroopsResponse(newTroop));
                 }
-                statusCode = 200;
-                return createdTroops;
+                return (createdTroops, 200);
             }
-            statusCode = 401;
-            return new List<TroopsResponse>();
+            return (new List<TroopsResponse>(), 401);
         }
 
         public Troop CreateNewTroop(string troopType, int kingdomId)
@@ -200,14 +167,14 @@ namespace DumDum.Services
 
         public bool IsUpgradeInProgress(int kingdomId, string troopType)
         {
-            return (int)DateTimeOffset.Now.ToUnixTimeSeconds() < UnitOfWork.Troops.FinishedAtTimeTroop(troopType, kingdomId);
+            return (int)DateTimeOffset.Now.ToUnixTimeSeconds() < UnitOfWork.Troops.FinishedAtTimeTroop(troopType, kingdomId).Result;
         }
 
         public int GetTroopCreationCost(string troopType, int troopCreationLevel)
         {
             if (troopCreationLevel > 0)
             {
-                return UnitOfWork.TroopLevels.TroopCreationHigherLevel(troopType, troopCreationLevel).Cost;
+                return UnitOfWork.TroopLevels.TroopCreationHigherLevel(troopType, troopCreationLevel).Result.Cost;
             }
             return 0;
         }
@@ -265,20 +232,16 @@ namespace DumDum.Services
             return 0;
         }
 
-        public TroopsLeaderboardResponse GetTroopsLeaderboard()
+        public async Task<TroopsLeaderboardResponse> GetTroopsLeaderboard()
         {
             TroopsLeaderboardResponse response = new();
             List<TroopsPoint> pointsList = new();
-            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
+            var kingdoms = await UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in kingdoms)
             {
-                var troopPoint = new TroopsPoint()
-                {
-                    Ruler = kingdom.Player.Username,
-                    Kingdom = kingdom.KingdomName,
-                    Troops = UnitOfWork.Troops.Find(t => t.KingdomId == kingdom.KingdomId).Count(),
-                    Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
-                };
+                var troopPoint = new TroopsPoint(kingdom, GetAllTroopsConsumptionInKingdom(kingdom.KingdomId).Result,
+                    UnitOfWork.Troops.Find(t => t.KingdomId == kingdom.KingdomId).Count());
+
                 pointsList.Add(troopPoint);
             }
 
@@ -287,7 +250,7 @@ namespace DumDum.Services
             return response;
         }
 
-        public double GetAllTroopsConsumptionInKingdom(int kingdomId)
+        public async Task<double> GetAllTroopsConsumptionInKingdom(int kingdomId)
         {
             var consumptionOfAllTroopsInKingdom = 0.0;
 
@@ -298,26 +261,19 @@ namespace DumDum.Services
                         .Select(t => t.Consumption)
                         .FirstOrDefault();
                 }
-
-            return consumptionOfAllTroopsInKingdom;
+                return await Task.FromResult(consumptionOfAllTroopsInKingdom);
         }
 
-        public KingdomsLeaderboardResponse GetKingdomsLeaderboard()
+        public async Task<KingdomsLeaderboardResponse> GetKingdomsLeaderboard()
         {
             KingdomsLeaderboardResponse response = new();
 
             List<KingdomPoints> pointsList = new();
-            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
+            var kingdoms = await UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
 
             foreach (var kingdom in kingdoms)
             {
-                var kingdomPoint = new KingdomPoints()
-                {
-                    Ruler = kingdom.Player.Username,
-                    Kingdom = kingdom.KingdomName,
-                    Points = GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)
-                            + UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom)
-                };
+                var kingdomPoint = new KingdomPoints(kingdom, (await GetAllTroopsConsumptionInKingdom(kingdom.KingdomId)) + (await UnitOfWork.Buildings.GetAllBuildingsConsumptionInKingdom(kingdom)));
                 pointsList.Add(kingdomPoint);
             }
 

@@ -6,6 +6,7 @@ using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Helpers;
 
 
@@ -21,29 +22,29 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public Player GetPlayerByUsername(string username)
+        public async Task<Player> GetPlayerByUsername(string username)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(username);
+            return await UnitOfWork.Players.GetPlayerByUsername(username);
         }
 
-        public Kingdom GetKingdomByName(string kingdomName)
+        public async Task<Kingdom> GetKingdomByName(string kingdomName)
         {
-            return UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
+            return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
 
-        public Player Register(string username, string password, string kingdomName)
+        public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
-            var kingdom = CreateKingdom(kingdomName, username);
-            var player = new Player() {Password = password, Username = username, KingdomId = kingdom.KingdomId};
+            var kingdom = await CreateKingdom(kingdomName, username);
+            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
             UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
-            var playerToReturn = GetPlayerByUsername(username);
+            var playerToReturn = await GetPlayerByUsername(username);
             kingdom.PlayerId = playerToReturn.PlayerId;
             UnitOfWork.Complete();
             return playerToReturn;
         }
 
-        public Kingdom CreateKingdom(string kingdomname, string username)
+        public async Task<Kingdom> CreateKingdom(string kingdomname, string username)
         {
             var kingdom = new Kingdom();
             if (kingdomname.IsNullOrEmpty())
@@ -83,12 +84,12 @@ namespace DumDum.Services
             return kingdomTo;
         }
 
-        public bool AreCredentialsValid(string username, string password)
+        public async Task<bool> AreCredentialsValid(string username, string password)
         {
-            return UnitOfWork.Players.AreCredentialsValid(username, password);
+            return await UnitOfWork.Players.AreCredentialsValid(username, password);
         }
 
-        public bool AreCoordinatesValid(int coordinateX, int coordinateY)
+        public async Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY)
         {
             return coordinateX > 0 && coordinateX < 100 && coordinateY > 0 && coordinateY < 100;
         }
@@ -110,7 +111,7 @@ namespace DumDum.Services
             var kingdom = UnitOfWork.Kingdoms.GetKingdomById(kingdomId);
             if (kingdom != null)
             {
-                return kingdom;
+                return kingdom.Result;
             }
 
             return new Kingdom() { };
@@ -127,120 +128,103 @@ namespace DumDum.Services
 
         public Player GetPlayerById(int id)
         {
-            return UnitOfWork.Players.GetPlayerById(id);
+            return UnitOfWork.Players.GetPlayerById(id).Result;
         }
 
-        public string RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest,
-            out int statusCode)
+        public async Task<(string, int)> RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest)
         {
             if (authorization != "")
             {
-                var player = AuthenticateService.GetUserInfo(new AuthRequest() {Token = authorization});
+                var player = await AuthenticateService.GetUserInfo(new AuthRequest() { Token = authorization });
 
                 if (kingdomRequest == null || kingdomRequest.GetType().GetProperties()
                     .All(p => p.GetValue(kingdomRequest) == null))
                 {
-                    statusCode = 400;
-                    return "Request was not done correctly!";
+                    return ("Request was not done correctly!", 400);
                 }
-
                 if (player.KingdomId != kingdomRequest.KingdomId)
                 {
-                    statusCode = 401;
-                    return "This kingdom does not belong to authenticated player";
+                    return ("This kingdom does not belong to authenticated player", 401);
                 }
-
-                if (!AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
+                if (!await AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
                 {
-                    statusCode = 400;
-                    return "One or both coordinates are out of valid range(0 - 99).";
+                    return ("One or both coordinates are out of valid range(0 - 99).", 400);
                 }
 
                 if (DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY))
                 {
-                    statusCode = 400;
-                    return "Given coordinates are already taken!";
+                    return ("Given coordinates are already taken!", 400);
                 }
-
                 if (!IsKingdomIdValid(kingdomRequest.KingdomId))
                 {
-                    statusCode = 400;
-                    return "Kingdom has coordinates assigned already";
+                    return ("Kingdom has coordinates assigned already", 400);
                 }
-
-                if (AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
-                    IsKingdomIdValid(kingdomRequest.KingdomId) &&
-                    !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
-                    player != null && player.KingdomId == kingdomRequest.KingdomId)
+                if (await AreCoordinatesValid(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
+                   IsKingdomIdValid(kingdomRequest.KingdomId) &&
+                   !DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
+                   player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
-                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY,
-                        kingdomRequest.KingdomId);
-                    statusCode = 200;
-                    return "Ok";
+                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    return ("Ok", 200);
                 }
             }
-
-            statusCode = 400;
-            return "";
+            return ("",400);
         }
 
-        public PlayerResponse RegisterPlayerLogic(PlayerRequest playerRequest, out int statusCode)
+        public async Task<(PlayerResponse, int)> RegisterPlayerLogic(PlayerRequest playerRequest)
         {
-            if (playerRequest.KingdomName is not null)
+            if (playerRequest.KingdomName is not null && playerRequest.Email is not null)
             {
-                if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
+                if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password) &&
+                    AuthenticateService.IsEmailValid(playerRequest.Email))
                 {
                     var hashedPassword = Crypto.HashPassword(playerRequest.Password);
-                    var player = Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName);
+                    var player = await Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName,
+                        playerRequest.Email);
+                    AuthenticateService.SendAccountVerificationEmail(player);
                     if (player is null)
                     {
-                        statusCode = 400;
-                        return null;
+                        return (null, 400);
                     }
-
-                    statusCode = 200;
-                    return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
+                    var response = new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
+                    return (response, 200);
                 }
-
-                statusCode = 400;
-                return null;
+                return (null, 400);
             }
 
-            if (AreCredentialsValid(playerRequest.Username, playerRequest.Password))
+            if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password))
             {
-                var player = Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName);
+                var player = await Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName,
+                    playerRequest.Email);
                 if (player is null)
                 {
-                    statusCode = 400;
-                    return null;
+                    return (null, 400);
                 }
-
-                statusCode = 200;
-                return new PlayerResponse() {Username = player.Username, KingdomId = player.KingdomId};
+                var response = new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
+                return (response, 200);
             }
-
-            statusCode = 400;
-            return null;
+            return (null, 400);
         }
 
-        public KingdomsListResponse GetAllKingdoms()
+        public async Task<KingdomsListResponse> GetAllKingdoms()
         {
-            return UnitOfWork.Kingdoms.GetAllKingdoms();
+            return UnitOfWork.Kingdoms.GetAllKingdoms().Result;
         }
 
-        public Location AddLocations(Kingdom kingdom)
+        public async Task<Location> AddLocations(Kingdom kingdom)
         {
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
         }
-
-        public int GetGoldAmountOfKingdom(int kingdomId)
+        
+        public async Task<int> GetGoldAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)
             {
-                var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
+                var gold = await UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
                 if (gold != null)
                 {
-                    return gold.Amount;
+                    int amount = gold.Amount;
+                    return amount;
                 }
 
                 return 0;
@@ -254,17 +238,17 @@ namespace DumDum.Services
             var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
             if (gold != null)
             {
-                gold.Amount -= amount;
-                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
+                gold.Result.Amount -= amount;
+                UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold.Result);
                 UnitOfWork.Complete();
             }
         }
 
-        public int GetFoodAmountOfKingdom(int kingdomId)
+        public async Task<int> GetFoodAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)
             {
-                var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+                var food = await UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
                 if (food != null)
                 {
                     return food.Amount;
@@ -276,7 +260,7 @@ namespace DumDum.Services
 
         public void TakeFood(int kingdomId, int amount)
         {
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (food != null)
             {
                 food.Amount -= amount;
@@ -287,7 +271,7 @@ namespace DumDum.Services
 
         public void GiveFood(int kingdomId, int amount)
         {
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (food != null)
             {
                 food.Amount += amount;
@@ -298,13 +282,80 @@ namespace DumDum.Services
 
         public void GiveGold(int kingdomId, int amount)
         {
-            var gold = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
+            var gold = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
             if (gold != null)
             {
                 gold.Amount += amount;
                 UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
                 UnitOfWork.Complete();
             }
+        }
+
+        public string SetAuthToTrue(int playerId, string hash, out int statusCode)
+        {
+            var player = GetPlayerVerified(playerId, hash);
+            if (player is not null)
+            {
+                if (player.IsVerified)
+                {
+                    statusCode = 200;
+                    return "Email already verified!";
+                }
+                statusCode = 200;
+                player.IsVerified = true;
+                UnitOfWork.Players.Update(player);
+                UnitOfWork.Complete();
+                return $"{player.Email} is now a verified email!";
+            }
+
+            statusCode = 400;
+            return string.Empty;
+        }
+
+        public async Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest)
+        {
+            if (UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
+            {
+                var player = await GetPlayerByUsername(passwordResetRequest.Username);
+                AuthenticateService.SendPasswordResetEmail(player);
+                return ("Email has been sent.", 200);
+            }
+            return ("Credentials not valid.", 400);
+        }
+
+        public Player GetPlayerVerified(int playerId, string hash)
+        {
+            hash = hash.Replace(" ", "+");
+            var player = GetPlayerById(playerId);
+            if (player is not null && player.Password.Contains(hash))
+            {
+                return player;
+            }
+
+            return null;
+        }
+
+        public string ChangePassword(int playerId, string newPassword, out int statusCode)
+        {
+            if (newPassword is not null && playerId != 0)
+            {
+                var player = GetPlayerById(playerId);
+                var hashed = Crypto.HashPassword(newPassword);
+                if (newPassword.Length >= 8 && hashed != player.Password)
+                {
+                    player.Password = Crypto.HashPassword(newPassword);
+                    UnitOfWork.Players.Update(player);
+                    UnitOfWork.Complete();
+                    statusCode = 200;
+                    return "Password has been changed successfully.";
+                }
+
+                statusCode = 400;
+                return "password doesn't match required conditions";
+            }
+
+            statusCode = 400;
+            return "Error. Something went wrong with the request.";
         }
     }
 }

@@ -1,10 +1,13 @@
-using DumDum.Interfaces;
-using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Battles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
+using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Authorization;
+using DumDum.Models.JsonEntities.Battles;
+using DumDum.Repository;
 
 namespace DumDum.Services
 {
@@ -21,19 +24,17 @@ namespace DumDum.Services
             DumDumService = dumService;
         }
 
-        public BattleResult GetBattleResult(string authorization, int attackerKingdomId, int battleId,
-            out int statusCode)
+        public async Task<(BattleResult, int)> GetBattleResult(string authorization, int attackerKingdomId, int battleId)
         {
             if (authorization != "")
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = await AuthenticateService.GetUserInfo(request);
 
                 if (player == null)
                 {
-                    statusCode = 401;
-                    return new BattleResult();
+                    return (new BattleResult(), 401);
                 }
 
                 var battle = UnitOfWork.Battles.GetBattleById(battleId);
@@ -61,39 +62,29 @@ namespace DumDum.Services
 
                 attacker.TroopsLost = troopAttackerList;
                 defender.TroopsLost = troopDefenderList;
-
-                statusCode = 200;
-                return new BattleResult()
-                {
-                    BattleId = battle.BattleId, ResolutionTime = battle.ResolutionTime,
-                    BattleType = battle.BattleType,
-                    Winner = DumDumService.GetPlayerById(battle.WinnerPlayerId).Username, Attacker = attacker,
-                    Defender = defender
-                };
+                
+                return (new BattleResult(battle.BattleId, battle.ResolutionTime, battle.BattleType,
+                    DumDumService.GetPlayerById(battle.WinnerPlayerId).Username, attacker, defender), 200);
             }
-
-            statusCode = 401;
-            return new BattleResult();
+            return new (new BattleResult(), 401);
         }
 
-        public BattleResponse MakeBattle(string authorization, int attackerKingdomId, BattleRequest battleRequest,
-            out int statusCode)
+        public async Task<(BattleResponse, int)> MakeBattle(string authorization, int attackerKingdomId, BattleRequest battleRequest)
         {
             if (authorization == "")
             {
-                statusCode = 401;
-                return new BattleResponse();
+                return (new BattleResponse(), 401);
             }
 
             AuthRequest request = new AuthRequest();
             request.Token = authorization.Remove(0, 7);
-            var player = AuthenticateService.GetUserInfo(request);
+            var player = await AuthenticateService.GetUserInfo(request);
 
             if (player != null)
             {
                 var kingdom = DumDumService.GetKingdomById(battleRequest.Target.KingdomId);
                 var minSpeed = GetMinSpeed(attackerKingdomId);
-                var attacker = DumDumService.GetPlayerByUsername(player.Ruler);
+                var attacker = await DumDumService.GetPlayerByUsername(player.Ruler);
                 var resolutionTime = ResolutionTimeCount(battleRequest.Target.Location.CoordinateX,
                     battleRequest.Target.Location.CoordinateY, minSpeed);
                 string loser;
@@ -121,8 +112,8 @@ namespace DumDum.Services
 
                 foreach (var troop in loserLostTroops)
                 {
-                    var troopToUpdate = UnitOfWork.TroopsLost.TroopToUpdate(troop.TroopLostId,
-                        DumDumService.GetPlayerByUsername(loser).PlayerId);
+                    var playerByUserName = await DumDumService.GetPlayerByUsername(loser);
+                    var troopToUpdate = UnitOfWork.TroopsLost.TroopToUpdate(troop.TroopLostId, playerByUserName.PlayerId);
 
                     if (troopToUpdate is not null)
                     {
@@ -131,14 +122,10 @@ namespace DumDum.Services
                         UnitOfWork.Complete();
                     }
                 }
-
-                statusCode = 200;
-                return new BattleResponse()
-                    {BattleId = battle.BattleId, ResolutionTime = battle.ResolutionTime};
+                return (new BattleResponse(battle.BattleId, battle.ResolutionTime), 200);
+                
             }
-
-            statusCode = 401;
-            return new BattleResponse();
+            return (new BattleResponse(), 401);
         }
 
         public Battle AddBattle(BattleRequest battleRequest, int attackerId, long resolutionTime, int winnerId,
@@ -147,7 +134,7 @@ namespace DumDum.Services
             var battleToAdd = new Battle()
             {
                 BattleType = battleRequest.BattleType, AttackerId = attackerId,
-                DefenderId = DumDumService.GetPlayerByUsername(battleRequest.Target.Ruler).PlayerId,
+                DefenderId = DumDumService.GetPlayerByUsername(battleRequest.Target.Ruler).Result.PlayerId,
                 ResolutionTime = resolutionTime, WinnerPlayerId = winnerId,
                 TimeToStartTheBattle = timeToStartTheBattle, FoodStolen = foodStolen, GoldStolen = goldStolen
             };
@@ -289,12 +276,12 @@ namespace DumDum.Services
         public void TakeAndGiveLoot(int winnerId, string loser, out float goldStolen, out float foodStolen)
         {
             var kingdomOfWinner = DumDumService.GetPlayerById(winnerId).Kingdom;
-            var kingdomOfLoser = DumDumService.GetPlayerByUsername(loser).Kingdom;
-            var amountOfGold = DumDumService.GetGoldAmountOfKingdom(kingdomOfLoser.KingdomId);
+            var kingdomOfLoser = DumDumService.GetPlayerByUsername(loser).Result.Kingdom;
+            var amountOfGold = DumDumService.GetGoldAmountOfKingdom(kingdomOfLoser.KingdomId).Result;
             float amountOfGoldToTakeOrGive = amountOfGold / 100f;
             goldStolen = amountOfGoldToTakeOrGive * 20;
             DumDumService.TakeGold(kingdomOfLoser.KingdomId, (int) goldStolen);
-            float amountOfFood = DumDumService.GetFoodAmountOfKingdom(kingdomOfLoser.KingdomId);
+            float amountOfFood = DumDumService.GetFoodAmountOfKingdom(kingdomOfLoser.KingdomId).Result;
             var amountOfFoodToTakeOrGive = amountOfFood / 100;
             foodStolen = amountOfFoodToTakeOrGive * 20;
             DumDumService.TakeFood(kingdomOfLoser.KingdomId, (int) foodStolen);

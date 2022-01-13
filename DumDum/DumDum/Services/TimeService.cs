@@ -1,6 +1,10 @@
-﻿using DumDum.Interfaces;
+﻿using DumDum.Database;
+using DumDum.Interfaces;
+using DumDum.Models.Entities;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -18,7 +22,6 @@ namespace DumDum.Services
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
         }
-
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             UpdateAllKingdomsEvents();
@@ -27,37 +30,37 @@ namespace DumDum.Services
         public void UpdateAllKingdomsEvents()
         {
             var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
-            foreach (var kingdom in Kingdoms)
+            foreach (var kingdom in Kingdoms.Result)
             {
                 GetKingdomResourcesPerCycle(kingdom.KingdomId);
             }
         }
 
-        public void GetKingdomResourcesPerCycle(int kingdomId)
+        public async void GetKingdomResourcesPerCycle(int kingdomId)
         {
             int cycles = 1;
-            var ActualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId);
-            var ActualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId);
+            var actualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId).Result;
+            var actualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId).Result;
             //kód na produkci
             //kód na jídlo
-            var ProductionOfFood = GetFoodFromFarms(kingdomId, cycles);
+            var productionOfFood = GetFoodFromFarms(kingdomId, cycles);
             //kód na zlato
-            var ProductionOfGold = GetGoldFromMines(kingdomId, cycles);
+            var productionOfGold = GetGoldFromMines(kingdomId, cycles);
 
             //kód na konzumaci
-            var ConsumptionOfTroops = 0;
-            var ConsumptionOfBuildings = 0;
-            var AllConsumption = ConsumptionOfBuildings + ConsumptionOfTroops;
+            var consumptionOfTroops = 0;
+            var consumptionOfBuildings = 0;
+            var allConsumption = consumptionOfBuildings + consumptionOfTroops;
             //Výsledek
-            var NewAmountOfFood = ActualKingdomsFood + (ProductionOfFood - AllConsumption);
-            var NewAmountOfGold = ActualKingdomsGold + ProductionOfGold;
+            var newAmountOfFood = actualKingdomsFood + (productionOfFood - allConsumption);
+            var newAmountOfGold = actualKingdomsGold + productionOfGold;
 
 
             //zapsání do db
-            var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
-            gold.Amount = NewAmountOfGold;
-            food.Amount = NewAmountOfFood;
+            var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId).Result;
+            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
+            gold.Amount = newAmountOfGold;
+            food.Amount = newAmountOfFood;
             UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
             UnitOfWork.Resources.UpdateFoodAmountOfKingdom(food);
             UnitOfWork.Complete();
@@ -65,30 +68,30 @@ namespace DumDum.Services
 
         public int GetFoodFromFarms(int kingdomId, int cycles)
         {
-            var FoodPerFarms = 0;
-            var NumberOfFarms = UnitOfWork.Buildings.GetNumberOfFarm(kingdomId);
-            foreach (var farm in NumberOfFarms)
+            var foodPerFarms = 0;
+            var numberOfFarms = UnitOfWork.Buildings.GetNumberOfFarm(kingdomId);
+            foreach (var farm in numberOfFarms)
             {
-                FoodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
+                foodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
             }
 
-            var ProducedFood = FoodPerFarms * cycles;
+            var producedFood = foodPerFarms * cycles;
 
-            return ProducedFood;
+            return producedFood;
         }
 
         public int GetGoldFromMines(int kingdomId, int cycles)
         {
-            var GoldPerMine = 0;
-            var NumberOfMines = UnitOfWork.Buildings.GetNumberOfMines(kingdomId);
-            foreach (var farm in NumberOfMines)
+            var goldPerMine = 0;
+            var numberOfMines = UnitOfWork.Buildings.GetNumberOfMines(kingdomId);
+            foreach (var farm in numberOfMines)
             {
-                GoldPerMine += HomMuchFoodOneFarmProduce(farm.Level);
+                goldPerMine += HomMuchFoodOneFarmProduce(farm.Level);
             }
 
-            var ProducedGold = GoldPerMine * cycles;
+            var producedGold = goldPerMine * cycles;
 
-            return ProducedGold;
+            return producedGold;
         }
 
         public int HomMuchFoodOneFarmProduce(int lvl)
