@@ -32,7 +32,7 @@ DumDum uses a number of open source projects to work properly:
 
 - [.NET 5] - .NET 5 is a cross-platform, high-performance, open-source framework
 - [MySQL] - Database Service is a fully managed database service to deploy cloud-native applications
-- [EntityFramework] - Oobject–relational mapping framework for .NET
+- [EntityFramework] - Object–relational mapping framework for .NET
 - [MOQ] - The most popular and friendly mocking library for .NET
 - [Newtonsoft Json.NET] - High-performance JSON framework for .NET
 - [Serilog.AspNetCore] - Logging for ASP.NET Core
