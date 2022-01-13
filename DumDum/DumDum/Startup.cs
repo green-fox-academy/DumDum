@@ -21,6 +21,7 @@ using DumDum.Interfaces.IRepositories;
 using DumDum.Interfaces.IServices;
 using DumDum.Repository;
 using Serilog;
+using Microsoft.OpenApi.Models;
 
 namespace DumDum
 {
@@ -96,6 +97,17 @@ namespace DumDum
             services.AddControllers().AddNewtonsoftJson(options =>
                  options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "DumDum",
+                    Description = ".NET 5 API App"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,10 +132,9 @@ namespace DumDum
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
-                c.IndexStream = () => GetType().Assembly
-                  .GetManifestResourceStream("DumDum.Views.DumDum.index.html"); // requires file to be added as an embedded resource
                 c.RoutePrefix = string.Empty;
             });
+
 
             app.UseSerilogRequestLogging();
         }
