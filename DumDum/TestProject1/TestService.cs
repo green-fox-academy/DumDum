@@ -38,6 +38,7 @@ namespace TestProject1
             return unitOfWork;
         }
 
+        /*
         internal string TestLoginReturnTokenPlayerInMemoryDB(out IUnitOfWork unitOfWork)
         {
              unitOfWork = GetContextWithoutData();
@@ -50,7 +51,7 @@ namespace TestProject1
             var token = LoginService.
                 Login(new LoginRequest { Username= testPlayerRequest.Username, Password = testPlayerRequest.Password });
             return token;
-        }
+        }*/
     }
 }
 

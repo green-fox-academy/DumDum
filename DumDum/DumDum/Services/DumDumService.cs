@@ -86,7 +86,7 @@ namespace DumDum.Services
 
         public async Task<bool> AreCredentialsValid(string username, string password)
         {
-            return UnitOfWork.Players.AreCredentialsValid(username, password).Result;
+            return await UnitOfWork.Players.AreCredentialsValid(username, password);
         }
 
         public async Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY)
