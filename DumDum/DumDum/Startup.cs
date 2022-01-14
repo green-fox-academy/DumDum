@@ -156,14 +156,11 @@ namespace DumDum
             //    .EnableDetailedErrors());
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-
-           
-
             if (environment == "Production")
             {
-                var connectionString = AppConfig.GetConnectionString("AzureSql");
+                var connectionString = AppConfig.GetConnectionString("dumdumsql");
                 var sb = new SqlConnectionStringBuilder(connectionString);
-                sb.Password = AppConfig["AzureSqlPassword"];
+                sb.Password = AppConfig["Dumdum123"];
                 services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
             }
         }
