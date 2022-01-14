@@ -6,10 +6,10 @@ namespace DumDum.Interfaces
 {
     public interface IBuildingRepository : IRepository<Building>
     {
-        List<BuildingList> GetBuildings(int Id);
-        Building AddBuilding(string building, Kingdom kingdom, BuildingType buildingType);
-        List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId);
-        double GetAllBuildingsConsumptionInKingdom(Kingdom kingdom);
-        List<Building> GetAllBuildingsOfKingdom(int kingdomId);
+        Task<List<BuildingList>> GetBuildings(int Id);
+        Task<Building> AddBuilding(string building, Kingdom kingdom, BuildingType buildingType);
+        List<Building> GetNumberOfFarm(int kingdomId);
+        List<Building> GetNumberOfMines(int kingdomId);
+        Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom);
     }
 }

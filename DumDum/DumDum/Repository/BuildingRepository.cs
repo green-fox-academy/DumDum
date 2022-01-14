@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Moq;
 
 namespace DumDum.Repository
 {
@@ -15,21 +17,15 @@ namespace DumDum.Repository
         {
         }
 
-        public List<BuildingList> GetBuildings(int Id)
+        public async Task<List<BuildingList>> GetBuildings(int Id)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList()
-            {
-                BuildingId = b.BuildingId,
-                BuildingType = b.BuildingType,
-                Level = b.Level,
-                StartedAt = b.StartedAt,
-                FinishedAt = b.FinishedAt
-            }).ToList();
+            var buildingList = DbContext.Buildings.Where(b => b.KingdomId == Id).Select(b => new BuildingList(b)).ToList();
+            return buildingList;
         }
 
-        public Building AddBuilding(string building, Kingdom kingdom, BuildingType buildingType)
+        public async Task<Building> AddBuilding(string building, Kingdom kingdom, BuildingType buildingType)
         {
-            return DbContext.Buildings.Add(new Building()
+            var addBuilding = DbContext.Buildings.Add(new Building()
             {
                 BuildingType = building,
                 KingdomId = kingdom.KingdomId,
@@ -41,11 +37,13 @@ namespace DumDum.Repository
                 FinishedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds()
                            + buildingType.BuildingLevel.ConstTime
             }).Entity;
+            return addBuilding;
         }
 
-        public double GetAllBuildingsConsumptionInKingdom(Kingdom kingdom)
+        public async Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom)
         {
-            return DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
+            var number = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
+            return number;
         }
 
         public List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId)

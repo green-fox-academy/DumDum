@@ -9,5 +9,19 @@ namespace DumDum.Models.JsonEntities.Battles
         public Attacker Attacker { get; set; }
         public Defender Defender { get; set; }
 
+        public BattleResult()
+        {
+            
+        }
+
+        public BattleResult(int battleId, long resolutionTime, string battleType, string winner, Attacker attacker, Defender defender )
+        {
+                BattleId = battleId;
+                ResolutionTime = resolutionTime;
+                Winner = winner;
+                Attacker = attacker;
+                Defender = defender;
+        }
+
     }
 }

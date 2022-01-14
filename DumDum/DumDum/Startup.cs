@@ -13,7 +13,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using DumDum.Services;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 using DumDum.Repository;
+using Serilog;
+using Microsoft.OpenApi.Models;
 
 namespace DumDum
 {
@@ -23,10 +27,16 @@ namespace DumDum
         public Startup(IConfiguration configuration)
         {
             AppConfig = configuration;
+
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen();
+
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
             services.AddTransient<IBattleService, BattleService>();
@@ -79,9 +89,21 @@ namespace DumDum
                     ValidateAudience = false
                 };
             });
+
             services.AddControllers().AddNewtonsoftJson(options =>
                  options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "DumDum",
+                    Description = ".NET 5 API App"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +122,17 @@ namespace DumDum
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
+                c.RoutePrefix = string.Empty;
+            });
+
+
+            app.UseSerilogRequestLogging();
         }
 
         private void ConfigureDb(IServiceCollection services)

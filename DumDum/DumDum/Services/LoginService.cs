@@ -7,6 +7,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Helpers;
 
 namespace DumDum.Services
@@ -25,26 +26,26 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public bool LoginCheck(string username)
+        public async Task<bool> LoginCheck(string username)
         {
             return UnitOfWork.Players.Any(x => x.Username == username);
         }
 
-        public bool PasswordCheck(string password)
+        public async Task<bool> PasswordCheck(string password)
         {
             return UnitOfWork.Players.Any(x => x.Password == password);
         }
 
-        public bool LoginPasswordCheck(string username, string password)
+        public async Task<bool> LoginPasswordCheck(string username, string password)
         {
-            var playerFromDb = DumDumService.GetPlayerByUsername(username);
+            var playerFromDb = await DumDumService.GetPlayerByUsername(username);
             var verified = Crypto.VerifyHashedPassword(playerFromDb.Password, password);
             return UnitOfWork.Players.Any(x => x.Username == username) && verified;
         }
 
-        public string Authenticate(string username, string password)
+        public async Task<string> Authenticate(string username, string password)
         {
-            if (LoginPasswordCheck(username, password))
+            if (await LoginPasswordCheck(username, password))
             {
                 //je potreba nainstalovat nuget System.IdentityModel.Tokens.Jwt
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -69,29 +70,25 @@ namespace DumDum.Services
         }
 
         //logika pro controller
-        public string Login(LoginRequest player, out int statusCode)
+        public async Task<(string, int)>Login(LoginRequest player)
         {
             LoginResponse response = new LoginResponse();
-            var playerTologin = DumDumService.GetPlayerByUsername(player.Username);
-            if (LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
+            var playerTologin = await DumDumService.GetPlayerByUsername(player.Username);
+            if (await LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
             {
-                response.Token = Authenticate(player.Username, player.Password);
+                response.Token = await Authenticate(player.Username, player.Password);
             }
 
             if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
             {
-                statusCode = 400;
-                return "Field username and/or field password was empty!";
+                return ("Field username and/or field password was empty!", 400);
             }
 
-            if (!LoginPasswordCheck(player.Username, player.Password))
+            if (! await LoginPasswordCheck(player.Username, player.Password))
             {
-                statusCode = 401;
-                return "Username and/or password was incorrect!";
+                return ("Username and/or password was incorrect!", 401);
             }
-
-            statusCode = 200;
-            return response.Token;
+            return (response.Token, 200);
         }
     }
 }

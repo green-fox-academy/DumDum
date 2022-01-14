@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DumDum.Database;
 using DumDum.Interfaces;
 using DumDum.Models.Entities;
@@ -22,52 +23,39 @@ namespace DumDum.Services
             AuthenticateService = authenticateService;
             DumDumService = dumDumService;
         }
-
-        public List<ResourceList> GetResources(int kingdomId)
+        public async Task<List<ResourceList>> GetResources(int kingdomId)
         {
-            return UnitOfWork.Resources.GetResources(kingdomId);
+            return await UnitOfWork.Resources.GetResources(kingdomId);
         }
 
-        public Location AddLocations(Kingdom kingdom)
+        public async Task<Location> AddLocations(Kingdom kingdom)
         {
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
         }
 
-        public ResourceResponse ResourceLogic(int id, string authorization, out int statusCode)
+        public async Task<(ResourceResponse, int)> ResourceLogic(int id, string authorization)
         {
             if (authorization != null)
             {
                 AuthRequest request = new AuthRequest();
                 request.Token = authorization.Remove(0, 7);
-                var player = AuthenticateService.GetUserInfo(request);
+                var player = await AuthenticateService.GetUserInfo(request);
 
                 if (player != null && player.KingdomId == id)
                 {
-                    var kingdom = DumDumService.GetKingdomById(id);
+                    var kingdom = await DumDumService.GetKingdomById(id);
                     if (kingdom is null)
                     {
-                        statusCode = 404;
-                        return new ResourceResponse();
+                        return (null, 404);
                     }
                     var locations = AddLocations(kingdom);
-                    var resources = GetResources(id);
-                    statusCode = 200;
-                    return new ResourceResponse()
-                    {
-                        Kingdom = new KingdomResponse()
-                        {
-                            KingdomId = kingdom.KingdomId,
-                            KingdomName = kingdom.KingdomName,
-                            Ruler = player.Ruler,
-                            Location = locations,
-                        },
-                        Resources = resources
-                    };
+                    var resources = await GetResources(id);
+                    var resResp = new ResourceResponse(new KingdomResponse(kingdom), resources);
+                    return (resResp, 200);
+
                 }
             }
-
-            statusCode = 401;
-            return new ResourceResponse();
+            return (new ResourceResponse(), 401);
         }
     }
 }

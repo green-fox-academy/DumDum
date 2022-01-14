@@ -26,20 +26,18 @@ namespace DumDum.Controllers
         public IActionResult Login([FromBody] LoginRequest player)
         {
             int statusCode;
-            var message = LoginService.Login(player, out statusCode);
-            
+            var message = LoginService.Login(player).Result;
 
-            if (statusCode == 200)
+            if (message.Item2 == 200)
             {
-                return Ok(new LoginResponse{ Status = "Ok", Token = message });
+                return Ok(new LoginResponse{ Status = "Ok", Token = message.Item1 });
             }
-            return StatusCode(statusCode, new ErrorResponse{ Error = message });
+            return StatusCode(message.Item2, new ErrorResponse{ Error = message.Item1 });
         }
-
         [HttpPost("auth")]
         public IActionResult TokenCheck([FromBody]AuthRequest request)
         {
-            var response = AuthenticateService.GetUserInfo(request);
+            var response = AuthenticateService.GetUserInfo(request).Result;
            
             if (response != null)
             {

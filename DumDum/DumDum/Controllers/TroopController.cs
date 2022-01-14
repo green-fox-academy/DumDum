@@ -19,11 +19,11 @@ namespace DumDum.Controllers
         [HttpGet("kingdoms/{kingdomId}/troops")]
         public IActionResult ListTroops([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
-            var response = TroopService.ListTroops(authorization, kingdomId, out int statusCode);
+            var response = TroopService.ListTroops(authorization, kingdomId).Result;
 
-            if (statusCode == 200)
+            if (response.Item2 == 200)
             {
-                return Ok(response);
+                return Ok(response.Item1);
             }
             return Unauthorized(new ErrorResponse { Error = "This kingdom does not belong to authenticated player" });
         }
@@ -32,17 +32,17 @@ namespace DumDum.Controllers
         [HttpPost("kingdoms/{kingdomId}/troops")]
         public IActionResult CreateTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopCreationRequest TroopCreationReq)
         {
-            var response = TroopService.CreateTroops(authorization, TroopCreationReq, kingdomId, out int statusCode);
+            var response = TroopService.CreateTroops(authorization, TroopCreationReq, kingdomId).Result;
 
-            if (statusCode == 200)
+            if (response.Item2 == 200)
             {
                 return Ok(response);
             }
-            if (statusCode == 400)
+            if (response.Item2 == 400)
             {
                 return BadRequest(new ErrorResponse { Error = "You don't have enough gold to train all these units!" });
             }
-            if (statusCode == 404)
+            if (response.Item2 == 404)
             {
                 return BadRequest(new ErrorResponse { Error = "Request was not done correctly!" });
             }
@@ -53,23 +53,23 @@ namespace DumDum.Controllers
         [HttpPut("kingdoms/{kingdomId}/troops")]
         public IActionResult UpgradeTroops([FromHeader] string authorization, [FromRoute] int kingdomId, [FromBody] TroopUpgradeRequest TroopUpdateReq)
         {
-            var response = TroopService.UpgradeTroops(authorization, TroopUpdateReq, kingdomId, out int statusCode);
+            var response = TroopService.UpgradeTroops(authorization, TroopUpdateReq, kingdomId).Result;
 
-            if (statusCode is 200)
+            if (response.Item2 is 200)
             {
-                return Ok(new StatusResponse() { Status = response });
+                return Ok(new StatusResponse() { Status = response.Item1 });
             }
-            if (statusCode is 400 or 402 or 403 or 404 or 406 or 407)
+            if (response.Item2 is 400 or 402 or 403 or 404 or 406 or 407)
             {
-                return BadRequest(new ErrorResponse { Error = response });
+                return BadRequest(new ErrorResponse { Error = response.Item1 });
             }
-            return Unauthorized(new ErrorResponse { Error = response });
+            return Unauthorized(new ErrorResponse { Error = response.Item1 });
         }
 
         [HttpGet("leaderboards/troops")]
         public IActionResult TroopsLeaderboard()
         {
-            var troopsLeaderboard = TroopService.GetTroopsLeaderboard();
+            var troopsLeaderboard = TroopService.GetTroopsLeaderboard().Result;
 
             return Ok(troopsLeaderboard);
         }
@@ -77,7 +77,7 @@ namespace DumDum.Controllers
         [HttpGet("leaderboards/kingdoms")]
         public IActionResult KingdomsLeaderboard()
         {
-            var kingdomsLeaderboard = TroopService.GetKingdomsLeaderboard();
+            var kingdomsLeaderboard = TroopService.GetKingdomsLeaderboard().Result;
 
             return Ok(kingdomsLeaderboard);
         }

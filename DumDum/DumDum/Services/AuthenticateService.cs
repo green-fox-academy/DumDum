@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Net.Mail;
 using DumDum.Models.JsonEntities.Player;
 using Microsoft.IdentityModel.Protocols;
@@ -27,12 +28,12 @@ namespace DumDum.Services
             UnitOfWork = unitOfWork;
         }
 
-        public Player FindPlayerByTokenName(string userName)
+        public async Task<Player> FindPlayerByTokenName(string userName)
         {
-            return UnitOfWork.Players.GetPlayerByUsername(userName);
+            return await UnitOfWork.Players.GetPlayerByUsername(userName);
         }
-
-        public AuthResponse GetUserInfo(AuthRequest request)
+        
+        public async Task<AuthResponse> GetUserInfo(AuthRequest request)
         {
             // funkce smaže slovo bearer z tokenu, v případe, že by jej tam uživatel v postmanu zadal.
             var firstFive = request.Token.Substring(0, 6);
@@ -41,8 +42,6 @@ namespace DumDum.Services
                 string token = request.Token;
                 request.Token = token.Remove(0, 7);
             }
-
-            var responseEnt = new AuthResponse();
 
             try
             {
@@ -63,14 +62,9 @@ namespace DumDum.Services
                 };
 
                 var principal = tokenHandler.ValidateToken(request.Token, validationParameters, out _);
-
-
-                var identity = principal.Identity.Name; //vraci username tokenu
-                var player = FindPlayerByTokenName(identity);
-                responseEnt.Ruler = player.Username;
-                responseEnt.KingdomId = player.KingdomId;
-                responseEnt.KingdomName = player.Kingdom.KingdomName;
-
+                
+                var identity = principal.Identity.Name;    //vraci username tokenu
+                var responseEnt = new AuthResponse(await FindPlayerByTokenName(identity));
                 return responseEnt;
             }
 
@@ -80,24 +74,22 @@ namespace DumDum.Services
             }
         }
 
-        public KingdomRenameResponse RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
+        public async Task<KingdomRenameResponse> RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            KingdomRenameResponse response = new KingdomRenameResponse();
-            var player = FindPlayerByTokenName(authResponse.Ruler);
+            var player =await  FindPlayerByTokenName(authResponse.Ruler);
             player.Kingdom.KingdomName = requestKingdomName.KingdomName;
             UnitOfWork.Complete();
-            response.KingdomId = player.KingdomId;
-            response.KingdomName = player.Kingdom.KingdomName;
-
+            KingdomRenameResponse response = new KingdomRenameResponse(player);
+            
             return response;
         }
 
-        public bool IsEmailValid(string email)
+        public async Task<bool> IsEmailValid(string email)
         {
             return email.Contains("@") && email.Contains(".") && !UnitOfWork.Players.EmailNotUsed(email);
         }
 
-        public void SendAccountVerificationEmail(Player player)
+        public async Task SendAccountVerificationEmail(Player player)
         {
             MailMessage mail = new MailMessage();
 
@@ -119,7 +111,7 @@ namespace DumDum.Services
         }
 
 
-        public void SendPasswordResetEmail(Player player)
+        public async Task SendPasswordResetEmail(Player player)
         {
             MailMessage mail = new MailMessage();
 

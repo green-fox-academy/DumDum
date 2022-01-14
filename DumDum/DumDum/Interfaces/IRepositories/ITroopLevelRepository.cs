@@ -4,8 +4,8 @@ namespace DumDum.Interfaces
 {
     public interface ITroopLevelRepository : IRepository<TroopLevel>
     {
-        int MaximumLevelPossible();
-        TroopLevel TroopCreationHigherLevel(string troopType, int troopCreationLevel);
         int GetConsumptionByTroopTypeAndLevel(int troopTypeId, int troopLevel);
+        Task<int> MaximumLevelPossible();
+        Task<TroopLevel> TroopCreationHigherLevel(string troopType, int troopCreationLevel);
     }
 }

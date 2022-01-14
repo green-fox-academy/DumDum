@@ -21,10 +21,10 @@ namespace DumDum.Repository
             return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
         }
 
-        public Kingdom GetKingdomById(int kingdomId)
-        {
-            return DbContext.Kingdoms.Include(k => k.Player).Include(k => k.Buildings).FirstOrDefault(x => x.KingdomId == kingdomId);
-        }
+    public async Task<Kingdom> GetKingdomById(int kingdomId)
+    {
+        return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
+    }
 
         public KingdomsListResponse GetAllKingdoms()
         {

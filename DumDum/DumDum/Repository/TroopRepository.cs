@@ -16,25 +16,15 @@ namespace DumDum.Repository
         {
         }
 
-        public List<TroopsResponse> GetTroops(int kingdomId)
+        public async Task<List<TroopsResponse>> GetTroops(int kingdomId)
         {
-            List<TroopsResponse> troops = DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).ToList().
-                Select(t => new TroopsResponse()
-                {
-                    TroopId = t.TroopId,
-                    TroopType = t.TroopType.TroopType,
-                    Level = t.Level,
-                    HP = t.TroopType.TroopLevel.Level,
-                    Attack = t.TroopType.TroopLevel.Attack,
-                    Defence = t.TroopType.TroopLevel.Defence,
-                    StartedAt = t.StartedAt,
-                    FinishedAt = t.FinishedAt
-                }).ToList();
+            var troops =  DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).Select(t => new TroopsResponse(t)).ToList();
             if (troops != null)
             {
                 return troops;
             }
-            return new List<TroopsResponse>();
+
+            return troops;
         }
 
         public void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop)
@@ -48,11 +38,12 @@ namespace DumDum.Repository
                      });
         }
 
-        public int FinishedAtTimeTroop(string troopType, int kingdomId)
+        public async Task<int> FinishedAtTimeTroop(string troopType, int kingdomId)
         {
-            return DbContext.Troops.Include(t => t.TroopType)
+            var number =  DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.TroopType.TroopType.ToLower() == troopType.ToLower() && t.KingdomId == kingdomId)
                 .Select(t => t.FinishedAt).FirstOrDefault();
+            return number;
         }
 
         public List<Troop> GetAllTroopsOfKingdom(int kingdomId)

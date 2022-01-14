@@ -1,6 +1,7 @@
 ﻿using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DumDum.Interfaces
 {
@@ -8,7 +9,7 @@ namespace DumDum.Interfaces
     {
         List<TroopsResponse> GetTroops(int kingdomId);
         void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop);
-        int FinishedAtTimeTroop(string troopType, int kingdomId);
+        Task<int> FinishedAtTimeTroop(string troopType, int kingdomId);
         List<Troop> GetAllTroopsOfKingdom(int kingdomId);
     }
 }
