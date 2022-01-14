@@ -160,7 +160,6 @@ namespace DumDum
             {
                 var connectionString = AppConfig.GetConnectionString("dumdumsql");
                 var sb = new SqlConnectionStringBuilder(connectionString);
-                sb.Password = AppConfig["Dumdum123"];
                 services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
             }
         }
