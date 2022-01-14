@@ -28,7 +28,7 @@ namespace DumDum.Services
             return await UnitOfWork.Resources.GetResources(kingdomId);
         }
 
-        public Location AddLocations(Kingdom kingdom)
+        public async Task<Location> AddLocations(Kingdom kingdom)
         {
             return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
         }
@@ -43,7 +43,7 @@ namespace DumDum.Services
 
                 if (player != null && player.KingdomId == id)
                 {
-                    var kingdom = DumDumService.GetKingdomById(id);
+                    var kingdom = await DumDumService.GetKingdomById(id);
                     if (kingdom is null)
                     {
                         return (null, 404);

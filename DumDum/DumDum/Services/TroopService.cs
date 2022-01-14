@@ -31,7 +31,7 @@ namespace DumDum.Services
 
             if (player != null && player.KingdomId == kingdomId)
             {
-                var kingdom = DumDumService.GetKingdomById(player.KingdomId);
+                var kingdom = await DumDumService.GetKingdomById(player.KingdomId);
                 var response = new GetTroopsResponse(new KingdomResponse(kingdom), await GetTroops(player.KingdomId) );
                 return (response, 200);
             }
