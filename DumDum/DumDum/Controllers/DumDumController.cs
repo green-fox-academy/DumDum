@@ -82,7 +82,7 @@ namespace DumDum.Controllers
 
             if (kingdoms == null)
             {
-                return StatusCode(500);
+                return StatusCode(420);
             }
             return Ok(kingdoms);
         }
