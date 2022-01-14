@@ -1,20 +1,14 @@
-﻿using System;
-using DumDum.Database;
+﻿using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Kingdom;
-using Microsoft.IdentityModel.Tokens;
-using DumDum.Interfaces;
-using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {
@@ -40,7 +34,9 @@ namespace DumDum.Services
         public async Task<KingdomResponse> GetKingdom(int id)
         {
             var kingdom = DumDumService.GetKingdomById(id);
-            return new KingdomResponse(DumDumService.GetKingdomById(id), DumDumService.GetPlayerById(kingdom.PlayerId), await DumDumService.AddLocations(kingdom));
+            return new KingdomResponse(DumDumService.GetKingdomById(id), 
+                                       DumDumService.GetPlayerById(kingdom.PlayerId), 
+                                       await DumDumService.AddLocations(kingdom));
         }
 
         public async Task<(BuildingResponse, int)> ListBuildings(string authorization, int kingdomId)
@@ -166,7 +162,8 @@ namespace DumDum.Services
 
         public async Task<int> GetTownHallLevel(int kingdomId)
         {
-            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").FirstOrDefault().Level;
+            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall")
+                                       .FirstOrDefault().Level;
         }
 
         public BuildingsLeaderboardResponse GetBuildingsLeaderboard()

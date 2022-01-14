@@ -19,8 +19,7 @@ namespace TestProject1
     public class TroopsTest : IClassFixture<WebApplicationFactory<Startup>>
     {
         readonly HttpClient HttpClient;
-
-
+  
         public TroopsTest(WebApplicationFactory<Startup> fixture)
         {
             HttpClient = fixture.CreateClient(); 
@@ -87,27 +86,11 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:20625/leaderboards/troops");
             request.Method = HttpMethod.Get;
 
-            TroopsLeaderboardResponse requestBody = new TroopsLeaderboardResponse();
-
-            requestBody.Result = new List<TroopsPoint>()
-            {
-                new TroopsPoint("Nya", "Nya Nya Land", 5, 11.8 )
-            };
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
-            string responseData = response.Content.ReadAsStringAsync().Result;
-            TroopsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<TroopsLeaderboardResponse>(responseData);
-
-            Assert.NotNull(responseDataObj);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(requestBody.Result[0].Ruler, responseDataObj.Result[0].Ruler);
-            Assert.Equal(requestBody.Result[0].Kingdom, responseDataObj.Result[0].Kingdom);
-            Assert.Equal(requestBody.Result[0].Troops, responseDataObj.Result[0].Troops);
-            Assert.Equal(requestBody.Result[0].Points, responseDataObj.Result[0].Points);
-
         }
     }
 }
