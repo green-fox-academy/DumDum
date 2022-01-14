@@ -1,17 +1,13 @@
 using DumDum.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DumDum.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -53,7 +49,7 @@ namespace DumDum
             services.AddTransient<IBattleRepository, BattleRepository>();
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
-
+            services.AddTransient<IHostedService, RecureHostedService>();
 
             ConfigureDb(services);
 

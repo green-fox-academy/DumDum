@@ -13,7 +13,6 @@ namespace DumDum.Interfaces
         int GetFoodFromFarms(int kingdomId, int cycles);
         int GetGoldFromMines(int kingdomId, int cycles);
         int FoodAndGoldProduction(int buildingLevel, int buildingTypeId);
-        Task StartAsync(CancellationToken cancellationToken);
-        Task StopAsync(CancellationToken cancellationToken);
+        
     }
 }

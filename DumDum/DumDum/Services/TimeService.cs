@@ -1,30 +1,32 @@
 ﻿using DumDum.Interfaces;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using DumDum.Models.Entities;
+using Microsoft.Extensions.Hosting;
 
 namespace DumDum.Services
 {
-    public class TimeService : IHostedService, ITimeService
+    public class TimeService :   ITimeService
 
     {
-        private DumDumService DumDumService { get; set; }
-        private System.Timers.Timer Timer { get; set; }
+        private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
+        private IHostedService HostedService { get; set; }
 
-        public TimeService(DumDumService dumdumService, IUnitOfWork unitOfWork)
+        public TimeService(IDumDumService dumdumService, IUnitOfWork unitOfWork, IHostedService hostedService)
         {
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
+            HostedService = hostedService;
+            HostedService.StartAsync(new CancellationToken());
         }
 
         public void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            UpdateAllKingdomsEvents();
+            
         }
 
         public void UpdateAllKingdomsEvents()
@@ -157,21 +159,6 @@ namespace DumDum.Services
         private int FoodAndGoldConsumption(int troopLevel, int troopTypeId)
         {
             return UnitOfWork.TroopLevels.GetConsumptionByTroopTypeAndLevel(troopTypeId, troopLevel);
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            Timer = new System.Timers.Timer(2000);
-            Timer.Elapsed += OnTimedEvent;
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }
