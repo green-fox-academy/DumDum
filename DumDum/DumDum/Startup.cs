@@ -22,6 +22,9 @@ using DumDum.Interfaces.IServices;
 using DumDum.Repository;
 using Serilog;
 using Microsoft.OpenApi.Models;
+using Microsoft.Data.Sqlite;
+using System.Data.SqlClient;
+
 
 namespace DumDum
 {
@@ -141,16 +144,28 @@ namespace DumDum
 
         private void ConfigureDb(IServiceCollection services)
         {
-            var connectionString = AppConfig.GetConnectionString("DefaultConnection");
-            var serverVersion = new MySqlServerVersion(new Version(8, 0));
+            //var connectionString = AppConfig.GetConnectionString("DefaultConnection");
+            //var serverVersion = new MySqlServerVersion(new Version(8, 0));
 
-            services.AddDbContext<ApplicationDbContext>(
-                options => options
-                .UseMySql(connectionString, serverVersion)
-                // The following three options help with debugging
-                .LogTo(Console.WriteLine, LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors());
+            //services.AddDbContext<ApplicationDbContext>(
+            //    options => options
+            //    .UseMySql(connectionString, serverVersion)
+            //    // The following three options help with debugging
+            //    .LogTo(Console.WriteLine, LogLevel.Information)
+            //    .EnableSensitiveDataLogging()
+            //    .EnableDetailedErrors());
+
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+           
+
+            if (environment == "Production")
+            {
+                var connectionString = AppConfig.GetConnectionString("AzureSql");
+                var sb = new SqlConnectionStringBuilder(connectionString);
+                sb.Password = AppConfig["AzureSqlPassword"];
+                services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
+            }
         }
     }
 }
