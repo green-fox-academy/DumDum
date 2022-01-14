@@ -22,21 +22,21 @@ namespace TestProject1
         private readonly Mock<ITimeService> timeServiceMoq = new Mock<ITimeService>();
         private readonly Mock<IUnitOfWork> unitOfWorkMoq = new Mock<IUnitOfWork>();
 
-        [Fact]
-        public void KingdomsList_ReturnsEmptyObject_WhenNoKingdomPresent()
-        {
-            // Arrange
-            KingdomsListResponse kingdomsEmptyList = new();
-            dumDumServiceMoq.Setup(x => x.GetAllKingdoms()).Returns(new Task<KingdomsListResponse>() { Kingdoms = kingdomsEmptyList });
-            dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
-               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
-            // Act
-            var actual = dumDumController.KingdomsList();
+        //[Fact]
+        //public void KingdomsList_ReturnsEmptyObject_WhenNoKingdomPresent()
+        //{
+        //    // Arrange
+        //    KingdomsListResponse kingdomsEmptyList = new();
+        //    dumDumServiceMoq.Setup(x => x.GetAllKingdoms()).Returns(new Task<KingdomsListResponse>() { Kingdoms = kingdomsEmptyList });
+        //    dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
+        //       detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
+        //    // Act
+        //    var actual = dumDumController.KingdomsList();
 
-            // Assert
-            Assert.IsType<OkObjectResult>(actual);
-            Assert.Equal(StatusCodes.Status200OK, (actual as ObjectResult).StatusCode);
-        }
+        //    // Assert
+        //    Assert.IsType<OkObjectResult>(actual);
+        //    Assert.Equal(StatusCodes.Status200OK, (actual as ObjectResult).StatusCode);
+        //}
 
         /*[Fact]
         public void RegisterKingdom_ReturnsOkStatus_WhenCoordinatesAndKingdomIdProvided()
