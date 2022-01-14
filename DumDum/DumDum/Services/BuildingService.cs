@@ -33,10 +33,8 @@ namespace DumDum.Services
 
         public async Task<KingdomResponse> GetKingdom(int id)
         {
-            var kingdom = DumDumService.GetKingdomById(id);
-            return new KingdomResponse(DumDumService.GetKingdomById(id), 
-                                       DumDumService.GetPlayerById(kingdom.PlayerId), 
-                                       await DumDumService.AddLocations(kingdom));
+            var kingdom = await DumDumService.GetKingdomById(id);
+            return new KingdomResponse(await DumDumService.GetKingdomById(id), await DumDumService.GetPlayerById(kingdom.PlayerId), await DumDumService.AddLocations(kingdom));
         }
 
         public async Task<(BuildingResponse, int)> ListBuildings(string authorization, int kingdomId)
@@ -120,14 +118,14 @@ namespace DumDum.Services
             return await UnitOfWork.Kingdoms.FindPlayerByKingdomId(id);
         }
 
-        public Task<BuildingType> FindLevelingByBuildingType(string buildingType)
+        public async Task<BuildingType> FindLevelingByBuildingType(string buildingType)
         {
-            return UnitOfWork.BuildingTypes.FindLevelingByBuildingType(buildingType);
+            return await UnitOfWork.BuildingTypes.FindLevelingByBuildingType(buildingType);
         }
 
-        public Task<List<string>> ExistingTypeOfBuildings()
+        public async Task<List<string>> ExistingTypeOfBuildings()
         {
-            return UnitOfWork.BuildingTypes.ExistingTypeOfBuildings();
+            return await UnitOfWork.BuildingTypes.ExistingTypeOfBuildings();
         }
 
         public async Task<(BuildingList, int)> AddBuilding(string building, int id, string authorization)
@@ -166,7 +164,7 @@ namespace DumDum.Services
                                        .FirstOrDefault().Level;
         }
 
-        public BuildingsLeaderboardResponse GetBuildingsLeaderboard()
+        public async Task<BuildingsLeaderboardResponse> GetBuildingsLeaderboard()
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
             response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints().Result;
