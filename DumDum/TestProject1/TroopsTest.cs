@@ -1,17 +1,13 @@
 ﻿using DumDum;
 using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Buildings;
-using DumDum.Models.JsonEntities.Troops;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using Xunit;
 
 namespace TestProject1
