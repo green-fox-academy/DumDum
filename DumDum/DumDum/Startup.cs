@@ -130,14 +130,16 @@ namespace DumDum
                 c.RoutePrefix = string.Empty;
             });
 
+
             app.UseSerilogRequestLogging();
         }
 
         private void ConfigureDb(IServiceCollection services)
         {
-            //RUNNING ON LOCAL
+            /*FOR LOCAL */
             var connectionString = AppConfig.GetConnectionString("DefaultConnection");
             var serverVersion = new MySqlServerVersion(new Version(8, 0));
+
             services.AddDbContext<ApplicationDbContext>(
                 options => options
                 .UseMySql(connectionString, serverVersion)
@@ -146,8 +148,7 @@ namespace DumDum
                 .EnableSensitiveDataLogging()
                 .EnableDetailedErrors());
 
-            //RUNNING ON AZURE
-
+            /*FOR AZURE */
             //var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             //if (environment == "Production")
             //{
