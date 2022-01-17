@@ -130,19 +130,31 @@ namespace DumDum
                 c.RoutePrefix = string.Empty;
             });
 
-
             app.UseSerilogRequestLogging();
         }
 
         private void ConfigureDb(IServiceCollection services)
         {
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            if (environment == "Production")
-            {
-                var connectionString = AppConfig.GetConnectionString("dumdumsql");
-                var sb = new SqlConnectionStringBuilder(connectionString);
-                services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
-            }
+            //RUNNING ON LOCAL
+            var connectionString = AppConfig.GetConnectionString("DefaultConnection");
+            var serverVersion = new MySqlServerVersion(new Version(8, 0));
+            services.AddDbContext<ApplicationDbContext>(
+                options => options
+                .UseMySql(connectionString, serverVersion)
+                // The following three options help with debugging
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors());
+
+            //RUNNING ON AZURE
+
+            //var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            //if (environment == "Production")
+            //{
+            //    var connectionString = AppConfig.GetConnectionString("dumdumsql");
+            //    var sb = new SqlConnectionStringBuilder(connectionString);
+            //    services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
+            //}
         }
     }
 }
