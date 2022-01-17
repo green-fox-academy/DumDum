@@ -36,6 +36,7 @@ namespace DumDum
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
@@ -47,7 +48,7 @@ namespace DumDum
             services.AddTransient<IResourceService, ResourceService>();
             services.AddTransient<ITimeService, TimeService>();
             services.AddTransient<ITroopService, TroopService>();
-
+            
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBuildingRepository, BuildingRepository>();
             services.AddTransient<IKingdomRepository, KingdomRepository>();
@@ -58,8 +59,6 @@ namespace DumDum
             services.AddTransient<ITroopTypesRepository, TroopTypesRepository>();
             services.AddTransient<IBattleRepository, BattleRepository>();
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IHostedService, RecureHostedService>();
 
             ConfigureDb(services);
 

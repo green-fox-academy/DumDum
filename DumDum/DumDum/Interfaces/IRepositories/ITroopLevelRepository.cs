@@ -1,4 +1,5 @@
-﻿using DumDum.Models.Entities;
+﻿using System.Threading.Tasks;
+using DumDum.Models.Entities;
 
 namespace DumDum.Interfaces
 {

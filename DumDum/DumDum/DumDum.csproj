@@ -17,6 +17,7 @@
     <Compile Remove="Interfaces\ITroopsLostRepository 2.cs" />
     <Compile Remove="Interfaces\IBattleRepository 2.cs" />
     <Compile Remove="Controllers\BattleController 2.cs" />
+    <Compile Remove="Services\RecureHostedService.cs" />
   </ItemGroup>
 
   <ItemGroup>

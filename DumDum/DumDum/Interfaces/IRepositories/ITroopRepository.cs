@@ -7,9 +7,9 @@ namespace DumDum.Interfaces
 {
     public interface ITroopRepository : IRepository<Troop>
     {
-        List<TroopsResponse> GetTroops(int kingdomId);
+        Task<List<TroopsResponse>> GetTroops(int kingdomId);
         void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop);
         Task<int> FinishedAtTimeTroop(string troopType, int kingdomId);
-        List<Troop> GetAllTroopsOfKingdom(int kingdomId);
+        Task<List<Troop>> GetAllTroopsOfKingdom(int kingdomId);
     }
 }

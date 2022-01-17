@@ -13,5 +13,23 @@ namespace DumDum.Models.Entities
         public List<Troop> Troops { get; set; }
         public List<Resource> Resources { get; set; }
         public List<Building> Buildings { get; set; }
+
+        public Kingdom(Kingdom kingdom)
+        {
+            KingdomId = kingdom.KingdomId;
+            KingdomName = kingdom.KingdomName;
+            CoordinateX = kingdom.CoordinateX;
+            CoordinateY = kingdom.CoordinateY;
+            Player = kingdom.Player;
+            PlayerId = kingdom.PlayerId;
+            Troops = kingdom.Troops;
+            Resources = kingdom.Resources;
+            Buildings = kingdom.Buildings;
+        }
+
+        public Kingdom()
+        {
+            
+        }
     }
 }

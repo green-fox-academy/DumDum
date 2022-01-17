@@ -7,6 +7,7 @@ using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DumDum.Repository
 {
@@ -16,33 +17,22 @@ namespace DumDum.Repository
         {
         }
 
-        public Kingdom GetKingdomByName(string kingdomName)
+        public async Task<Kingdom> GetKingdomByName(string kingdomName)
         {
-            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
+            var kingdom = DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomName == kingdomName);
+            return kingdom;
         }
 
-    public async Task<Kingdom> GetKingdomById(int kingdomId)
-    {
-        return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
-    }
+        public async Task<Kingdom> GetKingdomById(int kingdomId)
+        {
+            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
+        }
 
-        public KingdomsListResponse GetAllKingdoms()
+        public async Task<KingdomsListResponse> GetAllKingdoms()
         {
             KingdomsListResponse response = new KingdomsListResponse();
 
-            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse()
-            {
-                KingdomId = k.KingdomId,
-                KingdomName = k.KingdomName,
-                Ruler = k.Player.Username,
-                Population = 0,
-                Location = new Location()
-                {
-                    CoordinateX = k.CoordinateX,
-                    CoordinateY = k.CoordinateY,
-                }
-            }).ToList();
-
+            response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k)).ToList();
             return response;
         }
 
@@ -51,7 +41,7 @@ namespace DumDum.Repository
             return DbContext.Kingdoms.Add(kingdom).Entity;
         }
 
-        public Kingdom FindPlayerByKingdomId(int id)
+        public async Task<Kingdom> FindPlayerByKingdomId(int id)
         {
             var kingdom = DbContext.Kingdoms.Include(p => p.Player)
                 .Include(r => r.Resources)
@@ -59,21 +49,19 @@ namespace DumDum.Repository
             return kingdom;
         }
 
-        public List<Kingdom> GetAllKingdomsIncludePlayer()
+        public async Task<List<Kingdom>> GetAllKingdomsIncludePlayer()
         {
-            return DbContext.Kingdoms.Include(k => k.Player).ToList();
+            var kingdomList = DbContext.Kingdoms.Include(k => k.Player).Select(k => new Kingdom(k)).ToList();
+            return kingdomList;
         }
 
-        public List<BuildingPoints> GetListBuildingPoints()
+        public async Task<List<BuildingPoints>> GetListBuildingPoints()
         {
-            return DbContext.Kingdoms.Select(k => new BuildingPoints()
-            {
-                Ruler = k.Player.Username,
-                Kingdom = k.KingdomName,
-                Buildings = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Count(),
-                Points = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)
-            }).OrderByDescending(t => t.Points).ToList();
+            var point = DbContext.Kingdoms.Include(k => k.Player).Select(k => new BuildingPoints(
+                k,
+                DbContext.Buildings.Count(b => b.KingdomId == k.KingdomId),
+                DbContext.Buildings.Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)));
+            return point.ToList();
         }
     }
 }
-

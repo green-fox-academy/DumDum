@@ -117,7 +117,6 @@ namespace DumDum.Controllers
         [HttpPost("passwordReset")]
         public IActionResult PasswordReset([FromBody] PasswordResetRequest passwordRequest)
         {
-            int statusCode;
             var message = DumDumService.ResetPassword(passwordRequest).Result;
 
             if (message.Item2 == 200)
