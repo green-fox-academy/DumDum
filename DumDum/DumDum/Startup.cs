@@ -137,25 +137,25 @@ namespace DumDum
         private void ConfigureDb(IServiceCollection services)
         {
             /*FOR LOCAL */
-            var connectionString = AppConfig.GetConnectionString("DefaultConnection");
-            var serverVersion = new MySqlServerVersion(new Version(8, 0));
+            //var connectionString = AppConfig.GetConnectionString("DefaultConnection");
+            //var serverVersion = new MySqlServerVersion(new Version(8, 0));
 
-            services.AddDbContext<ApplicationDbContext>(
-                options => options
-                .UseMySql(connectionString, serverVersion)
-                // The following three options help with debugging
-                .LogTo(Console.WriteLine, LogLevel.Information)
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors());
+            //services.AddDbContext<ApplicationDbContext>(
+            //    options => options
+            //    .UseMySql(connectionString, serverVersion)
+            //    // The following three options help with debugging
+            //    .LogTo(Console.WriteLine, LogLevel.Information)
+            //    .EnableSensitiveDataLogging()
+            //    .EnableDetailedErrors());
 
             /*FOR AZURE */
-            //var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            //if (environment == "Production")
-            //{
-            //    var connectionString = AppConfig.GetConnectionString("dumdumsql");
-            //    var sb = new SqlConnectionStringBuilder(connectionString);
-            //    services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
-            //}
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+            if (environment == "Production")
+            {
+                var connectionString = AppConfig.GetConnectionString("dumdumsql");
+                var sb = new SqlConnectionStringBuilder(connectionString);
+                services.AddDbContext<ApplicationDbContext>(builder => builder.UseSqlServer(sb.ConnectionString));
+            }
         }
     }
 }
