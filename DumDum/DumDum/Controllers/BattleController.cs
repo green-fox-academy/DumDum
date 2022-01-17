@@ -1,8 +1,6 @@
-using DumDum.Interfaces;
 using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Battles;
-using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +8,7 @@ namespace DumDum.Controllers
 {
     public class BattleController : Controller
     {
-        public IBattleService BattleService { get; set; }
+        private IBattleService BattleService { get; set; }
         public BattleController(IBattleService battleService)
         {
             BattleService = battleService;
