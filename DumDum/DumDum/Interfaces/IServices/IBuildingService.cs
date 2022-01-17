@@ -19,6 +19,6 @@ namespace DumDum.Interfaces.IServices
         Task<List<string>> ExistingTypeOfBuildings();
         Task<(BuildingList, int)> AddBuilding(string building, int id, string authorization);
         Task<int> GetTownHallLevel(int kingdomId);
-        BuildingsLeaderboardResponse GetBuildingsLeaderboard();
+        Task<BuildingsLeaderboardResponse> GetBuildingsLeaderboard();
     }
 }

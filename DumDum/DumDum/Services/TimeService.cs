@@ -22,12 +22,12 @@ namespace DumDum.Services
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
         }
-        public void OnTimedEvent(Object source, ElapsedEventArgs e)
+        public async Task OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             UpdateAllKingdomsEvents();
         }
 
-        public void UpdateAllKingdomsEvents()
+        public async Task UpdateAllKingdomsEvents()
         {
             var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
             foreach (var kingdom in Kingdoms.Result)
@@ -36,16 +36,16 @@ namespace DumDum.Services
             }
         }
 
-        public async void GetKingdomResourcesPerCycle(int kingdomId)
+        public async Task GetKingdomResourcesPerCycle(int kingdomId)
         {
             int cycles = 1;
             var actualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId).Result;
             var actualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId).Result;
             //kód na produkci
             //kód na jídlo
-            var productionOfFood = GetFoodFromFarms(kingdomId, cycles);
+            var productionOfFood = await GetFoodFromFarms(kingdomId, cycles);
             //kód na zlato
-            var productionOfGold = GetGoldFromMines(kingdomId, cycles);
+            var productionOfGold = await GetGoldFromMines(kingdomId, cycles);
 
             //kód na konzumaci
             var consumptionOfTroops = 0;
@@ -66,13 +66,13 @@ namespace DumDum.Services
             UnitOfWork.Complete();
         }
 
-        public int GetFoodFromFarms(int kingdomId, int cycles)
+        public async Task<int> GetFoodFromFarms(int kingdomId, int cycles)
         {
             var foodPerFarms = 0;
             var numberOfFarms = UnitOfWork.Buildings.GetNumberOfFarm(kingdomId);
             foreach (var farm in numberOfFarms)
             {
-                foodPerFarms += HomMuchFoodOneFarmProduce(farm.Level);
+                foodPerFarms += await HomMuchFoodOneFarmProduce(farm.Level);
             }
 
             var producedFood = foodPerFarms * cycles;
@@ -80,13 +80,13 @@ namespace DumDum.Services
             return producedFood;
         }
 
-        public int GetGoldFromMines(int kingdomId, int cycles)
+        public async Task<int> GetGoldFromMines(int kingdomId, int cycles)
         {
             var goldPerMine = 0;
             var numberOfMines = UnitOfWork.Buildings.GetNumberOfMines(kingdomId);
             foreach (var farm in numberOfMines)
             {
-                goldPerMine += HomMuchFoodOneFarmProduce(farm.Level);
+                goldPerMine += await HomMuchFoodOneFarmProduce(farm.Level);
             }
 
             var producedGold = goldPerMine * cycles;
@@ -94,12 +94,12 @@ namespace DumDum.Services
             return producedGold;
         }
 
-        public int HomMuchFoodOneFarmProduce(int lvl)
+        public async Task<int> HomMuchFoodOneFarmProduce(int lvl)
         {
             return lvl * (1 + lvl);
         }
 
-        public int HomMuchGoldOneMineProduce(int lvl)
+        public async Task<int> HomMuchGoldOneMineProduce(int lvl)
         {
             return lvl * (1 + lvl);
         }
@@ -107,7 +107,7 @@ namespace DumDum.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             IamTimeLord = new System.Timers.Timer(2000);
-            IamTimeLord.Elapsed += OnTimedEvent;
+            //IamTimeLord.Elapsed += OnTimedEvent;
             IamTimeLord.AutoReset = true;
             IamTimeLord.Enabled = true;
 

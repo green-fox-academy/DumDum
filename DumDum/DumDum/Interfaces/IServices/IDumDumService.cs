@@ -12,26 +12,26 @@ namespace DumDum.Interfaces
         Task<(string, int)> RegisterKingdom(string authorization, KingdomRegistrationRequest kingdomRequest);
         Task<KingdomsListResponse> GetAllKingdoms();
         Task<Player> GetPlayerByUsername(string username);
-        Kingdom GetKingdomById(int kingdomId);
+        Task<Kingdom> GetKingdomById(int kingdomId);
         Task<int> GetGoldAmountOfKingdom(int kingdomId);
-        void TakeGold(int kingdomId, int amount);
-        void TakeFood(int kingdomId, int amount);
-        Player GetPlayerById(int id);
+        Task TakeGold(int kingdomId, int amount);
+        Task TakeFood(int kingdomId, int amount);
+        Task<Player> GetPlayerById(int id);
         Task<Location> AddLocations(Kingdom kingdom);
         Task<int> GetFoodAmountOfKingdom(int kingdomId);
-        void GiveGold(int kingdomId, int amount);
-        void GiveFood(int kingdomId, int amount);
-        Kingdom RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId);
-        bool IsKingdomIdValid(int kingdomId);
+        Task GiveGold(int kingdomId, int amount);
+        Task GiveFood(int kingdomId, int amount);
+        Task<Kingdom> RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId);
+        Task<bool> IsKingdomIdValid(int kingdomId);
         Task<bool> AreCredentialsValid(string username, string password);
         Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY);
-        bool DoCoordinatesExist(int coordinateX, int coordinateY);
+        Task<bool> DoCoordinatesExist(int coordinateX, int coordinateY);
         Task<Kingdom> CreateKingdom(string kingdomname, string username);
         Task<Player> Register(string username, string password, string kingdomName, string email);
         Task<Kingdom> GetKingdomByName(string kingdomName);
-        string SetAuthToTrue(int playerId, string hash, out int statusCode);
+        Task<(string, int)> SetAuthToTrue(int playerId, string hash);
         Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest);
-        string ChangePassword(int playerId, string newPassword, out int statusCode);
-        Player GetPlayerVerified(int playerId, string hash);
+        Task<(string, int)> ChangePassword(int playerId, string newPassword);
+        Task<Player> GetPlayerVerified(int playerId, string hash);
     }
 }

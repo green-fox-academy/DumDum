@@ -8,7 +8,7 @@ namespace DumDum.Interfaces
     public interface IResourceService
     {
         Task<List<ResourceList>> GetResources(int kingdomId);
-        Location AddLocations(Kingdom kingdom);
+        Task<Location> AddLocations(Kingdom kingdom);
         Task<(ResourceResponse, int)> ResourceLogic(int id, string authorization);
     }
 }

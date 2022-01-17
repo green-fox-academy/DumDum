@@ -103,10 +103,9 @@ namespace DumDum.Controllers
         [HttpGet("emailAuthenticated/{playerId=int}")]
         public IActionResult PasswordReset([FromRoute] int playerId, [FromQuery] string hash)
         {
-            int statusCode;
-            var message = DumDumService.SetAuthToTrue(playerId, hash, out statusCode);
+            var message = DumDumService.SetAuthToTrue(playerId, hash).Result;
 
-            if (statusCode == 200)
+            if (message.Item2 == 200)
             {
                 return Ok(message);
             }
@@ -133,10 +132,9 @@ namespace DumDum.Controllers
         [HttpPost("passwordChange")]
         public IActionResult PasswordChangeForm([FromForm] string newPassword, int playerId)
         {
-            int statusCode;
-            var message = DumDumService.ChangePassword(playerId,newPassword, out statusCode);
+            var message = DumDumService.ChangePassword(playerId,newPassword).Result;
 
-            if (statusCode == 200)
+            if (message.Item2 == 200)
             {
                 return Ok(message);
             }
@@ -148,7 +146,7 @@ namespace DumDum.Controllers
         [HttpGet("passwordChange/{playerId=int}")]
         public IActionResult PasswordChange([FromRoute] int playerId,[FromQuery] string hash)
         {
-            var player = DumDumService.GetPlayerVerified(playerId, hash);
+            var player = DumDumService.GetPlayerVerified(playerId, hash).Result;
             return View(player);
         }
 
