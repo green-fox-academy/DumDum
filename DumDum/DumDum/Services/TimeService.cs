@@ -1,6 +1,7 @@
 ﻿using DumDum.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using DumDum.Models.Entities;
 using Timer = System.Timers.Timer;
@@ -17,6 +18,7 @@ namespace DumDum.Services
         {
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
+            ExecuteAsync().Start();
         }
         
         private  Timer ExecuteAsync()
@@ -25,31 +27,6 @@ namespace DumDum.Services
             timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
             timer.Start();
             return timer;
-            /*while (!cancellationToken.IsCancellationRequested)
-            {
-                var playerId = 1;
-                
-                try
-                {
-                    var player = await DumDumService.GetPlayerById(playerId);
-                    Console.WriteLine(player.Username);
-                    while (playerId < 6)
-                    {
-                        playerId++;
-                    }
-                }
-                catch (NullReferenceException e)
-                {
-                    Console.WriteLine("Not cute nya");
-                    throw;
-                }
-
-                
-
-                //UpdateAllKingdomsEvents();
-                Console.WriteLine("Nya");
-                await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);*/
-            // }
         }
 
         public async Task UpdateAllKingdomsEvents()
