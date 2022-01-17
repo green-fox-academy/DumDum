@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace TestProject1
+namespace UnitTests
 {
     public class DumDumServiceInMemoryDBTests : TestService
     {
@@ -33,7 +33,7 @@ namespace TestProject1
             Assert.Equal(testPlayer.Item1.Username, actualPlayer.Result.Username);
         }
 
-        /*
+
         [Fact]
         public void RegisterKingdom_ReturnsStatusOkAndCorrectResponse_WhenCoordinatesAndKingdomIdProvided()
         {
@@ -41,9 +41,9 @@ namespace TestProject1
             IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() { Key = "This is my sample key" });
             StatusResponse expectedStatusResult = new();
             expectedStatusResult.Status = "Ok";
-            string token = TestLoginReturnTokenPlayerInMemoryDB(out IUnitOfWork unitOfWork);
-             var AuthenticateService = new AuthenticateService(AppSettings, unitOfWork);
-            var dumDumService = new DumDumService(AuthenticateService, unitOfWork);
+            var tokenPlayer = TestLoginReturnTokenPlayerInMemoryDB();
+            var AuthenticateService = new AuthenticateService(AppSettings, tokenPlayer.Result.Item2);
+            var dumDumService = new DumDumService(AuthenticateService, tokenPlayer.Result.Item2);
 
             KingdomRegistrationRequest requestBody = new();
             requestBody.CoordinateY = 88;
@@ -51,10 +51,10 @@ namespace TestProject1
             requestBody.KingdomId = 1;
 
             //act
-            var response = dumDumService.RegisterKingdom(token, requestBody);
-            
+            var response = dumDumService.RegisterKingdom(tokenPlayer.Result.Item1, requestBody);
+
             //assert
             Assert.Equal(expectedStatusResult.Status, response.Result.Item1);
-        }*/
+        }
     }
 }

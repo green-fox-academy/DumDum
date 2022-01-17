@@ -14,7 +14,7 @@ namespace DumDum.Interfaces
         Task<Kingdom> FindPlayerByKingdomId(int kingdomId);
         Task<List<Kingdom>> GetAllKingdomsIncludePlayer();
         Task<List<BuildingPoints>> GetListBuildingPoints();
-        Kingdom AddKingdom(Kingdom kingdom);
+        Task<Kingdom> AddKingdom(Kingdom kingdom);
 
     }
 }

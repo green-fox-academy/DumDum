@@ -149,6 +149,5 @@ namespace DumDum.Controllers
             var player = DumDumService.GetPlayerVerified(playerId, hash).Result;
             return View(player);
         }
-
     }
 }

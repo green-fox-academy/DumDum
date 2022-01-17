@@ -11,30 +11,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace TestProject1
+namespace IntegrationTests
 {
-    public class ResourcesTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class ResourceControllerTests : TestService, IClassFixture<WebApplicationFactory<Startup>>
     {
-        private HttpClient HttpClient { get; set; }
-
-        public ResourcesTest(WebApplicationFactory<Startup> factory)
-        {
-            HttpClient = factory.CreateClient();
-        }
-
-        public string TestLoginReturnToken(string userName, string password)
-        {
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() {Username = userName, Password = password});
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-            return tokenResult;
-        }
-        
         [Fact]
-        public void ResourcesReturnsAuthenticatedKingdom()
+        public void Resources_ShouldReturnAuthenticatedKingdomResources_WhenRequestIsCorrect()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -51,7 +33,7 @@ namespace TestProject1
         }
         
         [Fact]
-        public void ResourcesReturnsError()
+        public void Resources_ShouldReturnUnathorized_WhenCorrectPlayerNotLoggedIn()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");

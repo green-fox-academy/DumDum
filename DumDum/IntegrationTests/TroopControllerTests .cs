@@ -1,38 +1,89 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using DumDum;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
 using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Xunit;
 
-namespace TestProject1
+namespace IntegrationTests
 {
-    public class UpgradeTroopsTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class TroopControllerTests : TestService, IClassFixture<WebApplicationFactory<Startup>>
     {
-        private HttpClient HttpClient { get; set; }
-
-        public UpgradeTroopsTest(WebApplicationFactory<Startup> factory)
+        [Fact]
+        public void KingdomsLeaderboard_ShouldReturOKAndLeaderboardList_WhenRequestIsCorrect()
         {
-            HttpClient = factory.CreateClient();
+            //arrange
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/kingdoms");
+            request.Method = HttpMethod.Get;
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
         }
 
-        public string TestLoginReturnToken(string userName, string password)
+        [Fact]
+        public void Troops_ShouldReturnOk_WhenRequestCorrect()
         {
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+
+            var inputObj = JsonConvert.SerializeObject(new { kingdomId = 1 });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:5000/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-            return tokenResult;
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/troops");
+            request.Method = HttpMethod.Get;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
+        [Fact]
+        public void Troops_ShouldReturnUnauthorized_WhenNotCorrectPlayerLoggedIn()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
+
+            var inputObj = JsonConvert.SerializeObject(new { kingdomId = 1 });
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/7/troops");
+            request.Method = HttpMethod.Get;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+            string respond = response.Content.ReadAsStringAsync().Result;
+            ErrorResponse error = JsonConvert.DeserializeObject<ErrorResponse>(respond);
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
+        }
+
+        [Fact]
+        public void TroopsLeaderboard_ShouldReturnStatusOk_WhenRequestDoneCorrectly()
+        {
+            //arrange
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+            var request = new HttpRequestMessage();
+            request.RequestUri = new Uri("https://localhost:20625/leaderboards/troops");
+            request.Method = HttpMethod.Get;
+
+            //act
+            HttpResponseMessage response = HttpClient.SendAsync(request).Result;
+
+            //assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+        }
         [Fact]
         public void HttpPutUpgradeTroops_ReturnsUnauhtorizedAndError()
         {
@@ -63,7 +114,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public void HttpPutUpgradeTroops_ReturnsBadRequestAndError()
+        public void UpgradeTroops_ReturnsBadRequestAndError()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -92,4 +143,3 @@ namespace TestProject1
         }
     }
 }
-

@@ -55,7 +55,7 @@ namespace DumDum.Services
 
         public async Task<Building> GetBuildingById(int buildingId)
         {
-            return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).FirstOrDefault();
+            return UnitOfWork.Buildings.Find(b => b.BuildingId == buildingId).Result.FirstOrDefault();
         }
         
         public async Task<(BuildingList, int, string)> LevelUp(int kingdomId, int buildingId, string authorization)
@@ -109,7 +109,7 @@ namespace DumDum.Services
         public async Task<BuildingLevel> InformationForNextLevel(int levelTypeId, int buildingLevel)
         {
             return UnitOfWork.BuildingLevels
-                .Find(p => p.BuildingLevelId == levelTypeId && p.LevelNumber == buildingLevel + 1)
+                .Find(p => p.BuildingLevelId == levelTypeId && p.LevelNumber == buildingLevel + 1).Result
                 .FirstOrDefault();
         }
 
@@ -160,7 +160,7 @@ namespace DumDum.Services
 
         public async Task<int> GetTownHallLevel(int kingdomId)
         {
-            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall")
+            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").Result
                                        .FirstOrDefault().Level;
         }
 

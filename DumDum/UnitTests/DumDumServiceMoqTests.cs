@@ -1,69 +1,72 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DumDum.Controllers;
 using DumDum.Interfaces;
+using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace TestProject1
+namespace UnitTests
 {
     public class DumDumServiceMoqTests : TestService
     {
-        private IAuthenticateService IAuthenticateService { get; set; }
         private DumDumController dumDumController;
         private readonly Mock<IAuthenticateService> authenticateServiceMoq = new Mock<IAuthenticateService>();
         private Mock<IDumDumService> dumDumServiceMoq = new Mock<IDumDumService>();
-        private Mock<ITroopService> troopServiceMoq = new Mock<ITroopService>();
         private readonly Mock<IDetailService> detailServiceMoq = new Mock<IDetailService>();
         private readonly Mock<ITimeService> timeServiceMoq = new Mock<ITimeService>();
         private readonly Mock<IUnitOfWork> unitOfWorkMoq = new Mock<IUnitOfWork>();
 
-        //[Fact]
-        //public void KingdomsList_ReturnsEmptyObject_WhenNoKingdomPresent()
-        //{
-        //    // Arrange
-        //    KingdomsListResponse kingdomsEmptyList = new();
-        //    dumDumServiceMoq.Setup(x => x.GetAllKingdoms()).Returns(new Task<KingdomsListResponse>() { Kingdoms = kingdomsEmptyList });
-        //    dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
-        //       detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
-        //    // Act
-        //    var actual = dumDumController.KingdomsList();
-
-        //    // Assert
-        //    Assert.IsType<OkObjectResult>(actual);
-        //    Assert.Equal(StatusCodes.Status200OK, (actual as ObjectResult).StatusCode);
-        //}
-
-        /*[Fact]
-        public void RegisterKingdom_ReturnsOkStatus_WhenCoordinatesAndKingdomIdProvided()
+        [Fact]
+        public void KingdomsList_ReturnsEmptyObject_WhenNoKingdomPresent()
         {
             // Arrange
-            int statusCode = 200;
+            var kingdomsEmptyList = Task.FromResult(new KingdomsListResponse());
+            dumDumServiceMoq.Setup(x => x.GetAllKingdoms()).
+                Returns(kingdomsEmptyList);
+
+            dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
+               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
+            // Act
+            var actual = dumDumController.KingdomsList();
+
+            // Assert
+            Assert.IsType<OkObjectResult>(actual);
+            Assert.Equal(StatusCodes.Status200OK, (actual as ObjectResult).StatusCode);
+        }
+
+        [Fact]
+        public void RegisterKingdom_ReturnsOkStatus_WhenCoordinatesAndKingdomIdProvided()
+        {
+            //Arrange
             KingdomRegistrationRequest moqRequest = new();
             moqRequest.CoordinateY = 88;
             moqRequest.CoordinateX = 88;
             moqRequest.KingdomId = 1;
-            var expectedStatusResponse = new StatusResponse { Status = "Ok" };
+
+            (string, int) expectedStatusResponseTuple = new("Ok", 200);
+            var expectedStatusResponseTask = Task.FromResult(expectedStatusResponseTuple);
             dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
-
             dumDumServiceMoq.Setup(x => x.RegisterKingdom("moqToken", moqRequest))
-                            .Returns(()=>"Ok");
+                            .Returns(expectedStatusResponseTask);
 
             // Act
             var actualStatus = dumDumController.RegisterKingdom("moqToken", moqRequest);
             var actualStatusResponse = (actualStatus as ObjectResult).Value as StatusResponse;
 
             // Assert
-            Assert.Equal(expectedStatusResponse.Status , actualStatusResponse.Status);
-        }*/
+            Assert.Equal(expectedStatusResponseTask.Result.Item1, actualStatusResponse.Status);
+        }
 
         [Fact]
-        public void ListingAllKingdoms_ReturnsCorrectJson()
+        public void ListingAllKingdoms_ReturnsCorrectDtoObject()
         {
             var kingdoms = new KingdomsListResponse();
 
@@ -75,7 +78,7 @@ namespace TestProject1
                 KingdomName = "Hahalkovo",
                 Ruler = "Nya",
                 Population = 0,
-                Location = new DumDum.Models.Entities.Location()
+                Location = new Location()
                     {
                         CoordinateX = 10,
                         CoordinateY = 10,
@@ -92,26 +95,16 @@ namespace TestProject1
         }
 
         [Fact]
-        public void KingdomsLeaderboard_ReturnsLeaderboardList()
+        public void RegisterPlayerLogic_ReturnsCorrectDtoObject_WhenRequestIsCorrect()
         {
-            var kingdoms = new KingdomsLeaderboardResponse();
+            (PlayerResponse, int) expectedResponse = new();
+            expectedResponse.Item2 = 200;
 
-            kingdoms.Response = new List<KingdomPoints>()
-            {
-                new KingdomPoints()
-                {
-                    Ruler = "Nya",
-                    Kingdom = "Hahalkovo",
-                    Points = 14
-                }
-            };
+            dumDumServiceMoq.Setup(x => x.RegisterPlayerLogic(new PlayerRequest()).Result).Returns(expectedResponse);
 
-            troopServiceMoq.Setup(x => x.GetKingdomsLeaderboard().Result).Returns(kingdoms);
+            var actual = dumDumServiceMoq.Object.RegisterPlayerLogic(new PlayerRequest());
 
-            var actual = troopServiceMoq.Object.GetKingdomsLeaderboard().Result;
-
-            Assert.IsType<KingdomsLeaderboardResponse>(actual);
-            Assert.Equal(kingdoms, actual);
+            Assert.IsType<(PlayerResponse, int)>(actual.Result);
         }
     }
 }
