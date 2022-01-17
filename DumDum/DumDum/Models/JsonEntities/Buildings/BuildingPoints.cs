@@ -24,5 +24,8 @@ namespace DumDum.Models.JsonEntities.Buildings
             Buildings = buildings;
             Points = points;
         }
+        public BuildingPoints()
+        {
+        }
     }
 }

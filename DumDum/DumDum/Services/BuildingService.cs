@@ -160,7 +160,8 @@ namespace DumDum.Services
 
         public async Task<int> GetTownHallLevel(int kingdomId)
         {
-            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").FirstOrDefault().Level;
+            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall")
+                                       .FirstOrDefault().Level;
         }
 
         public async Task<BuildingsLeaderboardResponse> GetBuildingsLeaderboard()
