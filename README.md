@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-✨Kingom By Kingdom Build An Empire✨
+✨Kingdom By Kingdom Build An Empire✨
 </p>
 
 #### .NET 5 API App # Deployed on [Azure](https://dumdumdumdum.azurewebsites.net)
