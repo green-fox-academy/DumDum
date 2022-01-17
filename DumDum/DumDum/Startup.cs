@@ -46,7 +46,7 @@ namespace DumDum
             services.AddTransient<IDumDumService, DumDumService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IResourceService, ResourceService>();
-            services.AddTransient<ITimeService, TimeService>();
+            //services.AddSingleton<ITimeService, TimeService>();
             services.AddTransient<ITroopService, TroopService>();
             
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
@@ -61,7 +61,7 @@ namespace DumDum
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
 
             ConfigureDb(services);
-
+            
             //This is setting for authentication
 
             var appSettingSection = AppConfig.GetSection("AppSettings");

@@ -13,15 +13,17 @@ namespace DumDum.Services
     {
         private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
+        public static Timer timer = new System.Timers.Timer(6000);
         
         public TimeService(IDumDumService dumdumService, IUnitOfWork unitOfWork)
         {
             DumDumService = dumdumService;
             UnitOfWork = unitOfWork;
-            ExecuteAsync().Start();
+            timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
+            timer.Start();
         }
         
-        private  Timer ExecuteAsync()
+        private   Timer ExecuteAsync()
         {
             Timer timer = new Timer(5000);
             timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
