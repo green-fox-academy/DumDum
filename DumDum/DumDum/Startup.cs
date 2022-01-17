@@ -46,9 +46,9 @@ namespace DumDum
             services.AddTransient<IDumDumService, DumDumService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IResourceService, ResourceService>();
-            //services.AddSingleton<ITimeService, TimeService>();
+            services.AddHostedService<TimeService>();
             services.AddTransient<ITroopService, TroopService>();
-            
+
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBuildingRepository, BuildingRepository>();
             services.AddTransient<IKingdomRepository, KingdomRepository>();
@@ -61,6 +61,7 @@ namespace DumDum
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
 
             ConfigureDb(services);
+            //var timeService = new TimeService(services.)
             
             //This is setting for authentication
 

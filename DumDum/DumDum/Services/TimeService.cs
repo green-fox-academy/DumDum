@@ -1,35 +1,41 @@
 ﻿using DumDum.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using DumDum.Models.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Timer = System.Timers.Timer;
 
 namespace DumDum.Services
 {
-    public class TimeService : ITimeService
+    public class TimeService : ITimeService, IHostedService
 
     {
         private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
         public static Timer timer = new System.Timers.Timer(6000);
         
-        public TimeService(IDumDumService dumdumService, IUnitOfWork unitOfWork)
+        public TimeService(IServiceProvider serviceProvider)
         {
-            DumDumService = dumdumService;
-            UnitOfWork = unitOfWork;
+            using (var scope = serviceProvider.CreateScope())
+            {
+                DumDumService = scope.ServiceProvider.GetRequiredService<IDumDumService>();;
+                UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            }
             timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
             timer.Start();
         }
         
+        /*
         private   Timer ExecuteAsync()
         {
             Timer timer = new Timer(5000);
             timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
             timer.Start();
             return timer;
-        }
+        }*/
 
         public async Task UpdateAllKingdomsEvents()
         {
@@ -176,6 +182,18 @@ namespace DumDum.Services
         private int FoodAndGoldConsumption(int troopLevel, int troopTypeId)
         {
             return UnitOfWork.TroopLevels.GetConsumptionByTroopTypeAndLevel(troopTypeId, troopLevel);
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("StartAsync");
+            return Task.CompletedTask;
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("StopAsync");
+            return Task.CompletedTask;
         }
     }
 }
