@@ -2,7 +2,6 @@
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
-using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,14 +10,12 @@ namespace DumDum.Controllers
     public class LoginController : Controller
     {
         private ILoginService LoginService { get; set; }
-        private ITimeService TimeService { get; set; }
-        public IAuthenticateService AuthenticateService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
 
-        public LoginController(ILoginService service, IAuthenticateService auservice, ITimeService timeService)
+        public LoginController(ILoginService service, IAuthenticateService auservice)
         {
             LoginService = service;
             AuthenticateService = auservice;
-            TimeService = timeService;
         }
 
         [AllowAnonymous]
