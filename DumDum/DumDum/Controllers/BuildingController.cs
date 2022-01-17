@@ -1,8 +1,6 @@
-﻿using DumDum.Interfaces;
-using DumDum.Interfaces.IServices;
+﻿using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
-using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,16 +8,11 @@ namespace DumDum.Controllers
 {
     public class BuildingController : Controller
     {
-
-        private IDumDumService DumDumService { get; set; }
         private IBuildingService BuildingService { get; set; }
-        private ITimeService TimeService { get; set; }
 
-        public BuildingController(IDumDumService dumDumService, IBuildingService buildingService, ITimeService timeService)
+        public BuildingController(IBuildingService buildingService)
         {
-            DumDumService = dumDumService;
             BuildingService = buildingService;
-            TimeService = timeService;
         }
 
         [Authorize]
