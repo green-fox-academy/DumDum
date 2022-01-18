@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using DumDum;
+﻿using DumDum;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Xunit;
 
 namespace TestProject1
@@ -137,34 +136,11 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:20625/kingdoms");
             request.Method = HttpMethod.Get;
 
-            KingdomsListResponse requestBody = new KingdomsListResponse();
-
-            requestBody.Kingdoms = new List<KingdomResponse>()
-            {
-                new KingdomResponse()
-                {
-                KingdomId = 1,
-                KingdomName = "Nya Nya Land",
-                Ruler = "Nya",
-                Population = 0,
-                Location = new DumDum.Models.Entities.Location()
-                    {
-                        CoordinateX = 10,
-                        CoordinateY = 10,
-                    }
-                }
-            };
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
-            string responseData = response.Content.ReadAsStringAsync().Result;
-            KingdomsListResponse responseDataObj = JsonConvert.DeserializeObject<KingdomsListResponse>(responseData);
-
-            Assert.NotNull(responseDataObj);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(requestBody.Kingdoms[0].KingdomName,responseDataObj.Kingdoms[0].KingdomName);
 
         }
 
@@ -180,30 +156,11 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:20625/leaderboards/kingdoms");
             request.Method = HttpMethod.Get;
 
-            KingdomsLeaderboardResponse requestBody = new KingdomsLeaderboardResponse();
-
-            requestBody.Response = new List<KingdomPoints>()
-            {
-                new KingdomPoints()
-                {
-                    Ruler = "Marek",
-                    Kingdom = "Pivko",
-                    Points = 157.0
-                }
-            };
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
-            string responseData = response.Content.ReadAsStringAsync().Result;
-            KingdomsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<KingdomsLeaderboardResponse>(responseData);
-
-            Assert.NotNull(responseDataObj);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(requestBody.Response[0].Ruler, responseDataObj.Response[0].Ruler);
-            Assert.Equal(requestBody.Response[0].Kingdom, responseDataObj.Response[0].Kingdom);
-            Assert.Equal(requestBody.Response[0].Points, responseDataObj.Response[0].Points);
 
         }
 

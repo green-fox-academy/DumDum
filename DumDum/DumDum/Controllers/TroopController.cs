@@ -1,7 +1,6 @@
 ﻿using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Troops;
-using DumDum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

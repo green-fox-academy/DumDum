@@ -25,5 +25,8 @@ namespace DumDum.Models.JsonEntities.Troops
             Troops = troops;
             Points = points;
         }
+        public TroopsPoint()
+        {
+        }
     }
 }

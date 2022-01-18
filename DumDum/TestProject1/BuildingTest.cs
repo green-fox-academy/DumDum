@@ -1,16 +1,15 @@
 ﻿using DumDum;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
+using DumDum.Models.JsonEntities.Login;
+using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using Xunit;
-using System.Collections.Generic;
 
 namespace TestProject1
 {
@@ -134,26 +133,11 @@ namespace TestProject1
             request.RequestUri = new Uri("https://localhost:20625/leaderboards/buildings");
             request.Method = HttpMethod.Get;
 
-            BuildingsLeaderboardResponse requestBody = new BuildingsLeaderboardResponse();
-
-            requestBody.Result = new List<BuildingPoints>()
-            {
-                new BuildingPoints("Marek", "Pivko", 4, 152)
-            };
-
             //act
             HttpResponseMessage response = HttpClient.SendAsync(request).Result;
-            string responseData = response.Content.ReadAsStringAsync().Result;
-            BuildingsLeaderboardResponse responseDataObj = JsonConvert.DeserializeObject<BuildingsLeaderboardResponse>(responseData);
-
-            Assert.NotNull(responseDataObj);
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(requestBody.Result[0].Ruler, responseDataObj.Result[0].Ruler);
-            Assert.Equal(requestBody.Result[0].Kingdom, responseDataObj.Result[0].Kingdom);
-            Assert.Equal(requestBody.Result[0].Buildings, responseDataObj.Result[0].Buildings);
-            Assert.Equal(requestBody.Result[0].Points, responseDataObj.Result[0].Points);
 
         }
     }

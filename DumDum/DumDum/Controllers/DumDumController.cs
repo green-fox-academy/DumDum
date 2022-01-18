@@ -1,33 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using Microsoft.AspNetCore.Authorization;
+﻿using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
-using DumDum.Services;
-using Newtonsoft.Json;
-using DumDum.Interfaces;
-using DumDum.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace DumDum.Controllers
 {
     public class DumDumController : Controller
     {
-        private IUnitOfWork UnitOfWork { get; set; }
-        private ITimeService TimeService { get; set; }
         private IDumDumService DumDumService { get; set; }
         private IAuthenticateService AuthenticateService { get; set; }
         private IDetailService DetailService { get; set; }
 
         public DumDumController(IDumDumService dumDumService,IAuthenticateService authenticateService, 
-            IDetailService detailService, IUnitOfWork unitOfWork, ITimeService timeService)
+            IDetailService detailService)
         {
             DumDumService = dumDumService;
             AuthenticateService = authenticateService;
             DetailService = detailService;
-            UnitOfWork = unitOfWork;
-            TimeService = timeService;
         }
 
         [AllowAnonymous]
