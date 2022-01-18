@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
 
     public interface IRepository<T> where T : class

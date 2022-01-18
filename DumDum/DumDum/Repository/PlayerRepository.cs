@@ -1,9 +1,9 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {

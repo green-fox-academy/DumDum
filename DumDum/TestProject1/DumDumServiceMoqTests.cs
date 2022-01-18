@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DumDum.Controllers;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.AspNetCore.Http;
@@ -75,7 +77,7 @@ namespace TestProject1
                 KingdomName = "Hahalkovo",
                 Ruler = "Nya",
                 Population = 0,
-                Location = new DumDum.Models.Entities.Location()
+                Location = new Location()
                     {
                         CoordinateX = 10,
                         CoordinateY = 10,

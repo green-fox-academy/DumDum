@@ -17,6 +17,6 @@ namespace DumDum.Interfaces.IServices
         Task<int> GetSumOfDefensePower(Kingdom kingdom);
         Task<(int, string, List<TroopsLost>, List<TroopsLost>)> GetWinner(Player player, Kingdom kingdom);
         Task<(List<TroopsLost>, List<TroopsLost>)> TakeTroops(int winnerKingdomId, int loserKingdomId);
-        Task<(float, float)> TakeAndGiveLoot(int winnderId,string loser);
+        Task<(float, float)> TakeAndGiveLoot(int winnerId,string loser);
     }
 }

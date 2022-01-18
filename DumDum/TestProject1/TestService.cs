@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
+using DumDum.Interfaces.IServices;
 
 namespace TestProject1
 {

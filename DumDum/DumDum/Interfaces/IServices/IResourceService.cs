@@ -1,9 +1,10 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities.Resources;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Kingdom;
+using DumDum.Models.JsonEntities.Resources;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IResourceService
     {

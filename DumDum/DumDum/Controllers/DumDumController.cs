@@ -6,6 +6,7 @@ using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Controllers
 {
@@ -110,7 +111,6 @@ namespace DumDum.Controllers
         [HttpPost("passwordReset")]
         public IActionResult PasswordReset([FromBody] PasswordResetRequest passwordRequest)
         {
-            int statusCode;
             var message = DumDumService.ResetPassword(passwordRequest).Result;
 
             if (message.Item2 == 200)

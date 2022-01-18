@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using System.Linq;
+using DumDum.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Repository

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace DumDum.Models.JsonEntities.Battles
 {
