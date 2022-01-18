@@ -1,4 +1,3 @@
-using DumDum.Interfaces;
 using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Services
 {
@@ -279,13 +279,13 @@ namespace DumDum.Services
             var amountOfGold = await DumDumService.GetGoldAmountOfKingdom(kingdomOfLoser.KingdomId);
             float amountOfGoldToTakeOrGive = amountOfGold / 100f;
             float goldStolen = amountOfGoldToTakeOrGive * 20;
-            DumDumService.TakeGold(kingdomOfLoser.KingdomId, (int) goldStolen);
+            await DumDumService.TakeGold(kingdomOfLoser.KingdomId, (int) goldStolen);
             float amountOfFood = DumDumService.GetFoodAmountOfKingdom(kingdomOfLoser.KingdomId).Result;
             var amountOfFoodToTakeOrGive = amountOfFood / 100;
             float foodStolen = amountOfFoodToTakeOrGive * 20;
-            DumDumService.TakeFood(kingdomOfLoser.KingdomId, (int) foodStolen);
-            DumDumService.GiveGold(kingdomOfWinner.KingdomId, (int) goldStolen);
-            DumDumService.GiveFood(kingdomOfWinner.KingdomId, (int) foodStolen);
+            await DumDumService.TakeFood(kingdomOfLoser.KingdomId, (int) foodStolen);
+            await DumDumService.GiveGold(kingdomOfWinner.KingdomId, (int) goldStolen);
+            await DumDumService.GiveFood(kingdomOfWinner.KingdomId, (int) foodStolen);
             return (goldStolen, foodStolen);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DumDum.Models.Entities;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
     public interface IPlayerRepository : IRepository<Player>
     {

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface ITimeService
     {

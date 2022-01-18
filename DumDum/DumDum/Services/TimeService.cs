@@ -4,6 +4,8 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {
@@ -25,8 +27,8 @@ namespace DumDum.Services
 
         public async Task UpdateAllKingdomsEvents()
         {
-            var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
-            foreach (var kingdom in Kingdoms.Result)
+            var kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
+            foreach (var kingdom in kingdoms.Result)
             {
                 GetKingdomResourcesPerCycle(kingdom.KingdomId);
             }

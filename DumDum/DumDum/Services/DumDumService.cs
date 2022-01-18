@@ -8,6 +8,8 @@ using DumDum.Models.JsonEntities.Player;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 
 namespace DumDum.Services
@@ -31,11 +33,11 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
-
         public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
-            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
+            var player = new Player()
+                {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
             UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
             var playerToReturn = await GetPlayerByUsername(username);
@@ -43,11 +45,11 @@ namespace DumDum.Services
             UnitOfWork.Complete();
             return playerToReturn;
         }
-
-        public async Task<Kingdom> CreateKingdom(string kingdomname, string username)
+        
+        public async Task<Kingdom> CreateKingdom(string kingdomName, string username)
         {
             var kingdom = new Kingdom();
-            if (kingdomname.IsNullOrEmpty())
+            if (kingdomName.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s Kingdom";
                 var kingdomToSave = UnitOfWork.Kingdoms.AddKingdom(kingdom);
@@ -117,7 +119,7 @@ namespace DumDum.Services
             return new Kingdom() { };
         }
 
-        public async Task<Kingdom> RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId)
+        public async Task<Kingdom> RegisterKingdomToDb(int coordinateX, int coordinateY, int kingdomId)
         {
             var kingdom = await GetKingdomById(kingdomId);
             kingdom.CoordinateX = coordinateX;
@@ -164,7 +166,7 @@ namespace DumDum.Services
                    !await DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
                    player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
-                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    RegisterKingdomToDb(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
                     return ("Ok", 200);
                 }
             }

@@ -4,7 +4,7 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IDumDumService
     {
@@ -21,12 +21,12 @@ namespace DumDum.Interfaces
         Task<int> GetFoodAmountOfKingdom(int kingdomId);
         Task GiveGold(int kingdomId, int amount);
         Task GiveFood(int kingdomId, int amount);
-        Task<Kingdom> RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId);
+        Task<Kingdom> RegisterKingdomToDb(int coordinateX, int coordinateY, int kingdomId);
         Task<bool> IsKingdomIdValid(int kingdomId);
         Task<bool> AreCredentialsValid(string username, string password);
         Task<bool> AreCoordinatesValid(int coordinateX, int coordinateY);
         Task<bool> DoCoordinatesExist(int coordinateX, int coordinateY);
-        Task<Kingdom> CreateKingdom(string kingdomname, string username);
+        Task<Kingdom> CreateKingdom(string kingdomName, string username);
         Task<Player> Register(string username, string password, string kingdomName, string email);
         Task<Kingdom> GetKingdomByName(string kingdomName);
         Task<(string, int)> SetAuthToTrue(int playerId, string hash);

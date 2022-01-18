@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {
@@ -202,10 +204,10 @@ namespace DumDum.Services
 
         public int GetTroupTypeIdByTroupTypeName(string troopType)
         {
-            var TroupTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
-            if (TroupTypeIdByTroupTypeName != null)
+            var troopTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).FirstOrDefault();
+            if (troopTypeIdByTroupTypeName != null)
             {
-                return TroupTypeIdByTroupTypeName.TroopTypeId;
+                return troopTypeIdByTroupTypeName.TroopTypeId;
             }
             return 0;
         }
