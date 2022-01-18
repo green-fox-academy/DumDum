@@ -6,6 +6,7 @@ using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Controllers
 {

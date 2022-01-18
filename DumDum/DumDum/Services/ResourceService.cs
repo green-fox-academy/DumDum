@@ -5,6 +5,8 @@ using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Resources;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {

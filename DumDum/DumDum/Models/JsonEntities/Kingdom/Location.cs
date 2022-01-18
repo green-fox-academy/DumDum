@@ -1,4 +1,4 @@
-namespace DumDum.Models.Entities
+namespace DumDum.Models.JsonEntities.Kingdom
 {
     public class Location
     {

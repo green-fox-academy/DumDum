@@ -1,6 +1,6 @@
-using DumDum.Models.Entities;
+﻿using DumDum.Models.Entities;
 
-namespace DumDum.Models.JsonEntities
+namespace DumDum.Models.JsonEntities.Troops
 {
     public class TroopsResponse
     {

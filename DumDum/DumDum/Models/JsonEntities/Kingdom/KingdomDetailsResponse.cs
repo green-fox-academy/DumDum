@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Resources;
 using DumDum.Models.JsonEntities.Troops;
-using DumDum.Services;
+
 
 namespace DumDum.Models.JsonEntities.Kingdom
 {

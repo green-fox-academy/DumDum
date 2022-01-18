@@ -1,7 +1,7 @@
-using DumDum.Models.Entities;
 using System.Collections.Generic;
+using DumDum.Models.Entities;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
     public interface IBattleRepository : IRepository<Battle>
     {

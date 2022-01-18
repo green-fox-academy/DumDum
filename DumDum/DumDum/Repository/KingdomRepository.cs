@@ -1,13 +1,12 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {

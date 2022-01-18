@@ -1,9 +1,9 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities.Buildings;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Buildings;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
     public interface IBuildingRepository : IRepository<Building>
     {

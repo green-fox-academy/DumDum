@@ -19,7 +19,6 @@ namespace DumDum.Controllers
         [HttpGet("kingdoms/{kingdomId=int}/buildings")]
         public IActionResult Buildings([FromHeader] string authorization, [FromRoute] int kingdomId)
         {
-            int statusCode;
             var response = BuildingService.ListBuildings(authorization, kingdomId).Result;
 
             if (response.Item2 == 401)
