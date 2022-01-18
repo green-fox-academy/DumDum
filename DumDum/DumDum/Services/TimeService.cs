@@ -15,50 +15,42 @@ namespace DumDum.Services
     {
         private IDumDumService DumDumService { get; set; }
         private IUnitOfWork UnitOfWork { get; set; }
-        public static Timer timer = new System.Timers.Timer(6000);
-        
+        private Timer Timer { get; set; }
+        public IServiceProvider ServiceProvider { get; }
+
         public TimeService(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                DumDumService = scope.ServiceProvider.GetRequiredService<IDumDumService>();;
-                UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-            }
-            timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
-            timer.Start();
+            ServiceProvider = serviceProvider;
         }
-        
-        /*
-        private   Timer ExecuteAsync()
-        {
-            Timer timer = new Timer(5000);
-            timer.Elapsed += async ( sender, e ) =>  await UpdateAllKingdomsEvents();
-            timer.Start();
-            return timer;
-        }*/
 
         public async Task UpdateAllKingdomsEvents()
         {
-            Console.WriteLine("Nya");
-            var kingdoms = new List<Kingdom>();
-            try
+            using (var scope = ServiceProvider.CreateScope())
             {
-                kingdoms = await UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
-            }
-            catch (NullReferenceException e)
-            {
-                Console.WriteLine("nya nya ");
-                throw;
-            }
+                DumDumService = scope.ServiceProvider.GetRequiredService<IDumDumService>();
 
-            if (kingdoms is not null)
-            {
-                foreach (var kingdom in kingdoms)
+                UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                Console.WriteLine("Nya");
+                var kingdoms = new List<Kingdom>();
+                try
                 {
-                    GetKingdomResourcesPerCycle(kingdom.KingdomId);
+                    kingdoms = await UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
+                }
+                catch (NullReferenceException e)
+                {
+                    Console.WriteLine("nya nya ");
+                    throw;
+                }
+
+                if (kingdoms is not null)
+                {
+                    foreach (var kingdom in kingdoms)
+                    {
+                        GetKingdomResourcesPerCycle(kingdom.KingdomId);
+                    }
                 }
             }
-            return;
         }
 
         public async void GetKingdomResourcesPerCycle(int kingdomId)
@@ -66,22 +58,17 @@ namespace DumDum.Services
             int cycles = 1;
             var actualKingdomsGold = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var actualKingdomsFood = await DumDumService.GetFoodAmountOfKingdom(kingdomId);
-            //kód na produkci
-            //kód na jídlo
+
             var productionOfFood = await GetFoodFromFarms(kingdomId, cycles);
-            //kód na zlato
             var productionOfGold = await GetGoldFromMines(kingdomId, cycles);
 
-            //kód na konzumaci
             var consumptionOfTroops = await GetConsumptionOfTroops(kingdomId);
             var consumptionOfBuildings = await GetConsumptionOfBuildings(kingdomId);
             var allConsumption = consumptionOfBuildings + consumptionOfTroops;
-            //Výsledek
+
             var newAmountOfFood = actualKingdomsFood + (productionOfFood - allConsumption);
             var newAmountOfGold = actualKingdomsGold + productionOfGold;
 
-
-            //zapsání do db
             var gold = await UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
             var food = await UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
             gold.Amount = newAmountOfGold;
@@ -186,6 +173,9 @@ namespace DumDum.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            Timer = new Timer(300000);
+            Timer.Elapsed += async (sender, e) => await UpdateAllKingdomsEvents();
+            Timer.Start();
             Console.WriteLine("StartAsync");
             return Task.CompletedTask;
         }

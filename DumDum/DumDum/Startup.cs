@@ -61,9 +61,7 @@ namespace DumDum
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
 
             ConfigureDb(services);
-            //var timeService = new TimeService(services.)
             
-            //This is setting for authentication
 
             var appSettingSection = AppConfig.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
