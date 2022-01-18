@@ -7,14 +7,13 @@ namespace DumDum.Interfaces.IServices
 {
     public interface ITimeService
     {
-        Task OnTimedEvent(Object source, ElapsedEventArgs e);
         Task UpdateAllKingdomsEvents();
-        Task GetKingdomResourcesPerCycle(int kingdomId);
+        void GetKingdomResourcesPerCycle(int kingdomId);
         Task<int> GetFoodFromFarms(int kingdomId, int cycles);
         Task<int> GetGoldFromMines(int kingdomId, int cycles);
-        Task<int> HomMuchFoodOneFarmProduce(int lvl);
-        Task<int> HomMuchGoldOneMineProduce(int lvl);
-        Task StartAsync(CancellationToken cancellationToken);
-        Task StopAsync(CancellationToken cancellationToken);
+        Task<int> FoodAndGoldProduction(int buildingLevel, int buildingTypeId);
+        Task<int> GetConsumptionOfBuildings(int kingdomId);
+        Task<int> GetConsumptionOfTroops(int kingdomId);
+
     }
 }

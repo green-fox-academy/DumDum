@@ -116,7 +116,7 @@ namespace DumDum.Services
                 return kingdom.Result;
             }
 
-            return new Kingdom() { };
+            return new Kingdom();
         }
 
         public async Task<Kingdom> RegisterKingdomToDb(int coordinateX, int coordinateY, int kingdomId)

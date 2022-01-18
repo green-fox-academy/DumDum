@@ -1,17 +1,13 @@
 using DumDum.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DumDum.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -40,6 +36,7 @@ namespace DumDum
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
@@ -49,7 +46,7 @@ namespace DumDum
             services.AddTransient<IDumDumService, DumDumService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IResourceService, ResourceService>();
-            services.AddTransient<ITimeService, TimeService>();
+            services.AddHostedService<TimeService>();
             services.AddTransient<ITroopService, TroopService>();
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
@@ -62,12 +59,9 @@ namespace DumDum
             services.AddTransient<ITroopTypesRepository, TroopTypesRepository>();
             services.AddTransient<IBattleRepository, BattleRepository>();
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
 
             ConfigureDb(services);
-
-            //This is setting for authentication
+            
 
             var appSettingSection = AppConfig.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
