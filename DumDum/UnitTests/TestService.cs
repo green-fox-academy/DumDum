@@ -14,32 +14,24 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 
 namespace UnitTests
 {
     public class TestService
     {
         internal HttpClient HttpClient { get; set; }
-        private IAuthenticateService IAuthenticateService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
+        private IOptions<AppSettings> AppSettings { get; set; }
 
         public TestService()
         {
             var appFactory = new WebApplicationFactory<Startup>();
             HttpClient = appFactory.CreateClient();
+            AppSettings = Options.Create<AppSettings>(new AppSettings() { Key = "This is my sample key" });
         }
 
-        public string TestLoginReturnToken(string userName, string password)
-        {
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-            return tokenResult;
-        }
-
-        internal UnitOfWork GetContextWithoutData()
+        internal UnitOfWork AddPlayerToMemoryDB_ReturnContext()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
             var connection = new SqliteConnection(connectionStringBuilder.ToString());
@@ -49,26 +41,31 @@ namespace UnitTests
             var unitOfWork = new UnitOfWork(context);
             context.Database.OpenConnection();
             context.Database.EnsureCreated();
+            unitOfWork.Players.Add(new DumDum.Models.Entities.Player()
+            {
+                Username = "TestUser",
+                Password = Crypto.HashPassword("Password1"),
+                Email = "Test@email.com",
+                IsVerified = true,
+                KingdomId = 1,
+                PlayerId = 1,
+                Kingdom = new DumDum.Models.Entities.Kingdom() { KingdomId = 1, PlayerId = 1, KingdomName = "TestKingdom" }
+            });
+            unitOfWork.Complete();
             return unitOfWork;
         }
 
         internal async Task<(string, IUnitOfWork)> TestLoginReturnTokenPlayerInMemoryDB()
         {
-            var unitOfWork = GetContextWithoutData();
-            var dumDumService = new DumDumService(IAuthenticateService, unitOfWork);
-            IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() { Key = "This is my sample key" });
-            var authenticateService = new AuthenticateService(AppSettings, unitOfWork);
-            var testPlayerRequest = new PlayerRequest { KingdomName = "TestKingdom", Password = "TestPassword",
-                Username = "TestUser"};
-            await dumDumService.RegisterPlayerLogic(testPlayerRequest);
-            var newPlayer = await unitOfWork.Players.GetById(1);
-            newPlayer.IsVerified = true;
-            unitOfWork.Players.Update(newPlayer);
-            unitOfWork.Complete();
+            var unitOfWork = AddPlayerToMemoryDB_ReturnContext();
+            var dumDumService = new DumDumService(AuthenticateService, unitOfWork);
             var LoginService = new LoginService(AppSettings, dumDumService, unitOfWork);
+
+            var playerFromDb = unitOfWork.Players.GetPlayerById(1).Result;
             var token = LoginService.
-                Login(new LoginRequest { Username = testPlayerRequest.Username, Password = testPlayerRequest.Password }).Result.Item1;
-            return (token,unitOfWork);
+                Login(new LoginRequest { Username = playerFromDb.Username, Password = "Password1" }
+                ).Result.Item1;
+            return (token, unitOfWork);
         }
     }
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using DumDum;
+﻿using DumDum;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
-using DumDum.Models.JsonEntities.Login;
 using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using Xunit;
 
 namespace IntegrationTests
@@ -16,7 +15,7 @@ namespace IntegrationTests
     public class DumDumControllerTests : TestService, IClassFixture<WebApplicationFactory<Startup>>
     {
         [Fact]
-        public void HttpPostCreateTroops_ReturnsUnauhtorizedAndError()
+        public void CreateTroops_ShouldReturnUnauhtorizedAndError_WhenIncorrectPlayerLoggedIn()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -46,7 +45,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void HttpPostCreateTroops_ReturnsBadRequestAndError()
+        public void CreateTroops_ReturnsBadRequestAndError_WhenIncorrectRequest()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -76,7 +75,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void KingdomRegistration_ReturnsBadRequestAndErrorResponse()
+        public void KingdomRegistration_ReturnsBadRequestAndErrorResponse_WhenIncorrectRequest()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -107,7 +106,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void KingdomRegistration_ReturnsUnauthorizedtAndErrorResponse()
+        public void KingdomRegistration_ReturnsUnauthorizedtAndErrorResponse_WhenIncorrectPlayerLoggedIn()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -155,7 +154,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void KingdomDetails_ShouldReturnUnauthorized_WhenCorrectPlayerNotLoggedIn()
+        public void KingdomDetails_ShouldReturnUnauthorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
 
@@ -170,7 +169,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void RenameKingdom_ShouldReturnUnauthorized_WhenCorrectPlayerNotLoggedIn()
+        public void RenameKingdom_ShouldReturnUnauthorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
 
@@ -184,7 +183,7 @@ namespace IntegrationTests
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
         [Fact]
-        public void RenameKingdom_ShouldReturnBadRequest_WhenNewNameNotProvided()
+        public void RenameKingdom_ShouldReturnBadRequest_WhenNewKingdomNameNotProvided()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -199,6 +198,7 @@ namespace IntegrationTests
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
         [Fact]
         public void ListingAllKingdoms_ShouldReturnOKAndCorrectDtoObject_WhenRequestIsCorrect()
         {
@@ -217,7 +217,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void RegistrationReturnsBadRequest()
+        public void Registration_ShouldReturnsBadRequest_WhenRequestIsIncorrect()
         {
             var request = new HttpRequestMessage();
 

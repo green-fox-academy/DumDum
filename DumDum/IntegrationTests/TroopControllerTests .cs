@@ -1,8 +1,5 @@
 using DumDum;
 using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Authorization;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using DumDum.Models.JsonEntities.Troops;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
@@ -50,7 +47,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void Troops_ShouldReturnUnauthorized_WhenNotCorrectPlayerLoggedIn()
+        public void Troops_ShouldReturnUnauthorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -70,7 +67,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void TroopsLeaderboard_ShouldReturnStatusOk_WhenRequestDoneCorrectly()
+        public void TroopsLeaderboard_ShouldReturnStatusOk_WhenRequestIsCorrect()
         {
             //arrange
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
@@ -85,7 +82,7 @@ namespace IntegrationTests
             Assert.Equal(expectedStatusCode, response.StatusCode);
         }
         [Fact]
-        public void HttpPutUpgradeTroops_ReturnsUnauhtorizedAndError()
+        public void HttpPutUpgradeTroops_ReturnsUnauhtorizedAndError_WhenIncorrectPlayerLoggedIn()
         {
             //arrange
             var request = new HttpRequestMessage();
@@ -114,7 +111,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void UpgradeTroops_ReturnsBadRequestAndError()
+        public void UpgradeTroops_ReturnsBadRequestAndError_WhenRequestIsIncorrect()
         {
             //arrange
             var request = new HttpRequestMessage();

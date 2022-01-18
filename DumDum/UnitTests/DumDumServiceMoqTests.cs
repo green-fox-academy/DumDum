@@ -66,7 +66,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void ListingAllKingdoms_ReturnsCorrectDtoObject()
+        public void ListingAllKingdoms_ReturnsCorrectDtoObject_WhenRequestIsCorrect()
         {
             var kingdoms = new KingdomsListResponse();
 

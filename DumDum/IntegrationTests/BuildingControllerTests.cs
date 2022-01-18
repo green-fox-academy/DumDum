@@ -1,8 +1,6 @@
 ﻿using DumDum;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
@@ -34,7 +32,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void Buildings_ShouldReturnUnathorized_WhenCorrectPlayerNotLoggedIn()
+        public void Buildings_ShouldReturnUnathorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -71,7 +69,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void AddBuilding_ShouldReturnTypeIsRequired_WhenWrongTypeProvided()
+        public void AddBuilding_ShouldReturnNotAcceptable_WhenWrongTypeProvided()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -88,7 +86,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void AddBuilding_ShouldReturnUnathorized_WhenCorrectPlayerNotLoggedIn()
+        public void AddBuilding_ShouldReturnUnathorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
 
@@ -103,9 +101,8 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void BuildingLeaderboard_ShouldReturOKAndLeaderboardList()
+        public void BuildingLeaderboard_ShouldReturOKAndLeaderboardList_WhenRequestIsCorrect()
         {
-
             //arrange
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 

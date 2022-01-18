@@ -1,14 +1,12 @@
+using DumDum;
+using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Resources;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using DumDum;
-using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
-using DumDum.Models.JsonEntities.Resources;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace IntegrationTests

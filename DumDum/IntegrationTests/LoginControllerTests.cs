@@ -2,7 +2,6 @@
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
@@ -32,7 +31,7 @@ namespace IntegrationTests
         }
 
         [Fact]
-        public void Auth_ShouldReturnInfoAboutPLayer()
+        public void Auth_ShouldReturnInfoAboutPLayer_WhenRequestIsCorrect()
         {
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 

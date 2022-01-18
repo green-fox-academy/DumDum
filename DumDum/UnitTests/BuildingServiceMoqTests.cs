@@ -14,7 +14,7 @@ namespace UnitTests
         private Mock<IBuildingService> buildingServiceMoq = new Mock<IBuildingService>();
 
         [Fact]
-        public void BuildingLeaderboard_ReturLeaderboardList()
+        public void BuildingLeaderboard_ReturLeaderboardList_WhenRequestIsCorrect()
         {
             var expected = new BuildingsLeaderboardResponse()
             {
@@ -33,7 +33,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void LevelUp_ReturnsOk()
+        public void LevelUp_ReturnsOk_WhenRequestIsCorrect()
         {
             (BuildingList, int, string) expectedResponse = new
                     (new BuildingList(new Building(), new BuildingLevel()), 200, "Ok");

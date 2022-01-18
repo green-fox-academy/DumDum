@@ -20,26 +20,26 @@ namespace UnitTests
         private Mock<IAuthenticateService> authenticateServiceMoq = new Mock<IAuthenticateService>();
   
         [Fact]
-        public async void RenameKingdom_ShouldReturnChangedName() 
+        public async void RenameKingdom_ShouldReturnChangedName_WhenRequestIsCorrect() 
         {
             var testPlayer = new Player();
             testPlayer.Username = "TestUser";
             testPlayer.KingdomId = 1;
-            testPlayer.Kingdom = new Kingdom() { KingdomName = "TestKingdom", KingdomId = 1 };
+            testPlayer.Kingdom = new Kingdom() { KingdomName = "RenamedKingdom", KingdomId = 1 };
             var testAuthResponse = new AuthResponse() { KingdomId = 1, KingdomName = "Test", Ruler = testPlayer.Username };
 
             var testKingdomRenameRequest = new KingdomRenameRequest() { KingdomName = "TestKingdom" };
 
             KingdomRenameResponse expectedResponse = new(testPlayer);
-           // var TaskToReturn = Task.FromResult(expectedResponse);
 
             authenticateServiceMoq.Setup( x => x.
-            RenameKingdom(testKingdomRenameRequest, testAuthResponse)).Returns(Task.FromResult(expectedResponse));
+            RenameKingdom(testKingdomRenameRequest, testAuthResponse).Result).Returns(expectedResponse);
 
-            var actual = await authenticateServiceMoq.Object.
-                RenameKingdom(new KingdomRenameRequest() { KingdomName="TestKingdom"}, testAuthResponse);
+            var actual = authenticateServiceMoq.Object.
+                RenameKingdom(testKingdomRenameRequest, testAuthResponse);
 
-            Assert.IsType<KingdomRenameResponse>(actual);
+            Assert.IsType<KingdomRenameResponse>(actual.Result);
+            Assert.Equal("RenamedKingdom", actual.Result.KingdomName);
         }
     }
 }

@@ -2,6 +2,7 @@ using DumDum.Controllers;
 using DumDum.Interfaces;
 using DumDum.Models;
 using DumDum.Models.JsonEntities;
+using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
 using DumDum.Services;
@@ -13,37 +14,19 @@ namespace UnitTests
 {
     public class DumDumServiceInMemoryDBTests : TestService
     {
-        private IAuthenticateService IAuthenticateService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
       
-        [Fact]
-        public void GetPlayerById_ReturnsPlayer_WhenPlayerExists()
-        {
-            //arrange
-            var UnitOfWork = GetContextWithoutData();
-            var DumDumService = new DumDumService(IAuthenticateService, UnitOfWork);
-            var testPlayer = DumDumService.
-                RegisterPlayerLogic(new PlayerRequest { KingdomName = "testk", Password = "123456789", Username = "user" }).Result;
-            UnitOfWork.Kingdoms.Add(DumDumService.GetKingdomById(testPlayer.Item1.KingdomId).Result);
-            UnitOfWork.Players.Add(DumDumService.GetPlayerByUsername(testPlayer.Item1.Username).Result);
-
-            //act
-            var actualPlayer = DumDumService.GetPlayerById(1);
-
-            //assert
-            Assert.Equal(testPlayer.Item1.Username, actualPlayer.Result.Username);
-        }
-
 
         [Fact]
-        public void RegisterKingdom_ReturnsStatusOkAndCorrectResponse_WhenCoordinatesAndKingdomIdProvided()
+        public void RegisterKingdom_ReturnsStatusOk_WhenCoordinatesAndKingdomIdProvided()
         {
             //arrange
             IOptions<AppSettings> AppSettings = Options.Create<AppSettings>(new AppSettings() { Key = "This is my sample key" });
-            StatusResponse expectedStatusResult = new();
-            expectedStatusResult.Status = "Ok";
             var tokenPlayer = TestLoginReturnTokenPlayerInMemoryDB();
             var AuthenticateService = new AuthenticateService(AppSettings, tokenPlayer.Result.Item2);
             var dumDumService = new DumDumService(AuthenticateService, tokenPlayer.Result.Item2);
+            StatusResponse expectedStatusResult = new();
+            expectedStatusResult.Status = "Ok";
 
             KingdomRegistrationRequest requestBody = new();
             requestBody.CoordinateY = 88;
@@ -56,5 +39,21 @@ namespace UnitTests
             //assert
             Assert.Equal(expectedStatusResult.Status, response.Result.Item1);
         }
+
+        [Fact]
+        public void GetPlayerById_ReturnsPlayer_WhenPlayerExists()
+        {
+            //arrange
+            var UnitOfWork = AddPlayerToMemoryDB_ReturnContext();
+            var DumDumService = new DumDumService(AuthenticateService, UnitOfWork);
+            var expectedPlayer = UnitOfWork.Players.GetPlayerById(1);
+       
+            //act
+            var actualPlayer = DumDumService.GetPlayerById(1);
+
+            //assert
+            Assert.Equal(expectedPlayer.Result.Username, actualPlayer.Result.Username);
+        }
+
     }
 }

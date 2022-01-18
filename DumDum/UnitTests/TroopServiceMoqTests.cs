@@ -1,13 +1,9 @@
-﻿using DumDum.Controllers;
-using DumDum.Interfaces;
+﻿using DumDum.Interfaces;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,7 +14,7 @@ namespace UnitTests
         private Mock<ITroopService> troopServiceMoq = new Mock<ITroopService>();
 
         [Fact]
-        public void TroopsLeaderboardReturLeaderboardListMoq()
+        public void TroopsLeaderboard_ReturnsLeaderboardList_WhenRequestIsCorrect()
         {
             var troops = new TroopsLeaderboardResponse()
             {
@@ -35,7 +31,7 @@ namespace UnitTests
         }
    
         [Fact]
-        public void CreateTroops_ReturnsCorrectResponse() //moq
+        public void CreateTroops_ReturnsCorrectResponse_WhenRequestIsCorrect() 
         {
             (List<TroopsResponse>,int) expectedResultTuple = new();
             var expectedResultTask = Task.FromResult(expectedResultTuple);
@@ -47,7 +43,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void KingdomsLeaderboard_ReturnsLeaderboardList()
+        public void KingdomsLeaderboard_ReturnsLeaderboardList_WhenRequestIsCorrect()
         {
             var kingdoms = new KingdomsLeaderboardResponse();
 
