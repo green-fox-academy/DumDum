@@ -3,6 +3,8 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Models.JsonEntities.Kingdom;
 
 namespace DumDum.Interfaces
 {

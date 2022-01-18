@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DumDum.Controllers;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Kingdom;

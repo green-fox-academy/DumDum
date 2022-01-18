@@ -1,5 +1,4 @@
-﻿using DumDum.Interfaces;
-using DumDum.Models;
+﻿using DumDum.Models;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
@@ -7,13 +6,12 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Mail;
-using DumDum.Models.JsonEntities.Player;
-using Microsoft.IdentityModel.Protocols;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {

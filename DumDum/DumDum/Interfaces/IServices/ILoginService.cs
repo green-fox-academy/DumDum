@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DumDum.Models.JsonEntities.Login;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface ILoginService
     {

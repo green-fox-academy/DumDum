@@ -1,18 +1,17 @@
-using System.Threading.Tasks;
 using DumDum.Interfaces;
 using DumDum.Interfaces.IServices;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
+using System.Threading.Tasks;
 
 namespace DumDum.Services
 {
     public class DetailService : IDetailService
     {
-        public IBuildingService BuildingService { get; set; }
-        public IResourceService ResourceService { get; set; }
-        public ITroopService TroopService { get; set; }
-        public IAuthenticateService AuthenticateService { get; set; }
+        private IBuildingService BuildingService { get; set; }
+        private IResourceService ResourceService { get; set; }
+        private ITroopService TroopService { get; set; }
+        private IAuthenticateService AuthenticateService { get; set; }
         public DetailService(IBuildingService buildingService,
             IResourceService resourceService, ITroopService troopService, IAuthenticateService authenticateService)
         {

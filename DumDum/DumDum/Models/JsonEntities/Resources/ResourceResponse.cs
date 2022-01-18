@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Kingdom;
 
 namespace DumDum.Models.JsonEntities.Resources

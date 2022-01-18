@@ -9,6 +9,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {

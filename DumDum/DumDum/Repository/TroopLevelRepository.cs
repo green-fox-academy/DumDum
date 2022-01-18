@@ -1,9 +1,9 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
@@ -25,6 +25,18 @@ namespace DumDum.Repository
                 .Include(t => t.TroopType)
                 .FirstOrDefault(t => t.TroopType.TroopType == troopType.ToLower() && t.Level == troopCreationLevel);
             return level;
+        }
+        
+        public int GetConsumptionByTroopTypeAndLevel(int troopTypeId, int troopLevel)
+        {
+            var result = DbContext.TroopLevel
+                .FirstOrDefault(t => t.TroopTypeId == troopTypeId && t.Level == troopLevel);
+            if (result is not null)
+            {
+                return (int)result.Consumption;
+            }
+
+            return 0;
         }
     }
 }

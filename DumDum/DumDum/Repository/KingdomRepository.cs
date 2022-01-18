@@ -1,18 +1,17 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
     public class KingdomRepository : Repository<Kingdom>, IKingdomRepository
-
     {
         public KingdomRepository(ApplicationDbContext context) : base(context)
         {
@@ -26,8 +25,7 @@ namespace DumDum.Repository
 
         public async Task<Kingdom> GetKingdomById(int kingdomId)
         {
-            var kingdom = DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
-            return kingdom;
+            return DbContext.Kingdoms.Include(k => k.Player).FirstOrDefault(x => x.KingdomId == kingdomId);
         }
 
         public async Task<KingdomsListResponse> GetAllKingdoms()
@@ -36,6 +34,11 @@ namespace DumDum.Repository
 
             response.Kingdoms = DbContext.Kingdoms.Include(k => k.Player).Select(k => new KingdomResponse(k)).ToList();
             return response;
+        }
+
+        public Kingdom AddKingdom(Kingdom kingdom)
+        {
+            return DbContext.Kingdoms.Add(kingdom).Entity;
         }
 
         public async Task<Kingdom> FindPlayerByKingdomId(int id)
@@ -48,7 +51,7 @@ namespace DumDum.Repository
 
         public async Task<List<Kingdom>> GetAllKingdomsIncludePlayer()
         {
-            var kingdomList = DbContext.Kingdoms.Include(k => k.Player).ToList();
+            var kingdomList = DbContext.Kingdoms.Include(k => k.Player).Select(k => new Kingdom(k)).ToList();
             return kingdomList;
         }
 
@@ -60,12 +63,5 @@ namespace DumDum.Repository
                 DbContext.Buildings.Where(b => b.KingdomId == k.KingdomId).Sum(x => x.Level)));
             return point.ToList();
         }
-
-        public async Task<Kingdom> AddKingdom(Kingdom kingdom)
-        {
-            var kingdomInDb = DbContext.Kingdoms.Add(kingdom).Entity;
-            return kingdomInDb;
-        }
     }
 }
-

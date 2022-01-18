@@ -4,11 +4,12 @@ using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 namespace DumDum.Services
 {
@@ -208,7 +209,7 @@ namespace DumDum.Services
             var TroupTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).Result.FirstOrDefault();
             if (TroupTypeIdByTroupTypeName != null)
             {
-                return TroupTypeIdByTroupTypeName.TroopTypeId;
+                return troopTypeIdByTroupTypeName.TroopTypeId;
             }
             return 0;
         }
