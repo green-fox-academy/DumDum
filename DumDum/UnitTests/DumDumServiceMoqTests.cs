@@ -34,7 +34,7 @@ namespace UnitTests
                 Returns(kingdomsEmptyList);
 
             dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
-               detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
+               detailServiceMoq.Object);
             // Act
             var actual = dumDumController.KingdomsList();
 
@@ -55,7 +55,7 @@ namespace UnitTests
             (string, int) expectedStatusResponseTuple = new("Ok", 200);
             var expectedStatusResponseTask = Task.FromResult(expectedStatusResponseTuple);
             dumDumController = new DumDumController(dumDumServiceMoq.Object, authenticateServiceMoq.Object,
-              detailServiceMoq.Object, unitOfWorkMoq.Object, timeServiceMoq.Object);
+              detailServiceMoq.Object);
             dumDumServiceMoq.Setup(x => x.RegisterKingdom("moqToken", moqRequest))
                             .Returns(expectedStatusResponseTask);
 

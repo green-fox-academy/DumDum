@@ -1,7 +1,6 @@
 ﻿using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
-using DumDum.Services;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
@@ -11,7 +10,7 @@ namespace UnitTests
 
     public class BuildingServiceMoqTests
     {
-        private Mock<IBuildingService> buildingServiceMoq = new Mock<IBuildingService>();
+        private readonly Mock<IBuildingService> buildingServiceMoq = new Mock<IBuildingService>();
 
         [Fact]
         public void BuildingLeaderboard_ReturLeaderboardList_WhenRequestIsCorrect()

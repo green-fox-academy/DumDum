@@ -53,7 +53,7 @@ namespace DumDum.Services
             {
                 return ("Request was not done correctly!", 404);
             }
-            if (player != null && player.KingdomId == kingdomId && troopUpdateReq != null)
+            if (player != null && player.KingdomId == kingdomId && troopUpdateReq.Type != null)
             {
                 var goldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
                 var troopUpgradeCost = GetTroopUpdateCost(troopUpdateReq.Type.ToLower());
@@ -93,7 +93,7 @@ namespace DumDum.Services
                 }
                 UnitOfWork.Troops.UpgradeTroops(troopTypeIdToBeUpgraded, kingdomId, timeRequiredToUpgradeTroop);
                 UnitOfWork.Complete();
-                DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
+                await DumDumService.TakeGold(kingdomId, troopUpgradeCost * amountOfTroopsToUpdate);
                 return ("Ok", 200);
             }
             return ("This kingdom does not belong to authenticated player", 401);
@@ -123,9 +123,9 @@ namespace DumDum.Services
                 for (int i = 0; i < troopCreationReq.Quantity; i++)
                 {
                     var newTroop = CreateNewTroop(troopCreationReq.Type.ToLower(), kingdomId);
-                    UnitOfWork.Troops.Add(newTroop);
+                    await UnitOfWork.Troops.Add(newTroop);
                     UnitOfWork.Complete();
-                    DumDumService.TakeGold(kingdomId, newTroopCost);
+                    await DumDumService.TakeGold(kingdomId, newTroopCost);
                     createdTroops.Add(new TroopsResponse(newTroop));
                 }
                 return (createdTroops, 200);
@@ -206,8 +206,8 @@ namespace DumDum.Services
 
         public int GetTroupTypeIdByTroupTypeName(string troopType)
         {
-            var TroupTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).Result.FirstOrDefault();
-            if (TroupTypeIdByTroupTypeName != null)
+            var troopTypeIdByTroupTypeName = UnitOfWork.TroopTypes.Find(t => t.TroopType == troopType.ToLower()).Result.FirstOrDefault();
+            if (troopTypeIdByTroupTypeName != null)
             {
                 return troopTypeIdByTroupTypeName.TroopTypeId;
             }

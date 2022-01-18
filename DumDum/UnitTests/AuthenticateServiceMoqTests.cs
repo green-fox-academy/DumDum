@@ -1,5 +1,6 @@
 ﻿using DumDum.Controllers;
 using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
@@ -17,10 +18,10 @@ namespace UnitTests
 {
     public class AuthenticateServiceMoqTests
     {
-        private Mock<IAuthenticateService> authenticateServiceMoq = new Mock<IAuthenticateService>();
+        private readonly Mock<IAuthenticateService> authenticateServiceMoq = new Mock<IAuthenticateService>();
   
         [Fact]
-        public async void RenameKingdom_ShouldReturnChangedName_WhenRequestIsCorrect() 
+        public void RenameKingdom_ShouldReturnChangedName_WhenRequestIsCorrect() 
         {
             var testPlayer = new Player();
             testPlayer.Username = "TestUser";

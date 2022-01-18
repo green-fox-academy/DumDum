@@ -1,5 +1,4 @@
-﻿using DumDum.Interfaces;
-using DumDum.Models.JsonEntities;
+﻿using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Troops;
 using Moq;

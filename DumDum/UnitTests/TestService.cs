@@ -1,18 +1,16 @@
 ﻿using DumDum;
 using DumDum.Database;
-using DumDum.Interfaces;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 using DumDum.Models;
 using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using DumDum.Repository;
 using DumDum.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Helpers;
 
