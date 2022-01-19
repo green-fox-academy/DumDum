@@ -18,6 +18,7 @@ using DumDum.Interfaces.IServices;
 using DumDum.Repository;
 using Serilog;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace DumDum
 {
@@ -35,7 +36,6 @@ namespace DumDum
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
@@ -101,6 +101,25 @@ namespace DumDum
                     Title = "DumDum",
                     Description = ".NET 5 API App"
                 });
+
+                OpenApiSecurityScheme securityDefinition = new OpenApiSecurityScheme()
+                {
+                    BearerFormat = "JWT",
+                    Name = "dumdum-token",
+                    Description = "Set the current token",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer"
+                };
+                c.AddSecurityDefinition("Bearer", securityDefinition);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+                       {
+                            new OpenApiSecurityScheme{
+                                Reference = new OpenApiReference{
+                                    Id = "Bearer", //The name of the previously defined security scheme.
+                                    Type = ReferenceType.SecurityScheme}},new List<string>()
+                       }});
             });
         }
 
