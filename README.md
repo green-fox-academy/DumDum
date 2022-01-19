@@ -1,10 +1,8 @@
-<p align="center">
-<img src="https://raw.githubusercontent.com/green-fox-academy/DumDum/c2da052dc3c28d48df1cafcf67051f93a6bc8b0a/DumDum/DumDum/Views/DumDum/logo.png">
-</p>
-
-<p align="center">
-✨Kingom By Kingdom Build An Empire✨
-</p>
+<div align="center"> <h1> :crown: :crown: :crown: :crown: :crown: </h1> </div>
+<span align="center"> <h1> DumDum </h1> </span>
+<span align="center"> <h2> :european_castle: Kingdom By Kingdom Build An Empire :european_castle: </h2> </span>
+</br>
+</br>
 
 #### .NET 5 API App # Deployed on [Azure](https://dumdumdumdum.azurewebsites.net)
 
@@ -25,7 +23,6 @@ Silvia Walla [GitHub](https://github.com/wuwime)
 - New player registers into the game 
 - Provides username and password 
 - Starts building an empire
-- Follow the [Rules](https://github.com/green-fox-academy/DumDum/blob/master/DumDum/DumDum_Rules.txt)!
 
 ## Tech:
 DumDum uses a number of open source projects to work properly:

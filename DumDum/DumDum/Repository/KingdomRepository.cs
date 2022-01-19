@@ -1,4 +1,5 @@
 ﻿using DumDum.Database;
+using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
@@ -6,8 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DumDum.Interfaces;
-using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
@@ -36,7 +35,7 @@ namespace DumDum.Repository
             return response;
         }
 
-        public Kingdom AddKingdom(Kingdom kingdom)
+        public async Task<Kingdom> AddKingdom(Kingdom kingdom)
         {
             return DbContext.Kingdoms.Add(kingdom).Entity;
         }
