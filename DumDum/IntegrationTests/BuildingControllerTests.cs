@@ -1,8 +1,6 @@
 ﻿using DumDum;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
-using DumDum.Models.JsonEntities.Login;
-using DumDum.Models.JsonEntities.Player;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System;
@@ -11,38 +9,18 @@ using System.Net.Http;
 using System.Text;
 using Xunit;
 
-namespace TestProject1
+namespace IntegrationTests
 {
-    public class BuildingTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class BuildingControllerTests : TestService, IClassFixture<WebApplicationFactory<Startup>>
     {
-        readonly HttpClient HttpClient;
-       
-
-        public BuildingTest(WebApplicationFactory<Startup> fixture)
-        {
-            HttpClient = fixture.CreateClient();  //vytvori se klient
-           
-        }
-        
-        public string TestLoginReturnToken(string userName, string password)
-        {
-            var inputObj = JsonConvert.SerializeObject(new PlayerRequest() { Username = userName, Password = password });
-            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
-            var response = HttpClient.PostAsync("https://localhost:20625/login", requestContent).Result;
-            string contentResponse = response.Content.ReadAsStringAsync().Result;
-            LoginResponse token = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
-            string tokenResult = token.Token;
-            return tokenResult;
-        }
-
         
         [Fact]
-        public void BuildingReturnOk()
+        public void Buildings_ShouldReturnOK_WhenPlayerExist()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new BuildingRequest() { Id = 1}); //vstupovat s parametry, jako controller
+            var inputObj = JsonConvert.SerializeObject(new BuildingRequest() { Id = 1 }); //vstupovat s parametry, jako controller
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings");
             request.Method = HttpMethod.Get;
@@ -54,7 +32,7 @@ namespace TestProject1
         }
 
         [Fact]
-        public void BuildingReturnError()
+        public void Buildings_ShouldReturnUnathorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
@@ -72,13 +50,14 @@ namespace TestProject1
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal("This kingdom does not belong to authenticated player", error.Error);
         }
-                [Fact]
-        public void AddBuilding_ShouldReturnOk()
+
+        [Fact]
+        public void AddBuilding_ShouldReturnOk_WhenRequestIsCorrect()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "farm"});
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest() { Type = "farm" });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:20625/kingdoms/1/buildings");
             request.Method = HttpMethod.Post;
@@ -90,12 +69,12 @@ namespace TestProject1
         }
 
         [Fact]
-        public void AddBuilding_ShouldReturnTypeIsRequired()
+        public void AddBuilding_ShouldReturnNotAcceptable_WhenWrongTypeProvided()
         {
             var request = new HttpRequestMessage();
             var tokenResult = TestLoginReturnToken("Nya", "catcatcat");
 
-            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "arm"});
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest() { Type = "arm" });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:20625/kingdoms/1/buildings/");
             request.Method = HttpMethod.Post;
@@ -105,12 +84,13 @@ namespace TestProject1
 
             Assert.Equal(HttpStatusCode.NotAcceptable, response.StatusCode);
         }
+
         [Fact]
-        public void AddBuilding_Return404()
+        public void AddBuilding_ShouldReturnUnathorized_WhenIncorrectPlayerLoggedIn()
         {
             var request = new HttpRequestMessage();
 
-            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest(){Type = "farm"});
+            var inputObj = JsonConvert.SerializeObject(new BuildingAddRequest() { Type = "farm" });
             StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
             request.RequestUri = new Uri("https://localhost:20625/kingdoms/1/buildings/");
             request.Method = HttpMethod.Post;
@@ -120,13 +100,10 @@ namespace TestProject1
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
-
         [Fact]
-        public void BuildingLeaderboardReturOKAndLeaderboardList()
+        public void BuildingLeaderboard_ShouldReturOKAndLeaderboardList_WhenRequestIsCorrect()
         {
-
             //arrange
-
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
             var request = new HttpRequestMessage();
@@ -138,7 +115,40 @@ namespace TestProject1
 
             //assert
             Assert.Equal(expectedStatusCode, response.StatusCode);
+        }
 
+        [Fact]
+        public void UpgradeBuildings_ShouldReturnBadRequest_WhenRequestNotCorrect()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("nya", "catcatcat");
+
+            var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1 });
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/");
+            request.Method = HttpMethod.Put;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public void UpgradeBuildings_ShouldReturnUnauthorized_WhenWrongPasswordProvided()
+        {
+            var request = new HttpRequestMessage();
+            var tokenResult = TestLoginReturnToken("Nya", "cattcat");
+
+            var inputObj = JsonConvert.SerializeObject(new UpgradeBuildingRequest() { KingdomId = 1, BuildingId = 1 });
+            StringContent requestContent = new(inputObj, Encoding.UTF8, "application/json");
+            request.RequestUri = new Uri("http://localhost:20625/kingdoms/1/buildings/1");
+            request.Method = HttpMethod.Put;
+            request.Content = requestContent;
+            request.Headers.Add("authorization", $"bearer {tokenResult}");
+            var response = HttpClient.SendAsync(request).Result;
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         }
     }
 }

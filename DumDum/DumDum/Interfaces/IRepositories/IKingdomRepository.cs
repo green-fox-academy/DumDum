@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using DumDum.Models.Entities;
+﻿using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Buildings;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 using DumDum.Models.JsonEntities.Kingdom;
 
-namespace DumDum.Interfaces.IRepositories
+namespace DumDum.Interfaces
 {
     public interface IKingdomRepository : IRepository<Kingdom>
     {
@@ -15,7 +16,7 @@ namespace DumDum.Interfaces.IRepositories
         Task<Kingdom> FindPlayerByKingdomId(int kingdomId);
         Task<List<Kingdom>> GetAllKingdomsIncludePlayer();
         Task<List<BuildingPoints>> GetListBuildingPoints();
-        Kingdom AddKingdom(Kingdom kingdom);
+        Task<Kingdom> AddKingdom(Kingdom kingdom);
 
     }
 }

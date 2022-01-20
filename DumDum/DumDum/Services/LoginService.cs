@@ -30,19 +30,19 @@ namespace DumDum.Services
 
         public async Task<bool> LoginCheck(string username)
         {
-            return UnitOfWork.Players.Any(x => x.Username == username);
+            return UnitOfWork.Players.Any(x => x.Username == username).Result;
         }
 
         public async Task<bool> PasswordCheck(string password)
         {
-            return UnitOfWork.Players.Any(x => x.Password == password);
+            return UnitOfWork.Players.Any(x => x.Password == password).Result;
         }
 
         public async Task<bool> LoginPasswordCheck(string username, string password)
         {
             var playerFromDb = await DumDumService.GetPlayerByUsername(username);
             var verified = Crypto.VerifyHashedPassword(playerFromDb.Password, password);
-            return UnitOfWork.Players.Any(x => x.Username == username) && verified;
+            return UnitOfWork.Players.Any(x => x.Username == username).Result && verified;
         }
 
         public async Task<string> Authenticate(string username, string password)

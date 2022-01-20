@@ -9,8 +9,8 @@ namespace DumDum.Interfaces.IRepositories
     {
         Task<List<BuildingList>> GetBuildings(int Id);
         Task<Building> AddBuilding(string building, Kingdom kingdom, BuildingType buildingType);
-        List<Building> GetNumberOfFarm(int kingdomId);
-        List<Building> GetNumberOfMines(int kingdomId);
         Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom);
+        public List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId);
+        public List<Building> GetAllBuildingsOfKingdom(int kingdomId);
     }
 }

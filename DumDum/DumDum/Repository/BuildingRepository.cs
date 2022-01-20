@@ -45,13 +45,14 @@ namespace DumDum.Repository
             return number;
         }
 
-        public List<Building> GetNumberOfFarm(int kingdomId)
+        public List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Farm").ToList();
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingTypeId == buildingTypeId).ToList();
         }
-        public List<Building> GetNumberOfMines(int kingdomId)
+
+        public List<Building> GetAllBuildingsOfKingdom(int kingdomId)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Mine").ToList();
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId).ToList();
         }
     }
 }

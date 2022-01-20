@@ -11,5 +11,6 @@ namespace DumDum.Interfaces.IRepositories
         Task<List<TroopsResponse>> GetTroops(int kingdomId);
         void UpgradeTroops(int troopTypeIdToBeUpgraded, int kingdomId, int timeRequiredToUpgradeTroop);
         Task<int> FinishedAtTimeTroop(string troopType, int kingdomId);
+        Task<List<Troop>> GetAllTroopsOfKingdom(int kingdomId);
     }
 }

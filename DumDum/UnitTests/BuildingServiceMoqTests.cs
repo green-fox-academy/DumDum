@@ -1,18 +1,19 @@
 ﻿using DumDum.Interfaces.IServices;
+using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
 using Moq;
 using System.Collections.Generic;
 using Xunit;
 
-namespace TestProject1
+namespace UnitTests
 {
 
     public class BuildingServiceMoqTests
     {
-        private Mock<IBuildingService> buildingServiceMoq = new Mock<IBuildingService>();
+        private readonly Mock<IBuildingService> buildingServiceMoq = new Mock<IBuildingService>();
 
         [Fact]
-        public void BuildingLeaderboard_ReturLeaderboardList()
+        public void BuildingLeaderboard_ReturLeaderboardList_WhenRequestIsCorrect()
         {
             var expected = new BuildingsLeaderboardResponse()
             {
@@ -28,6 +29,19 @@ namespace TestProject1
 
             Assert.Equal(expected, actual);
             Assert.IsType<BuildingsLeaderboardResponse>(actual);
+        }
+
+        [Fact]
+        public void LevelUp_ReturnsOk_WhenRequestIsCorrect()
+        {
+            (BuildingList, int, string) expectedResponse = new
+                    (new BuildingList(new Building(), new BuildingLevel()), 200, "Ok");
+           
+
+            buildingServiceMoq.Setup(x => x.LevelUp(1, 1, "fakeToken").Result).Returns(expectedResponse);
+
+            var actual = buildingServiceMoq.Object.LevelUp(1, 1, "fakeToken");
+            Assert.Equal("Ok", actual.Result.Item3);
         }
     }
 }
