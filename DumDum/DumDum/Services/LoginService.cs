@@ -47,28 +47,25 @@ namespace DumDum.Services
 
         public async Task<string> Authenticate(string username, string password)
         {
-            if (await LoginPasswordCheck(username, password))
-            {
-                //je potreba nainstalovat nuget System.IdentityModel.Tokens.Jwt
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenKey = Encoding.ASCII.GetBytes(AppSettings.Key);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, username), //z ceho ma brat jmeno
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(24), //za kolik hodin vyprsi
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey),
-                        SecurityAlgorithms.HmacSha256Signature) //typ tokenu
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor); //toto vytvori novy token
-                return tokenHandler.WriteToken(token); //toto posle hotovy token ve stringu
-            }
-            else
+            if (!await LoginPasswordCheck(username, password))
             {
                 return null;
             }
+            //je potreba nainstalovat nuget System.IdentityModel.Tokens.Jwt
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = Encoding.ASCII.GetBytes(AppSettings.Key);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, username), //z ceho ma brat jmeno
+                }),
+                Expires = DateTime.UtcNow.AddHours(24), //za kolik hodin vyprsi
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey),
+                    SecurityAlgorithms.HmacSha256Signature) //typ tokenu
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor); //toto vytvori novy token
+            return tokenHandler.WriteToken(token); //toto posle hotovy token ve stringu
         }
 
         //logika pro controller

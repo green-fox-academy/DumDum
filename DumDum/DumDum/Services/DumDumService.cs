@@ -31,11 +31,11 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
+
         public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
-            var player = new Player()
-                {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
+            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
             UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
             var playerToReturn = await GetPlayerByUsername(username);
@@ -43,11 +43,11 @@ namespace DumDum.Services
             UnitOfWork.Complete();
             return playerToReturn;
         }
-        
-        public async Task<Kingdom> CreateKingdom(string kingdomName, string username)
+
+        public async Task<Kingdom> CreateKingdom(string kingdomname, string username)
         {
             var kingdom = new Kingdom();
-            if (kingdomName.IsNullOrEmpty())
+            if (kingdomname.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s Kingdom";
                 var kingdomToSave = UnitOfWork.Kingdoms.AddKingdom(kingdom);
@@ -99,6 +99,7 @@ namespace DumDum.Services
             return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX) &&
                    UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX);
         }
+        
 
         public async Task<bool> IsKingdomIdValid(int kingdomId)
         {
@@ -310,13 +311,13 @@ namespace DumDum.Services
 
         public async Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest)
         {
-            if (UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
+            if (!UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
             {
-                var player = await GetPlayerByUsername(passwordResetRequest.Username);
-                AuthenticateService.SendPasswordResetEmail(player);
-                return ("Email has been sent.", 200);
+                return ("Credentials not valid.", 400); 
             }
-            return ("Credentials not valid.", 400);
+            var player = await GetPlayerByUsername(passwordResetRequest.Username);
+            await AuthenticateService.SendPasswordResetEmail(player);
+            return ("Email has been sent.", 200);
         }
 
         public async Task<Player> GetPlayerVerified(int playerId, string hash)

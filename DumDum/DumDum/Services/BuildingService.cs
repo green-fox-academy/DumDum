@@ -168,7 +168,7 @@ namespace DumDum.Services
         public async Task<BuildingsLeaderboardResponse> GetBuildingsLeaderboard()
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
-            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints().Result;
+            response.Result = await UnitOfWork.Kingdoms.GetListBuildingPoints();
             return response;
         }        
     }
