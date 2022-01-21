@@ -22,7 +22,7 @@ Silvia Walla [GitHub](https://github.com/wuwime)
 ## Features:
 - New player registers into the game 
 - Provides username and password 
-- Starts building an empire
+- Starts building an empire :european_castle: :european_castle:
 - Builds ***Farm*** :seedling:, ***Mine*** :mountain:, ***Academy*** :school: , ***Townhall*** :classical_building: or ***Barracks*** :houses:
 - Soldiers up by creating ***Phalanx*** :footprints:, ***Axemen*** :axe: or ***Knights*** :unicorn:
 - And starts making ***Gold*** :moneybag: and producing ***Food*** :poultry_leg:
