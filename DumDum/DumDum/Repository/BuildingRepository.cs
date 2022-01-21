@@ -1,5 +1,4 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Buildings;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DumDum.Interfaces.IRepositories;
 
 namespace DumDum.Repository
 {
@@ -45,13 +45,14 @@ namespace DumDum.Repository
             return number;
         }
 
-        public List<Building> GetNumberOfFarm(int kingdomId)
+        public List<Building> GetListOfBuildingsByType(int kingdomId, int buildingTypeId)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Farm").ToList();
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingTypeId == buildingTypeId).ToList();
         }
-        public List<Building> GetNumberOfMines(int kingdomId)
+
+        public List<Building> GetAllBuildingsOfKingdom(int kingdomId)
         {
-            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId && b.BuildingType == "Mine").ToList();
+            return DbContext.Buildings.Where(b => b.KingdomId == kingdomId).ToList();
         }
     }
 }

@@ -8,6 +8,8 @@ using DumDum.Models.JsonEntities.Player;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Helpers;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
 
 
 namespace DumDum.Services
@@ -31,11 +33,11 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
-
         public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
-            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
+            var player = new Player()
+                {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
             UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
             var playerToReturn = await GetPlayerByUsername(username);
@@ -44,44 +46,58 @@ namespace DumDum.Services
             return playerToReturn;
         }
 
-        public async Task<Kingdom> CreateKingdom(string kingdomname, string username)
+        public async Task<Kingdom> CreateKingdom(string kingdomName, string username)
         {
             var kingdom = new Kingdom();
-            if (kingdomname.IsNullOrEmpty())
+
+            if (kingdomName.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s Kingdom";
                 var kingdomToSave = UnitOfWork.Kingdoms.AddKingdom(kingdom);
-                var gold = new Resource()
-                {
-                    Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
-                    KingdomId = kingdomToSave.KingdomId
-                };
-                var food = new Resource()
-                {
-                    Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
-                    KingdomId = kingdomToSave.KingdomId
-                };
-                UnitOfWork.Resources.Add(gold);
-                UnitOfWork.Resources.Add(food);
-                UnitOfWork.Complete();
-                return kingdomToSave;
+                await NewKingdomBuildingsAndResources(kingdomToSave.Result);
+                return kingdomToSave.Result;
             }
 
+            kingdom.KingdomName = kingdomName;
             var kingdomTo = UnitOfWork.Kingdoms.AddKingdom(kingdom);
-            var golds = new Resource()
+            await NewKingdomBuildingsAndResources(kingdomTo.Result);
+            return kingdomTo.Result;
+        }
+
+        public async Task NewKingdomBuildingsAndResources(Kingdom kingdom)
+        {
+            var buildingTypeFarm = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Farm").Result;
+            var buildingTypeMine = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Mine").Result;
+            var buildingTypeTownhall = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Townhall").Result;
+            var buildingTypeBarracks = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Barracks").Result;
+
+            await UnitOfWork.Buildings.AddBuilding("Farm", kingdom, buildingTypeFarm);
+            await UnitOfWork.Buildings.AddBuilding("Mine", kingdom, buildingTypeMine);
+            await UnitOfWork.Buildings.AddBuilding("Townhall", kingdom, buildingTypeTownhall);
+            await UnitOfWork.Buildings.AddBuilding("Barracks", kingdom, buildingTypeBarracks);
+
+            var gold = new Resource()
             {
-                Amount = 100, Generation = 1, ResourceType = "Gold", UpdatedAt = 1, Kingdom = kingdom,
-                KingdomId = kingdomTo.KingdomId
+                Amount = 100,
+                Generation = 1,
+                ResourceType = "Gold",
+                UpdatedAt = 1,
+                Kingdom = kingdom,
+                KingdomId = kingdom.KingdomId
             };
-            var foods = new Resource()
+            var food = new Resource()
             {
-                Amount = 100, Generation = 1, ResourceType = "Food", UpdatedAt = 1, Kingdom = kingdom,
-                KingdomId = kingdomTo.KingdomId
+                Amount = 100,
+                Generation = 1,
+                ResourceType = "Food",
+                UpdatedAt = 1,
+                Kingdom = kingdom,
+                KingdomId = kingdom.KingdomId
             };
-            UnitOfWork.Resources.Add(golds);
-            UnitOfWork.Resources.Add(foods);
+
+            await UnitOfWork.Resources.Add(gold);
+            await UnitOfWork.Resources.Add(food);
             UnitOfWork.Complete();
-            return kingdomTo;
         }
 
         public async Task<bool> AreCredentialsValid(string username, string password)
@@ -96,14 +112,14 @@ namespace DumDum.Services
 
         public async Task<bool> DoCoordinatesExist(int coordinateX, int coordinateY)
         {
-            return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX) &&
-                   UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX);
+            return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX).Result &&
+                   UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX).Result;
         }
 
         public async Task<bool> IsKingdomIdValid(int kingdomId)
         {
-            return UnitOfWork.Players.Any(p => p.KingdomId == kingdomId) && UnitOfWork.Kingdoms
-                .Any(k => k.KingdomId == kingdomId && k.CoordinateX == 0 && k.CoordinateY == 0);
+            return UnitOfWork.Players.Any(p => p.KingdomId == kingdomId).Result && UnitOfWork.Kingdoms
+                .Any(k => k.KingdomId == kingdomId && k.CoordinateX == 0 && k.CoordinateY == 0).Result;
         }
 
         public async Task<Kingdom> GetKingdomById(int kingdomId)
@@ -114,10 +130,10 @@ namespace DumDum.Services
                 return kingdom.Result;
             }
 
-            return new Kingdom() { };
+            return new Kingdom();
         }
 
-        public async Task<Kingdom> RegisterKingdomToDB(int coordinateX, int coordinateY, int kingdomId)
+        public async Task<Kingdom> RegisterKingdomToDb(int coordinateX, int coordinateY, int kingdomId)
         {
             var kingdom = await GetKingdomById(kingdomId);
             kingdom.CoordinateX = coordinateX;
@@ -164,19 +180,18 @@ namespace DumDum.Services
                    !await DoCoordinatesExist(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY) &&
                    player != null && player.KingdomId == kingdomRequest.KingdomId)
                 {
-                    RegisterKingdomToDB(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
+                    RegisterKingdomToDb(kingdomRequest.CoordinateX, kingdomRequest.CoordinateY, kingdomRequest.KingdomId);
                     return ("Ok", 200);
                 }
             }
-            return ("",400);
+            return ("", 400);
         }
 
         public async Task<(PlayerResponse, int)> RegisterPlayerLogic(PlayerRequest playerRequest)
         {
             if (playerRequest.KingdomName is not null && playerRequest.Email is not null)
             {
-                if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password) &&
-                    await AuthenticateService.IsEmailValid(playerRequest.Email))
+                if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password) && await AuthenticateService.IsEmailValid(playerRequest.Email))
                 {
                     var hashedPassword = Crypto.HashPassword(playerRequest.Password);
                     var player = await Register(playerRequest.Username, hashedPassword, playerRequest.KingdomName,
@@ -189,19 +204,6 @@ namespace DumDum.Services
                     var response = new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
                     return (response, 200);
                 }
-                return (null, 400);
-            }
-
-            if (await AreCredentialsValid(playerRequest.Username, playerRequest.Password))
-            {
-                var player = await Register(playerRequest.Username, playerRequest.Password, playerRequest.KingdomName,
-                    playerRequest.Email);
-                if (player is null)
-                {
-                    return (null, 400);
-                }
-                var response = new PlayerResponse() { Username = player.Username, KingdomId = player.KingdomId };
-                return (response, 200);
             }
             return (null, 400);
         }
@@ -213,9 +215,9 @@ namespace DumDum.Services
 
         public async Task<Location> AddLocations(Kingdom kingdom)
         {
-            return new Location() {CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY};
+            return new Location() { CoordinateX = kingdom.CoordinateX, CoordinateY = kingdom.CoordinateY };
         }
-        
+
         public async Task<int> GetGoldAmountOfKingdom(int kingdomId)
         {
             if (kingdomId != 0)

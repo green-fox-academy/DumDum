@@ -1,4 +1,5 @@
 ﻿using DumDum.Interfaces;
+using DumDum.Interfaces.IServices;
 using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Login;
@@ -22,7 +23,6 @@ namespace DumDum.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest player)
         {
-            int statusCode;
             var message = LoginService.Login(player).Result;
 
             if (message.Item2 == 200)

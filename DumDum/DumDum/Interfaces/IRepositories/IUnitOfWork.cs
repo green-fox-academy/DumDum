@@ -1,7 +1,6 @@
 ﻿using System;
-using DumDum.Interfaces.IRepositories;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
     public interface IUnitOfWork : IDisposable
     {

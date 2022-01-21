@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DumDum.Models.JsonEntities.Kingdom;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IDetailService
     {

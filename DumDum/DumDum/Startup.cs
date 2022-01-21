@@ -1,17 +1,13 @@
 using DumDum.Database;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using DumDum.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +20,7 @@ using Serilog;
 using Microsoft.OpenApi.Models;
 using Microsoft.Data.Sqlite;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 
 namespace DumDum
@@ -42,7 +39,7 @@ namespace DumDum
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
@@ -52,7 +49,7 @@ namespace DumDum
             services.AddTransient<IDumDumService, DumDumService>();
             services.AddTransient<ILoginService, LoginService>();
             services.AddTransient<IResourceService, ResourceService>();
-            services.AddTransient<ITimeService, TimeService>();
+            services.AddHostedService<TimeService>();
             services.AddTransient<ITroopService, TroopService>();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IBuildingRepository, BuildingRepository>();
@@ -64,9 +61,10 @@ namespace DumDum
             services.AddTransient<ITroopTypesRepository, TroopTypesRepository>();
             services.AddTransient<IBattleRepository, BattleRepository>();
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             ConfigureDb(services);
+
+            //This is setting for authentication
 
             var appSettingSection = AppConfig.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingSection);
@@ -103,6 +101,25 @@ namespace DumDum
                     Title = "DumDum",
                     Description = ".NET 5 API App"
                 });
+
+                OpenApiSecurityScheme securityDefinition = new OpenApiSecurityScheme()
+                {
+                    BearerFormat = "JWT",
+                    Name = "dumdum-token",
+                    Description = "Set the current token",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer"
+                };
+                c.AddSecurityDefinition("Bearer", securityDefinition);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+                       {
+                            new OpenApiSecurityScheme{
+                                Reference = new OpenApiReference{
+                                    Id = "Bearer", //The name of the previously defined security scheme.
+                                    Type = ReferenceType.SecurityScheme}},new List<string>()
+                       }});
             });
         }
 

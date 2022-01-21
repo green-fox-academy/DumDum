@@ -1,60 +1,78 @@
 ﻿using DumDum.Interfaces;
-using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
+using DumDum.Interfaces.IRepositories;
+using DumDum.Interfaces.IServices;
+using DumDum.Models.Entities;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Timer = System.Timers.Timer;
 
 namespace DumDum.Services
 {
-    public class TimeService : IHostedService, ITimeService
+    public class TimeService : ITimeService, IHostedService
+
     {
         private IDumDumService DumDumService { get; set; }
-        private System.Timers.Timer IamTimeLord { get; set; }
-        private IUnitOfWork UnitOfWork { get; set; } 
+        private IUnitOfWork UnitOfWork { get; set; }
+        private Timer Timer { get; set; }
+        public IServiceProvider ServiceProvider { get; }
 
-        public TimeService( IDumDumService dumdumService, IUnitOfWork unitOfWork)
+        public TimeService(IServiceProvider serviceProvider)
         {
-            DumDumService = dumdumService;
-            UnitOfWork = unitOfWork;
-        }
-        public async Task OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            UpdateAllKingdomsEvents();
+            ServiceProvider = serviceProvider;
         }
 
         public async Task UpdateAllKingdomsEvents()
         {
-            var Kingdoms = UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
-            foreach (var kingdom in Kingdoms.Result)
+            using (var scope = ServiceProvider.CreateScope())
             {
-                GetKingdomResourcesPerCycle(kingdom.KingdomId);
+                DumDumService = scope.ServiceProvider.GetRequiredService<IDumDumService>();
+
+                UnitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                Console.WriteLine("Nya");
+                var kingdoms = new List<Kingdom>();
+                try
+                {
+                    kingdoms = await UnitOfWork.Kingdoms.GetAllKingdomsIncludePlayer();
+                }
+                catch (NullReferenceException e)
+                {
+                    Console.WriteLine("nya nya ");
+                    throw;
+                }
+
+                if (kingdoms is not null)
+                {
+                    foreach (var kingdom in kingdoms)
+                    {
+                        GetKingdomResourcesPerCycle(kingdom.KingdomId);
+                    }
+                }
             }
         }
 
-        public async Task GetKingdomResourcesPerCycle(int kingdomId)
+        public async void GetKingdomResourcesPerCycle(int kingdomId)
         {
             int cycles = 1;
-            var actualKingdomsGold = DumDumService.GetGoldAmountOfKingdom(kingdomId).Result;
-            var actualKingdomsFood = DumDumService.GetFoodAmountOfKingdom(kingdomId).Result;
-            //kód na produkci
-            //kód na jídlo
+            var actualKingdomsGold = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
+            var actualKingdomsFood = await DumDumService.GetFoodAmountOfKingdom(kingdomId);
+
             var productionOfFood = await GetFoodFromFarms(kingdomId, cycles);
-            //kód na zlato
             var productionOfGold = await GetGoldFromMines(kingdomId, cycles);
 
-            //kód na konzumaci
-            var consumptionOfTroops = 0;
-            var consumptionOfBuildings = 0;
+            var consumptionOfTroops = await GetConsumptionOfTroops(kingdomId);
+            var consumptionOfBuildings = await GetConsumptionOfBuildings(kingdomId);
             var allConsumption = consumptionOfBuildings + consumptionOfTroops;
-            //Výsledek
+
             var newAmountOfFood = actualKingdomsFood + (productionOfFood - allConsumption);
             var newAmountOfGold = actualKingdomsGold + productionOfGold;
 
-
-            //zapsání do db
-            var gold = UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId).Result;
-            var food = UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId).Result;
+            var gold = await UnitOfWork.Resources.GetGoldAmountOfKingdom(kingdomId);
+            var food = await UnitOfWork.Resources.GetFoodAmountOfKingdom(kingdomId);
             gold.Amount = newAmountOfGold;
             food.Amount = newAmountOfFood;
             UnitOfWork.Resources.UpdateGoldAmountOfKingdom(gold);
@@ -62,13 +80,63 @@ namespace DumDum.Services
             UnitOfWork.Complete();
         }
 
+        public async Task<int> GetConsumptionOfTroops(int kingdomId)
+        {
+            var listOfTroops = new List<Troop>();
+            var allTroopsOfKingdom = await UnitOfWork.Troops.GetAllTroopsOfKingdom(kingdomId);
+
+            foreach (var troop in allTroopsOfKingdom)
+            {
+                if (!listOfTroops.Contains(troop))
+                {
+                    listOfTroops.Add(troop);
+                }
+            }
+
+            var result = 0;
+            if (listOfTroops.Count != 0)
+            {
+                foreach (var troop in listOfTroops)
+                {
+                    result += FoodAndGoldConsumption(troop.Level, troop.TroopTypeId);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<int> GetConsumptionOfBuildings(int kingdomId)
+        {
+            var listOfBuildings = new List<Building>();
+            var listOfBuildingsInKingdom = UnitOfWork.Buildings.GetAllBuildingsOfKingdom(kingdomId);
+
+            foreach (var building in listOfBuildingsInKingdom)
+            {
+                if (!listOfBuildings.Contains(building))
+                {
+                    listOfBuildings.Add(building);
+                }
+            }
+
+            var result = 0;
+            if (listOfBuildings.Count != 0)
+            {
+                foreach (var building in listOfBuildings)
+                {
+                    result += FoodAndGoldBuildingConsumption(building.Level, building.BuildingTypeId);
+                }
+            }
+
+            return result;
+        }
+
         public async Task<int> GetFoodFromFarms(int kingdomId, int cycles)
         {
             var foodPerFarms = 0;
-            var numberOfFarms = UnitOfWork.Buildings.GetNumberOfFarm(kingdomId);
+            var numberOfFarms = UnitOfWork.Buildings.GetListOfBuildingsByType(kingdomId, 2);
             foreach (var farm in numberOfFarms)
             {
-                foodPerFarms += await HomMuchFoodOneFarmProduce(farm.Level);
+                foodPerFarms += await FoodAndGoldProduction(farm.Level, farm.BuildingTypeId);
             }
 
             var producedFood = foodPerFarms * cycles;
@@ -79,10 +147,10 @@ namespace DumDum.Services
         public async Task<int> GetGoldFromMines(int kingdomId, int cycles)
         {
             var goldPerMine = 0;
-            var numberOfMines = UnitOfWork.Buildings.GetNumberOfMines(kingdomId);
-            foreach (var farm in numberOfMines)
+            var numberOfMines = UnitOfWork.Buildings.GetListOfBuildingsByType(kingdomId, 3);
+            foreach (var mine in numberOfMines)
             {
-                goldPerMine += await HomMuchFoodOneFarmProduce(farm.Level);
+                goldPerMine += await FoodAndGoldProduction(mine.Level, mine.BuildingTypeId);
             }
 
             var producedGold = goldPerMine * cycles;
@@ -90,29 +158,34 @@ namespace DumDum.Services
             return producedGold;
         }
 
-        public async Task<int> HomMuchFoodOneFarmProduce(int lvl)
+        public async Task<int> FoodAndGoldProduction(int buildingLevel, int buildingTypeId)
         {
-            return lvl * (1 + lvl);
+            return UnitOfWork.BuildingLevels.GetProductionByBuildingTypeAndLevel(buildingTypeId, buildingLevel);
         }
 
-        public async Task<int> HomMuchGoldOneMineProduce(int lvl)
+        private int FoodAndGoldBuildingConsumption(int buildingLevel, int buildingTypeId)
         {
-            return lvl * (1 + lvl);
+            return UnitOfWork.BuildingLevels.GetConsumptionByBuildingTypeAndLevel(buildingTypeId, buildingLevel);
+        }
+
+        private int FoodAndGoldConsumption(int troopLevel, int troopTypeId)
+        {
+            return UnitOfWork.TroopLevels.GetConsumptionByTroopTypeAndLevel(troopTypeId, troopLevel);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            IamTimeLord = new System.Timers.Timer(2000);
-            //IamTimeLord.Elapsed += OnTimedEvent;
-            IamTimeLord.AutoReset = true;
-            IamTimeLord.Enabled = true;
-
+            Timer = new Timer(300000);
+            Timer.Elapsed += async (sender, e) => await UpdateAllKingdomsEvents();
+            Timer.Start();
+            Console.WriteLine("StartAsync");
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("StopAsync");
+            return Task.CompletedTask;
         }
     }
 }

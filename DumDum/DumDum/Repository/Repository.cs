@@ -1,9 +1,11 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using DumDum.Interfaces.IRepositories;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace DumDum.Repository
 {
@@ -15,29 +17,29 @@ namespace DumDum.Repository
             DbContext = context;
         }
 
-        public void Add(T entity)
+        async public Task Add(T entity)
         {
-            DbContext.Set<T>().Add(entity);
+           await DbContext.Set<T>().AddAsync(entity);
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        async public Task AddRange(IEnumerable<T> entities)
         {
-            DbContext.Set<T>().AddRange(entities);
+            await DbContext.Set<T>().AddRangeAsync(entities);
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
+        async public Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression)
         {
-            return DbContext.Set<T>().Where(expression);
+            return await DbContext.Set<T>().Where(expression).ToListAsync();
         }
 
-        public IEnumerable<T> GetAll()
+        async public Task<IEnumerable<T>> GetAll()
         {
-            return DbContext.Set<T>().ToList();
+            return await DbContext.Set<T>().ToListAsync();
         }
 
-        public T GetById(int id)
+        async public Task<T> GetById(int id)
         {
-            return DbContext.Set<T>().Find(id);
+            return await DbContext.Set<T>().FindAsync(id);
         }
 
         public void Remove(T entity)
@@ -50,9 +52,9 @@ namespace DumDum.Repository
             DbContext.Set<T>().RemoveRange(entities);
         }
 
-        public bool Any(Expression<Func<T, bool>> expression)
+        async public Task<bool> Any(Expression<Func<T, bool>> expression)
         {
-            return DbContext.Set<T>().Any(expression);
+            return await DbContext.Set<T>().AnyAsync(expression);
         }
 
         public void Update(T entity)

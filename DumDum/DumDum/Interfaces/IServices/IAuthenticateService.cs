@@ -3,7 +3,7 @@ using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IServices
 {
     public interface IAuthenticateService
     {
