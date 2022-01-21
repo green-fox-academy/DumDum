@@ -23,9 +23,9 @@ Silvia Walla [GitHub](https://github.com/wuwime)
 - New player registers into the game 
 - Provides username and password 
 - Starts building an empire
-- Builds ***Farm***, ***Mine***, ***Academy***, ***Townhall*** or ***Barracks***
-- Soldiers up by creating ***Phalanx***, ***Axemen*** or ***Knights***
-- And starts making ***Gold*** and producing ***Food***
+- Builds ***Farm*** :seedling:, ***Mine*** :mountain:, ***Academy*** :school: , ***Townhall*** :classical_building: or ***Barracks*** :houses:
+- Soldiers up by creating ***Phalanx*** :footprints:, ***Axemen*** :axe: or ***Knights*** :unicorn:
+- And starts making ***Gold*** :moneybag: and producing ***Food*** :poultry_leg:
 
 ## Tech:
 DumDum uses a number of open source projects to work properly:
