@@ -7,3 +7,4 @@ ALTER TABLE dumdum.buildinglevels DROP COLUMN DefBoost;
 ALTER TABLE dumdum.trooplevel DROP COLUMN HP;
 ALTER TABLE dumdum.trooplevel DROP COLUMN CarryCap;
 ALTER TABLE dumdum.trooplevel DROP COLUMN SpecialSkills;
+UPDATE dumdum.players SET Username = 'Beef68' WHERE Username = 'Beef69';
