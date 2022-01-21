@@ -69,10 +69,13 @@ namespace DumDum.Services
             var buildingTypeFarm = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Farm").Result;
             var buildingTypeMine = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Mine").Result;
             var buildingTypeTownhall = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Townhall").Result;
+            var buildingTypeBarracks = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Barracks").Result;
 
             await UnitOfWork.Buildings.AddBuilding("Farm", kingdom, buildingTypeFarm);
             await UnitOfWork.Buildings.AddBuilding("Mine", kingdom, buildingTypeMine);
             await UnitOfWork.Buildings.AddBuilding("Townhall", kingdom, buildingTypeTownhall);
+            await UnitOfWork.Buildings.AddBuilding("Barracks", kingdom, buildingTypeBarracks);
+
             var gold = new Resource()
             {
                 Amount = 100,
