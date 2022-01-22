@@ -29,7 +29,6 @@ namespace DumDum.Repository
                 BuildingType = building,
                 KingdomId = kingdom.KingdomId,
                 Kingdom = kingdom,
-                Hp = 1,
                 Level = buildingType.BuildingLevel.LevelNumber,
                 BuildingTypeId = buildingType.BuildingTypeId,
                 StartedAt = (int)DateTimeOffset.Now.ToUnixTimeSeconds(),
