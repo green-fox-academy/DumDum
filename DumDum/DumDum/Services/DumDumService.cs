@@ -60,6 +60,7 @@ namespace DumDum.Services
 
             kingdom.KingdomName = kingdomName;
             var kingdomTo = UnitOfWork.Kingdoms.AddKingdom(kingdom);
+            UnitOfWork.Complete();
             await NewKingdomBuildingsAndResources(kingdomTo.Result);
             return kingdomTo.Result;
         }
