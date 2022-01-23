@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DumDum.Interfaces.IRepositories;
 using DumDum.Interfaces.IServices;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace DumDum.Services
 {
@@ -96,26 +98,45 @@ namespace DumDum.Services
             }
         }
 
+        //public async Task SendAccountVerificationEmail(Player player)
+        //{
+        //    MailMessage mail = new MailMessage();
+
+        //    mail.From = new MailAddress("dumdumnya@gmail.com", "DumDum");
+        //    mail.To.Add(new MailAddress(player.Email));
+
+        //    mail.Subject = "Account verification";
+        //    mail.IsBodyHtml = true;
+        //    mail.Body =
+        //        $"Welcome to DumDum, {player.Username}!\n The last step of registration is email verification.\n " +
+        //        $"All you need is to click <a href=\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
+        //    mail.Priority = MailPriority.High;
+        //    var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
+
+        //    SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
+
+        //    smtp.Credentials = loginInfo;
+        //    smtp.EnableSsl = true;
+        //    smtp.Send(mail);
+        //}
+
+
         public async Task SendAccountVerificationEmail(Player player)
         {
-            MailMessage mail = new MailMessage();
 
-            mail.From = new MailAddress("dumdumnya@gmail.com", "DumDum");
-            mail.To.Add(new MailAddress(player.Email));
-
-            mail.Subject = "Account verification";
-            mail.IsBodyHtml = true;
-            mail.Body =
-                $"Welcome to DumDum, {player.Username}!\n The last step of registration is email verification.\n " +
-                $"All you need is to click <a href=\"http://localhost:20625/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
-            mail.Priority = MailPriority.High;
-            var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
-
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.Credentials = loginInfo;
-            smtp.EnableSsl = true;
-            smtp.Send(mail);
+            var apiKey = Environment.GetEnvironmentVariable("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");
+            var client = new SendGridClient(apiKey);
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress("dumdumnya@gmail.com", "DumDum"),
+                Subject = "DumDum Email Verification",
+                HtmlContent = $"Welcome to DumDum, {player.Username}!\n The last step of registration is email verification.\n " +
+                      $"All you need is to click <a href=\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>"
+            };
+            msg.AddTo(new EmailAddress(player.Email, player.Username));
+            var response = await client.SendEmailAsync(msg);
         }
+           
 
 
         public async Task SendPasswordResetEmail(Player player)
