@@ -14,7 +14,7 @@ namespace DumDum.Repository
             
         }
 
-        public double MinSpeed(int kingdomId)
+        public decimal MinSpeed(int kingdomId)
         {
             return DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.KingdomId == kingdomId && t.TroopType.TroopLevel.Level == t.Level)
@@ -25,7 +25,7 @@ namespace DumDum.Repository
         {
             return DbContext.Battles.Add(battle).Entity;
         }
-        public double SumOfAttackPower(int playerKingdomId)
+        public decimal SumOfAttackPower(int playerKingdomId)
         {
             return DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.KingdomId == playerKingdomId && t.TroopType.TroopLevel.Level == t.Level)
@@ -42,7 +42,7 @@ namespace DumDum.Repository
             return DbContext.Troops.Where(t => t.KingdomId == id).ToList();
         }
 
-        public double GetDefensePower(int kingdomId)
+        public decimal GetDefensePower(int kingdomId)
         {
             return DbContext.Troops.Include(t => t.TroopType)
                 .Where(t => t.KingdomId == kingdomId && t.TroopType.TroopLevel.Level == t.Level)

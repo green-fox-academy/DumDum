@@ -253,9 +253,9 @@ namespace DumDum.Services
             return response;
         }
 
-        public async Task<double> GetAllTroopsConsumptionInKingdom(int kingdomId)
+        public async Task<decimal> GetAllTroopsConsumptionInKingdom(int kingdomId)
         {
-            var consumptionOfAllTroopsInKingdom = 0.0;
+            decimal consumptionOfAllTroopsInKingdom = 0;
 
                 var troopsInKingdom = UnitOfWork.Troops.Find(t => t.KingdomId == kingdomId).Result.ToList();
                 foreach (var troop in troopsInKingdom)

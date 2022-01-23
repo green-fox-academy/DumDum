@@ -6,13 +6,13 @@ namespace DumDum.Models.JsonEntities.Kingdom
     {
         public string Ruler { get; set; }
         public string Kingdom { get; set; }
-        public double Points { get; set; }
+        public decimal Points { get; set; }
 
         public KingdomPoints()
         {
                 
         }
-        public KingdomPoints(Entities.Kingdom kingdom, double points)
+        public KingdomPoints(Entities.Kingdom kingdom, decimal points)
         {
             Ruler = kingdom.Player.Username;
             Kingdom = kingdom.KingdomName;

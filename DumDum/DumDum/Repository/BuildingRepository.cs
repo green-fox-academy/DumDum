@@ -38,7 +38,7 @@ namespace DumDum.Repository
             return addBuilding;
         }
 
-        public async Task<double> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom)
+        public async Task<decimal> GetAllBuildingsConsumptionInKingdom(Kingdom kingdom)
         {
             var number = DbContext.Buildings.Include(b => b.Kingdom).Where(b => b.KingdomId == kingdom.KingdomId).Sum(x => x.Level);
             return number;

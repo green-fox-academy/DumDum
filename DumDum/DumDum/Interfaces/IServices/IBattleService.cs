@@ -11,8 +11,8 @@ namespace DumDum.Interfaces.IServices
         Task<(BattleResponse, int)> MakeBattle(string authorization, int attackerKingdomId, BattleRequest battleRequest);
         Task<Battle> AddBattle(BattleRequest battleRequest, int attackerId, long resolutionTime, int winnerId,
             long timeToStartTheBattle, int foodStolen, int goldStolen);
-        Task<long> ResolutionTimeCount(int coordinateX, int coordinateY, double minSpeed);
-        Task<double> GetMinSpeed(int kingdomId);
+        Task<long> ResolutionTimeCount(int coordinateX, int coordinateY, decimal minSpeed);
+        Task<decimal> GetMinSpeed(int kingdomId);
         Task<int> GetSumOfAttackPower(Player player);
         Task<int> GetSumOfDefensePower(Kingdom kingdom);
         Task<(int, string, List<TroopsLost>, List<TroopsLost>)> GetWinner(Player player, Kingdom kingdom);

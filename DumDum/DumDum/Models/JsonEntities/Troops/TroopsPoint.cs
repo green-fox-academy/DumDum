@@ -8,9 +8,9 @@ namespace DumDum.Models.JsonEntities.Troops
         public string Ruler { get; set; }
         public string Kingdom { get; set; }
         public int Troops { get; set; }
-        public double Points { get; set; }
+        public decimal Points { get; set; }
         
-        public TroopsPoint(Entities.Kingdom kingdom, double points, int troops)
+        public TroopsPoint(Entities.Kingdom kingdom, decimal points, int troops)
         {
             Ruler = kingdom.Player.Username;
             Kingdom = kingdom.KingdomName;
@@ -18,7 +18,7 @@ namespace DumDum.Models.JsonEntities.Troops
             Points = points;
         }
 
-        public TroopsPoint(string ruler, string kingdom, int troops, double points)
+        public TroopsPoint(string ruler, string kingdom, int troops, decimal points)
         {
             Ruler = ruler;
             Kingdom = kingdom;

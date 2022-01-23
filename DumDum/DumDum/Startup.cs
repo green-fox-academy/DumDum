@@ -39,7 +39,6 @@ namespace DumDum
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddControllersWithViews();
             services.AddTransient<IAuthenticateService, AuthenticateService>();
@@ -61,6 +60,7 @@ namespace DumDum
             services.AddTransient<ITroopTypesRepository, TroopTypesRepository>();
             services.AddTransient<IBattleRepository, BattleRepository>();
             services.AddTransient<ITroopsLostRepository, TroopsLostRepository>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             ConfigureDb(services);
 

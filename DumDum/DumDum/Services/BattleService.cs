@@ -146,16 +146,16 @@ namespace DumDum.Services
             return battle;
         }
 
-        public async Task<long> ResolutionTimeCount(int coordinateX, int coordinateY, double minSpeed)
+        public async Task<long> ResolutionTimeCount(int coordinateX, int coordinateY, decimal minSpeed)
         {
-            double newCoordinateX = Convert.ToDouble(coordinateX * coordinateX);
-            double newCoordinateY = Convert.ToDouble(coordinateY * coordinateY);
-            double toSquare = newCoordinateX + newCoordinateY;
+            var newCoordinateX = Convert.ToDecimal(coordinateX * coordinateX);
+            var newCoordinateY = Convert.ToDecimal(coordinateY * coordinateY);
+            var toSquare = newCoordinateX + newCoordinateY;
 
-            return Convert.ToInt64(Math.Sqrt(toSquare) * minSpeed);
+            return Convert.ToInt64((decimal)Math.Sqrt((double)toSquare) * minSpeed);
         }
 
-        public async Task<double> GetMinSpeed(int kingdomId)
+        public async Task<decimal> GetMinSpeed(int kingdomId)
         {
             var kingdom = await DumDumService.GetKingdomById(kingdomId);
             if (UnitOfWork.Battles.GetTroopsByKingdomId(kingdom.KingdomId) is null)

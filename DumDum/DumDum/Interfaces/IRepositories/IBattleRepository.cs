@@ -6,13 +6,13 @@ namespace DumDum.Interfaces.IRepositories
     public interface IBattleRepository : IRepository<Battle>
     {
 
-        double MinSpeed(int kingdomId);
+        decimal MinSpeed(int kingdomId);
         
-        double SumOfAttackPower(int playerKingdomId);
+        decimal SumOfAttackPower(int playerKingdomId);
 
         List<Troop> GetTroopsByKingdomId(int id);
 
-        double GetDefensePower(int kingdomId);
+        decimal GetDefensePower(int kingdomId);
 
         Battle GetBattleById(int id);
 

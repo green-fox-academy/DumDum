@@ -23,7 +23,7 @@ namespace DumDum.Interfaces.IServices
         int CurrentLevelOfTownhall(int kingdomId);
         int CurrentLevelOTroops(int kingdomId, string troopType);
         Task<TroopsLeaderboardResponse> GetTroopsLeaderboard();
-        Task<double> GetAllTroopsConsumptionInKingdom(int kingdomId);
+        Task<decimal> GetAllTroopsConsumptionInKingdom(int kingdomId);
         Task<KingdomsLeaderboardResponse> GetKingdomsLeaderboard();
         public List<Troop> GetActiveTroops();
         public bool IsTroopActive(Troop troop);
