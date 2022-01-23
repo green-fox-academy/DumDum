@@ -115,7 +115,7 @@ namespace DumDum.Services
             var loginInfo = CredentialCache.DefaultNetworkCredentials;
 
 
-            SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
 
             smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
@@ -136,7 +136,8 @@ namespace DumDum.Services
             mail.Body =
                 $"Hello, {player.Username}! You have requested for password reset recently. \n " +
                 "If you still want to change your password, please, click " +
-                $"<a href =\"http://localhost:20625/passwordChange/{player.PlayerId}?hash={player.Password}\">this link</a>";
+                 $"<a href =\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
+
             mail.Priority = MailPriority.Normal;
            // var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
             var loginInfo = CredentialCache.DefaultNetworkCredentials;
