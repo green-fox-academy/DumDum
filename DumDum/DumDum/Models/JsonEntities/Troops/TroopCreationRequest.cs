@@ -1,5 +1,4 @@
 ﻿
-
 namespace DumDum.Models.JsonEntities.Troops
 {
     public class TroopCreationRequest

@@ -1,13 +1,10 @@
 ﻿using DumDum.Database;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DumDum.Models.JsonEntities.Battles;
 using DumDum.Interfaces.IRepositories;
 using DumDum.Models.JsonEntities.Troops;
 
@@ -22,11 +19,6 @@ namespace DumDum.Repository
         public async Task<List<TroopsResponse>> GetTroops(int kingdomId)
         {
             var troops =  DbContext.Troops.Where(t => t.KingdomId == kingdomId).Include(t => t.TroopType.TroopLevel).Select(t => new TroopsResponse(t)).ToList();
-            if (troops != null)
-            {
-                return troops;
-            }
-
             return troops;
         }
 

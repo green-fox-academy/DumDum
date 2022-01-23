@@ -17,27 +17,27 @@ namespace DumDum.Repository
             DbContext = context;
         }
 
-        async public Task Add(T entity)
+        public async Task Add(T entity)
         {
            await DbContext.Set<T>().AddAsync(entity);
         }
 
-        async public Task AddRange(IEnumerable<T> entities)
+        public async Task AddRange(IEnumerable<T> entities)
         {
             await DbContext.Set<T>().AddRangeAsync(entities);
         }
 
-        async public Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression)
+        public async Task<IEnumerable<T>> Find(Expression<Func<T, bool>> expression)
         {
             return await DbContext.Set<T>().Where(expression).ToListAsync();
         }
 
-        async public Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
             return await DbContext.Set<T>().ToListAsync();
         }
 
-        async public Task<T> GetById(int id)
+        public async Task<T> GetById(int id)
         {
             return await DbContext.Set<T>().FindAsync(id);
         }
@@ -52,7 +52,7 @@ namespace DumDum.Repository
             DbContext.Set<T>().RemoveRange(entities);
         }
 
-        async public Task<bool> Any(Expression<Func<T, bool>> expression)
+        public async Task<bool> Any(Expression<Func<T, bool>> expression)
         {
             return await DbContext.Set<T>().AnyAsync(expression);
         }

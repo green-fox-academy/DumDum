@@ -1,5 +1,4 @@
-﻿using DumDum.Interfaces;
-using DumDum.Models.JsonEntities;
+﻿using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;

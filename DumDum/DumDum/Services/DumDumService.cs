@@ -31,12 +31,13 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
-
+        
         public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
-            var player = new Player() { Password = password, Username = username, KingdomId = kingdom.KingdomId };
-            UnitOfWork.Players.Add(player);
+            var player = new Player()
+                {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
+            await UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
             var playerToReturn = await GetPlayerByUsername(username);
             kingdom.PlayerId = playerToReturn.PlayerId;
