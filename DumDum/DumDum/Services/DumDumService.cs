@@ -44,60 +44,58 @@ namespace DumDum.Services
             return playerToReturn;
         }
 
-        public async Task<Kingdom> CreateKingdom(string kingdomname, string username)
+        public async Task<Kingdom> CreateKingdom(string kingdomName, string username)
         {
             var kingdom = new Kingdom();
-            if (kingdomname.IsNullOrEmpty())
+
+            if (kingdomName.IsNullOrEmpty())
             {
                 kingdom.KingdomName = $"{username}'s Kingdom";
                 var kingdomToSave = UnitOfWork.Kingdoms.AddKingdom(kingdom);
-                var gold = new Resource()
-                {
-                    Amount = 100,
-                    Generation = 1,
-                    ResourceType = "Gold",
-                    UpdatedAt = 1,
-                    Kingdom = kingdom,
-                    KingdomId = kingdomToSave.Result.KingdomId
-                };
-                var food = new Resource()
-                {
-                    Amount = 100,
-                    Generation = 1,
-                    ResourceType = "Food",
-                    UpdatedAt = 1,
-                    Kingdom = kingdom,
-                    KingdomId = kingdomToSave.Result.KingdomId
-                };
-                await UnitOfWork.Resources.Add(gold);
-                await UnitOfWork.Resources.Add(food);
-                UnitOfWork.Complete();
+                await NewKingdomBuildingsAndResources(kingdomToSave.Result);
                 return kingdomToSave.Result;
             }
 
+            kingdom.KingdomName = kingdomName;
             var kingdomTo = UnitOfWork.Kingdoms.AddKingdom(kingdom);
-            var golds = new Resource()
+            await NewKingdomBuildingsAndResources(kingdomTo.Result);
+            return kingdomTo.Result;
+        }
+
+        public async Task NewKingdomBuildingsAndResources(Kingdom kingdom)
+        {
+            var buildingTypeFarm = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Farm").Result;
+            var buildingTypeMine = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Mine").Result;
+            var buildingTypeTownhall = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Townhall").Result;
+            var buildingTypeBarracks = UnitOfWork.BuildingTypes.FindLevelingByBuildingType("Barracks").Result;
+
+            await UnitOfWork.Buildings.AddBuilding("Farm", kingdom, buildingTypeFarm);
+            await UnitOfWork.Buildings.AddBuilding("Mine", kingdom, buildingTypeMine);
+            await UnitOfWork.Buildings.AddBuilding("Townhall", kingdom, buildingTypeTownhall);
+            await UnitOfWork.Buildings.AddBuilding("Barracks", kingdom, buildingTypeBarracks);
+
+            var gold = new Resource()
             {
                 Amount = 100,
                 Generation = 1,
                 ResourceType = "Gold",
                 UpdatedAt = 1,
                 Kingdom = kingdom,
-                KingdomId = kingdomTo.Result.KingdomId
+                KingdomId = kingdom.KingdomId
             };
-            var foods = new Resource()
+            var food = new Resource()
             {
                 Amount = 100,
                 Generation = 1,
                 ResourceType = "Food",
                 UpdatedAt = 1,
                 Kingdom = kingdom,
-                KingdomId = kingdomTo.Result.KingdomId
+                KingdomId = kingdom.KingdomId
             };
-            UnitOfWork.Resources.Add(golds);
-            UnitOfWork.Resources.Add(foods);
+
+            await UnitOfWork.Resources.Add(gold);
+            await UnitOfWork.Resources.Add(food);
             UnitOfWork.Complete();
-            return kingdomTo.Result;
         }
 
         public async Task<bool> AreCredentialsValid(string username, string password)
@@ -115,7 +113,6 @@ namespace DumDum.Services
             return UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX).Result &&
                    UnitOfWork.Kingdoms.Any(k => k.CoordinateX == coordinateX).Result;
         }
-        
 
         public async Task<bool> IsKingdomIdValid(int kingdomId)
         {

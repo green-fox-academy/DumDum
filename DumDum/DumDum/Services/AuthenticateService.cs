@@ -30,7 +30,7 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Players.GetPlayerByUsername(userName);
         }
-        
+
         public async Task<AuthResponse> GetUserInfo(AuthRequest request)
         {
             // funkce smaže slovo bearer z tokenu, v případe, že by jej tam uživatel v postmanu zadal.
@@ -60,7 +60,7 @@ namespace DumDum.Services
                 };
 
                 var principal = tokenHandler.ValidateToken(request.Token, validationParameters, out _);
-                
+
                 var identity = principal.Identity.Name;    //vraci username tokenu
                 var responseEnt = new AuthResponse(await FindPlayerByTokenName(identity));
                 return responseEnt;
@@ -74,17 +74,26 @@ namespace DumDum.Services
 
         public async Task<KingdomRenameResponse> RenameKingdom(KingdomRenameRequest requestKingdomName, AuthResponse authResponse)
         {
-            var player =await  FindPlayerByTokenName(authResponse.Ruler);
+            var player = await FindPlayerByTokenName(authResponse.Ruler);
             player.Kingdom.KingdomName = requestKingdomName.KingdomName;
             UnitOfWork.Complete();
             KingdomRenameResponse response = new KingdomRenameResponse(player);
-            
+
             return response;
         }
 
         public async Task<bool> IsEmailValid(string email)
         {
-            return email.Contains("@") && email.Contains(".") && !UnitOfWork.Players.EmailNotUsed(email);
+            MailMessage mail = new MailMessage();
+            try
+            {
+                mail.To.Add(email);
+                return email.Contains("@") && email.Contains(".") && !UnitOfWork.Players.EmailNotUsed(email);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task SendAccountVerificationEmail(Player player)
@@ -101,7 +110,7 @@ namespace DumDum.Services
                 $"All you need is to click <a href=\"http://localhost:20625/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
             mail.Priority = MailPriority.High;
             var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
-            
+
             SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
             smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
