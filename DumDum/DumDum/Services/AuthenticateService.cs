@@ -136,12 +136,12 @@ namespace DumDum.Services
                 $"Welcome to DumDum, {player.Username}!\n The last step of registration is email verification.\n " +
                 $"All you need is to click <a href=\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
             mail.Priority = MailPriority.High;
-            //var loginInfo = new NetworkCredential("apikey", "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");
-            var loginInfo = CredentialCache.DefaultNetworkCredentials;
+            var loginInfo = new NetworkCredential("apikey", "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");
+            //var loginInfo = CredentialCache.DefaultNetworkCredentials;
             SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
 
-            smtp.UseDefaultCredentials = true;
-            //smtp.Credentials = loginInfo;
+           // smtp.UseDefaultCredentials = true;
+            smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
             smtp.Send(mail);
         }
@@ -161,12 +161,14 @@ namespace DumDum.Services
                  $"<a href =\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
 
             mail.Priority = MailPriority.Normal;
-           // var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
-            var loginInfo = CredentialCache.DefaultNetworkCredentials;
+            // var loginInfo = new NetworkCredential("dumdumnya@gmail.com", "dumdumcatcatcat");
+            var loginInfo = new NetworkCredential("apikey", "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");
+
+           // var loginInfo = CredentialCache.DefaultNetworkCredentials;
 
             SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
-            smtp.UseDefaultCredentials = true;
-           // smtp.Credentials = loginInfo;
+           // smtp.UseDefaultCredentials = true;
+            smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
             smtp.Send(mail);
         }
