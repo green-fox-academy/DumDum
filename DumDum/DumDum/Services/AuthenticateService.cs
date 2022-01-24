@@ -140,8 +140,8 @@ namespace DumDum.Services
             var loginInfo = CredentialCache.DefaultNetworkCredentials;
             SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
 
-            smtp.Credentials = loginInfo;
             smtp.UseDefaultCredentials = true;
+            //smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
             smtp.Send(mail);
         }
@@ -166,7 +166,7 @@ namespace DumDum.Services
 
             SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
             smtp.UseDefaultCredentials = true;
-            smtp.Credentials = loginInfo;
+           // smtp.Credentials = loginInfo;
             smtp.EnableSsl = true;
             smtp.Send(mail);
         }
