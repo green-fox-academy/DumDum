@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using DumDum.Repository;
+﻿
 
 namespace DumDum.Models.JsonEntities.Troops
 {

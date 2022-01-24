@@ -1,12 +1,10 @@
-﻿using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
-using DumDum.Models.JsonEntities.Buildings;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DumDum.Interfaces.IRepositories;
+using DumDum.Models.Entities;
+using DumDum.Models.JsonEntities.Buildings;
 using DumDum.Models.JsonEntities.Kingdom;
 
-namespace DumDum.Interfaces
+namespace DumDum.Interfaces.IRepositories
 {
     public interface IKingdomRepository : IRepository<Kingdom>
     {

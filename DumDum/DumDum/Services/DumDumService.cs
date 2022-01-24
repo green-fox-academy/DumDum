@@ -1,7 +1,5 @@
 using Castle.Core.Internal;
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
-using DumDum.Models.JsonEntities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
 using DumDum.Models.JsonEntities.Player;
@@ -33,12 +31,13 @@ namespace DumDum.Services
         {
             return await UnitOfWork.Kingdoms.GetKingdomByName(kingdomName);
         }
+        
         public async Task<Player> Register(string username, string password, string kingdomName, string email)
         {
             var kingdom = await CreateKingdom(kingdomName, username);
             var player = new Player()
                 {Password = password, Username = username, KingdomId = kingdom.KingdomId, Email = email, IsVerified = false};
-            UnitOfWork.Players.Add(player);
+            await UnitOfWork.Players.Add(player);
             UnitOfWork.Complete();
             var playerToReturn = await GetPlayerByUsername(username);
             kingdom.PlayerId = playerToReturn.PlayerId;
@@ -312,13 +311,13 @@ namespace DumDum.Services
 
         public async Task<(string, int)> ResetPassword(PasswordResetRequest passwordResetRequest)
         {
-            if (UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
+            if (!UnitOfWork.Players.UserWithEmailExists(passwordResetRequest.Username, passwordResetRequest.Email))
             {
-                var player = await GetPlayerByUsername(passwordResetRequest.Username);
-                AuthenticateService.SendPasswordResetEmail(player);
-                return ("Email has been sent.", 200);
+                return ("Credentials not valid.", 400); 
             }
-            return ("Credentials not valid.", 400);
+            var player = await GetPlayerByUsername(passwordResetRequest.Username);
+            await AuthenticateService.SendPasswordResetEmail(player);
+            return ("Email has been sent.", 200);
         }
 
         public async Task<Player> GetPlayerVerified(int playerId, string hash)

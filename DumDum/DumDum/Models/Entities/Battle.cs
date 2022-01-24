@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using DumDum.Models.JsonEntities.Battles;
 
 namespace DumDum.Models.Entities
 {

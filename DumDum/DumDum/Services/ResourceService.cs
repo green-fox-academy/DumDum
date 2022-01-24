@@ -1,4 +1,3 @@
-using DumDum.Interfaces;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Kingdom;
@@ -47,7 +46,7 @@ namespace DumDum.Services
                     {
                         return (null, 404);
                     }
-                    var locations = AddLocations(kingdom);
+                    await AddLocations(kingdom);
                     var resources = await GetResources(id);
                     var resResp = new ResourceResponse(new KingdomResponse(kingdom), resources);
                     return (resResp, 200);

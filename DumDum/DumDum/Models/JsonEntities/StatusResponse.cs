@@ -1,5 +1,4 @@
 ﻿
-
 namespace DumDum.Models.JsonEntities
 {
     public class StatusResponse

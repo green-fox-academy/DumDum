@@ -1,5 +1,3 @@
-using DumDum.Models.Entities;
-
 
 namespace DumDum.Models.JsonEntities.Kingdom
 {

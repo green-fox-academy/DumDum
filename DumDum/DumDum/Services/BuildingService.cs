@@ -1,5 +1,4 @@
-﻿using DumDum.Interfaces;
-using DumDum.Interfaces.IServices;
+﻿using DumDum.Interfaces.IServices;
 using DumDum.Models.Entities;
 using DumDum.Models.JsonEntities.Authorization;
 using DumDum.Models.JsonEntities.Buildings;
@@ -161,14 +160,13 @@ namespace DumDum.Services
 
         public async Task<int> GetTownHallLevel(int kingdomId)
         {
-            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").Result
-                                       .FirstOrDefault().Level;
+            return UnitOfWork.Buildings.Find(t => t.BuildingType == "townhall" || t.BuildingType == "Townhall").Result.FirstOrDefault().Level;
         }
 
         public async Task<BuildingsLeaderboardResponse> GetBuildingsLeaderboard()
         {
             BuildingsLeaderboardResponse response = new BuildingsLeaderboardResponse();
-            response.Result = UnitOfWork.Kingdoms.GetListBuildingPoints().Result;
+            response.Result = await UnitOfWork.Kingdoms.GetListBuildingPoints();
             return response;
         }        
     }
