@@ -136,7 +136,7 @@ namespace DumDum.Services
                 $"Welcome to DumDum, {player.Username}!\n The last step of registration is email verification.\n " +
                 $"All you need is to click <a href=\"http://dumdumdumdum.azurewebsites.net/emailAuthenticated/{player.PlayerId}?hash={player.Password}\">this link</a>";
             mail.Priority = MailPriority.High;
-            var loginInfo = new NetworkCredential("apikey", "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");
+            var loginInfo = new NetworkCredential("apikey", "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");
             //var loginInfo = CredentialCache.DefaultNetworkCredentials;
             SmtpClient smtp = new SmtpClient("smtp.sendgrid.net", 587);
 
