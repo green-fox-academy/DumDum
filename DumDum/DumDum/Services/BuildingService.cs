@@ -63,6 +63,10 @@ namespace DumDum.Services
             AuthRequest request = new AuthRequest();
             request.Token = authorization;
             var player = await AuthenticateService.GetUserInfo(request);
+            if (player == null || player.KingdomId != kingdomId)
+            {
+                return (null, 401, "This kingdom does not belong to authenticated player!");
+            }
             var building = await GetBuildingById(buildingId);
             
             if (building == null)
@@ -71,11 +75,6 @@ namespace DumDum.Services
             }
             var kingdomGoldAmount = await DumDumService.GetGoldAmountOfKingdom(kingdomId);
             var nextLevelInfo = await InformationForNextLevel(building.BuildingTypeId, building.Level);
-            
-            if (player == null || player.KingdomId != kingdomId)
-            {
-                return (null, 401, "This kingdom does not belong to authenticated player!");
-            }
             
             if (nextLevelInfo == null)
             {
@@ -87,7 +86,7 @@ namespace DumDum.Services
                 return (null, 400, "You don't have enough gold to upgrade that!");
             }
             
-            if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > GetTownHallLevel(kingdomId).Result)
+            if (building.BuildingType != "Townhall"  && nextLevelInfo.LevelNumber > await GetTownHallLevel(kingdomId))
             {
                 return (null, 400, "Your building can't have higher level than your townhall! Upgrade townhall first." );
             }
@@ -130,24 +129,22 @@ namespace DumDum.Services
 
         public async Task<(BuildingList, int)> AddBuilding(string building, int id, string authorization)
         {
-            var buildingType = await FindLevelingByBuildingType(building.ToLower());
-            
-            var kingdom =  await FindPlayerByKingdomId(id);
-
             AuthRequest authRequest = new AuthRequest() {Token = authorization};
-            var gold = kingdom.Resources.FirstOrDefault(r => r.ResourceType == "Gold");
-
             var player = AuthenticateService.GetUserInfo(authRequest);
             if (player == null)
             {
                 return (null, 401);
             }
-
+            var buildingType = await FindLevelingByBuildingType(building.ToLower());
+            
             if (building.IsNullOrEmpty() || !ExistingTypeOfBuildings().Result.Contains(building))
             {
                 return (null, 406);
             }
             
+            var kingdom =  await FindPlayerByKingdomId(id);
+            
+            var gold = kingdom.Resources.FirstOrDefault(r => r.ResourceType == "Gold");
             if (gold?.Amount < buildingType.BuildingLevel.Cost)
             {
                 return (null, 400);

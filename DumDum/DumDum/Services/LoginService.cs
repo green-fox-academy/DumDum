@@ -70,6 +70,14 @@ namespace DumDum.Services
         //logika pro controller
         public async Task<(string, int)>Login(LoginRequest player)
         {
+            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
+            {
+                return ("Field username and/or field password was empty!", 400);
+            }
+            if (! await LoginPasswordCheck(player.Username, player.Password))
+            {
+                return ("Username and/or password was incorrect!", 401);
+            }
             LoginResponse response = new LoginResponse();
             var playerTologin = await DumDumService.GetPlayerByUsername(player.Username);
             if (await LoginPasswordCheck(player.Username, player.Password) && playerTologin.IsVerified)
@@ -77,15 +85,6 @@ namespace DumDum.Services
                 response.Token = await Authenticate(player.Username, player.Password);
             }
 
-            if (string.IsNullOrEmpty(player.Username) || string.IsNullOrEmpty(player.Password))
-            {
-                return ("Field username and/or field password was empty!", 400);
-            }
-
-            if (! await LoginPasswordCheck(player.Username, player.Password))
-            {
-                return ("Username and/or password was incorrect!", 401);
-            }
             return (response.Token, 200);
         }
     }

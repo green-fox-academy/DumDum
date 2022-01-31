@@ -25,7 +25,7 @@ namespace DumDum.Services
             AuthRequest response = new AuthRequest();
             response.Token = authorization;
             var player = await AuthenticateService.GetUserInfo(response);
-            if (player != null)
+            if (player != null && player.KingdomId == kingdomId)
             {
                 KingdomDetailsResponse kingdomDetailsResponse = new KingdomDetailsResponse(
                     BuildingService.GetKingdom(kingdomId),
